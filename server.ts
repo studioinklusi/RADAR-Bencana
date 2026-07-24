@@ -36,22 +36,22 @@ app.post('/api/generate-ai-report', async (req: Request, res: Response) => {
   try {
     const { districtName, provinceName = 'Jawa Barat', stats, hazardType = 'flood' } = req.body;
 
-    const qwenApiKey = process.env.QWEN_API_KEY || 'sk-881f765fc62246d4845b10977a34c85b';
+    const qwenApiKey = process.env.QWEN_API_KEY;
 
     if (!qwenApiKey) {
       return res.json({
         success: true,
         report: {
-          executiveSummary: `Wilayah ${districtName} (${provinceName}) memiliki risiko kerentanan ${hazardType.toUpperCase()} dengan kategori ${stats?.summary?.riskCategory || 'Tinggi'}. Sebagian besar area berupa lahan pertanian dan kawasan terbangun non-vegetasi.`,
+          executiveSummary: `[DEMO MODE] API Key Qwen tidak ditemukan di .env. Untuk mengaktifkan fitur analisis AI real-time, silakan hubungi Tim Studio Inklusi untuk mendapatkan API Key resmi.`,
           keyVulnerabilities: [
-            'Tinggi curah hujan harian & kemiringan lereng di area hulu',
-            'Konversi lahan hutan primer menjadi kawasan pemukiman',
-            'Penyempitan dan pendangkalan alur sungai utama'
+            'Hubungi Tim Studio Inklusi untuk akses API Key Qwen 2.5',
+            'Konfigurasi QWEN_API_KEY di file .env lokal Anda',
+            'Analisis spasial GEE berbasis AI akan aktif secara otomatis'
           ],
           actionableMitigations: [
-            'Restorasi kawasan resapan air dan vegetasi hutan di hulu',
-            'Pemasangan Sensor Peringatan Dini (EWS) Banjir & Longsor',
-            'Penguatan tanggul sungai dan pengerukan sedimen berkala'
+            'Dapatkan QWEN_API_KEY dari Tim Studio Inklusi',
+            'Masukkan ke file .env lalu restart dev server',
+            'Gunakan modul analisis AI terintegrasi'
           ]
         }
       });
@@ -101,7 +101,14 @@ Wajib merespons HANYA dalam format JSON valid sebagai berikut:
 app.post('/api/chat-ai', async (req: Request, res: Response) => {
   try {
     const { messages = [], activeContext = {} } = req.body;
-    const qwenApiKey = process.env.QWEN_API_KEY || 'sk-881f765fc62246d4845b10977a34c85b';
+    const qwenApiKey = process.env.QWEN_API_KEY;
+
+    if (!qwenApiKey) {
+      return res.json({
+        success: true,
+        text: 'API Key Qwen 2.5 belum terkonfigurasi. Silakan hubungi Tim Studio Inklusi untuk mendapatkan API Key resmi.'
+      });
+    }
 
     const {
       districtName = 'Jawa Barat (Keseluruhan)',

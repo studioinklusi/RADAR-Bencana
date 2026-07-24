@@ -69,7 +69,8 @@ Aplikasi ini menggunakan kunci API dari **Alibaba Cloud DashScope (Qwen 2.5)** u
 
    ```env
    # API Key Qwen 2.5 dari Alibaba Cloud DashScope
-   QWEN_API_KEY=sk-881f765fc62246d4845b10977a34c85b
+   # (Hubungi Tim Studio Inklusi untuk mendapatkan API Key resmi)
+   QWEN_API_KEY=your_qwen_api_key_here
 
    # Port Server Express Backend
    PORT=3000

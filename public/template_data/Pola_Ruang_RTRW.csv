@@ -1,0 +1,6 @@
+id_pola_ruang,kode_zona,nama_zona,kategori_utama,sub_zona_pola_ruang,kabupaten_kota,luas_ha,ketentuan_kkpr,status_konservasi
+PR-3204-01,HL,Hutan Lindung Cikole,Kawasan Lindung,Hutan Konservasi & Resapan Air,Kabupaten Bandung Barat,1250.5,Dilarang Bangunan Non-Konservasi,Zona Merah (Protected)
+PR-3204-02,KPI,Kawasan Peruntukan Industri Dayeuhkolot,Kawasan Budi Daya,Zona Industri & Logistik,Kabupaten Bandung,850.0,KKPR Disetujui Otomatis / Bersyarat Peil Banjir,Zona Budi Daya Komersial
+PR-3204-03,KBAU,Kawasan Bandung Utara (Sempadan Lembang),Kawasan Lindung,Kawasan Resapan & Sempadan Sesar,Kabupaten Bandung Barat,3400.2,Pengawasan Ketat / Moratorium Komersial,Zona Merah (Sesar Active)
+PR-3204-04,PP-1,Kawasan Pemukiman & Jasa Perkotaan,Kawasan Budi Daya,Pemukiman Kepadatan Tinggi,Kota Bandung,2100.0,Disetujui untuk Usaha Jasa & Pemukiman,Zona Budi Daya Perkotaan
+PR-3203-05,HSA,Suaka Margasatwa & Resapan Air,Kawasan Lindung,Resapan Air & Hutan Lindung,Kabupaten Cianjur,5200.0,Dilarang Alih Fungsi Lahan,Zona Merah (Hutan Lindung)

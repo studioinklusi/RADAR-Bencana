@@ -1,0 +1,6 @@
+code,name,provinsi,luas_ha,populasi,luas_risiko_tinggi_ha,luas_risiko_sedang_ha,luas_risiko_rendah_ha,koordinat_lat,koordinat_lng
+3204,Kabupaten Bandung,Jawa Barat,176239,3600000,45200,68400,62639,-7.0252,107.5197
+3217,Kabupaten Bandung Barat,Jawa Barat,130577,1700000,38500,52000,40077,-6.8427,107.5144
+3273,Kota Bandung,Jawa Barat,16730,2500000,3200,6500,7030,-6.9175,107.6191
+3277,Kota Cimahi,Jawa Barat,4020,560000,850,1400,1770,-6.8722,107.5422
+3203,Kabupaten Cianjur,Jawa Barat,361435,2400000,112000,145000,104435,-6.8168,107.1425

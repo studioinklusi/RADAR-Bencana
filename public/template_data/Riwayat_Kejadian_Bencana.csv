@@ -1,0 +1,5 @@
+id_kejadian,jenis_bencana,tanggal_kejadian,kabupaten_kota,kecamatan_desa,korban_jiwa,rumah_rusak,kerugian_estimasi_rp,penyebab_utama,lat,lng
+INC-2024-001,Banjir Bandang,2024-03-15,Kabupaten Bandung,Dayeuhkolot / Desa Citeureup,0,450,3500000000,Intensitas hujan ekstrem >120mm/jam dan luapan Sungai Citarum,-6.9840,107.6230
+INC-2023-012,Tanah Longsor,2023-11-21,Kabupaten Bandung Barat,Lembang / Desa Suntenjaya,2,12,850000000,Pergerakan tanah tebing akibat hujan lebat berkepanjangan,-6.8120,107.6320
+INC-2022-045,Gempa Bumi Tektonik,2022-11-21,Kabupaten Cianjur,Cugenang / Desa Gasol,602,56000,125000000000,Aktivitas Sesar Cugenang kedalaman dangkal 10 km,-6.8180,107.1250
+INC-2024-008,Angin Puting Beliung,2024-02-21,Kabupaten Bandung,Rancaekek / Desa Bintangresmi,0,120,1200000000,Fenomena microburst awan Cumulonimbus berkecepatan 65 km/jam,-6.9600,107.7600

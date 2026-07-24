@@ -1,0 +1,6 @@
+id_fasilitas,nama_fasilitas,kategori_utama,sub_kategori,kabupaten_kota,alamat_lengkap,kapasitas_penampungan,nomor_kontak_darurat,status_operasional,latitude,longitude
+FAS-001,Pos Pemadam Kebakaran Cimahi Tengah,Damkar & Penyelamatan,Pos Utama,Kota Cimahi,Jl. Alun-Alun Cimahi No. 12,5 Unit Armada,022-6652441,24 Jam Aktif,-6.8735,107.5430
+FAS-002,RSUD Otista Bandung,Fasilitas Kesehatan,Rumah Sakit Rujukan,Kabupaten Bandung,Jl. Raya Soreang No. 88,350 Tempat Tidur,022-5891122,24 Jam Aktif,-7.0280,107.5210
+FAS-003,Posko Utama BPBD KBB,Posko Kebencanaan,BPBD Kabupaten,Kabupaten Bandung Barat,Jl. Raya Padalarang No. 45,500 Pengungsi,022-86861234,24 Jam Aktif,-6.8380,107.4920
+FAS-004,GOR Evakuasi Dayeuhkolot,Tempat Evakuasi Sementara,Shelter Bencana,Kabupaten Bandung,Jl. Raya Dayeuhkolot No. 102,1200 Jiwa,0812-3456-7890,Siap Pakai,-6.9820,107.6210
+FAS-005,Helipad Darurat Tangkuban Parahu,Akses Logistik,Helipad SAR,Kabupaten Bandung Barat,Kawasan Cikole Lembang,2 Helikopter,0811-2233-4455,Siap Pakai,-6.7600,107.6150

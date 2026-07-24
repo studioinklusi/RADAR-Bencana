@@ -1,0 +1,6 @@
+{
+  "name": "RADAR BENCANA - Web GIS & Earth Engine Hazard Mapping",
+  "description": "RADAR (Rekapitulasi Analisis Dampak Area dan Risiko) BENCANA - Interactive Web GIS platform for Disaster Hazard Mapping, dynamic raster clipping, administrative area statistics, and Google Earth Engine backend code.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

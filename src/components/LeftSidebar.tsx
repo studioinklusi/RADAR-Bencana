@@ -70,9 +70,14 @@ interface LeftSidebarProps {
   onClearRadarInvest?: () => void;
   isPickingOnMap?: boolean;
   onTogglePickOnMap?: () => void;
-  pickedLocation?: { lat: number; lng: number } | null;
   selectedDistrict?: AdminFeature | null;
   stats?: ZonalStatistics | null;
+  chatMessages?: ChatMessage[];
+  inputChatText?: string;
+  onChangeInputChatText?: (text: string) => void;
+  onSendChatMessage?: (textToSend?: string) => void;
+  isChatSending?: boolean;
+  onOpenMaximizedChat?: () => void;
 }
 
 export const LeftSidebar: React.FC<LeftSidebarProps> = ({
@@ -109,6 +114,12 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
   isPickingOnMap = false,
   onTogglePickOnMap,
   pickedLocation,
+  chatMessages = [],
+  inputChatText = '',
+  onChangeInputChatText,
+  onSendChatMessage,
+  isChatSending = false,
+  onOpenMaximizedChat,
 }) => {
   const [activeTab, setActiveTab] = useState<'tema' | 'ai' | 'invest'>('tema');
   const [expandedSection, setExpandedSection] = useState<'wilayah' | 'polaruang' | 'hazard' | 'incidents' | 'facilities' | null>('polaruang');
@@ -120,83 +131,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
   const [investSector, setInvestSector] = useState<string>('Manufaktur & Kawasan Industri');
   const [investProjectName, setInvestProjectName] = useState<string>('Rencana Pembangunan Industri');
 
-  // Interactive Disaster Chatbot state
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-    {
-      id: 'welcome',
-      sender: 'ai',
-      text: 'Halo! Saya Asisten Tanya AI RADAR Bencana. Silakan tanyakan apapun seputar potensi bencana, analisis spasial GEE, tata ruang RTRW, atau rekomendasi mitigasi BPBD di Jawa Barat.',
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    }
-  ]);
-  const [inputChatText, setInputChatText] = useState('');
-  const [isChatSending, setIsChatSending] = useState(false);
-  const [isChatMaximized, setIsChatMaximized] = useState(false);
   const [isChatMinimized, setIsChatMinimized] = useState(false);
-
-  const handleSendChatMessage = async (textToSend?: string) => {
-    const text = textToSend || inputChatText.trim();
-    if (!text || isChatSending) return;
-
-    const userMsg: ChatMessage = {
-      id: Date.now().toString(),
-      sender: 'user',
-      text,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
-
-    setChatMessages((prev) => [...prev, userMsg]);
-    if (!textToSend) setInputChatText('');
-    setIsChatSending(true);
-
-    try {
-      const activeContext = {
-        districtName: selectedDistrict?.properties?.name || 'Provinsi Jawa Barat',
-        provinceName: selectedDistrict?.properties?.province || 'Jawa Barat',
-        hazardType: selectedHazard,
-        stats: stats ? {
-          highRiskHa: stats.highRiskHa,
-          mediumRiskHa: stats.mediumRiskHa,
-          lowRiskHa: stats.lowRiskHa,
-          riskCategory: stats.riskCategory,
-          totalAreaHa: stats.totalAreaHa,
-        } : null
-      };
-
-      const res = await fetch('/api/chat-ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: [...chatMessages, userMsg],
-          activeContext
-        })
-      });
-
-      const data = await res.json();
-      if (data && data.success) {
-        const aiMsg: ChatMessage = {
-          id: (Date.now() + 1).toString(),
-          sender: 'ai',
-          text: data.text,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-        setChatMessages((prev) => [...prev, aiMsg]);
-      } else {
-        throw new Error(data.error || 'Gagal memproses pesan');
-      }
-    } catch (err) {
-      console.error('Chat AI Error:', err);
-      const errorMsg: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        sender: 'ai',
-        text: 'Maaf, terjadi kendala saat memproses jawaban AI. Silakan periksa koneksi Anda.',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      setChatMessages((prev) => [...prev, errorMsg]);
-    } finally {
-      setIsChatSending(false);
-    }
-  };
 
   // Update form values when user picks a point on map
   useEffect(() => {
@@ -919,7 +854,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                   </button>
                   <button
                     type="button"
-                    onClick={() => setIsChatMaximized(true)}
+                    onClick={() => onOpenMaximizedChat?.()}
                     title="Layar Penuh (Maximize)"
                     className="p-1 hover:bg-emerald-50 hover:text-emerald-700 rounded text-slate-500 transition-all cursor-pointer"
                   >
@@ -984,19 +919,19 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                     <span className="text-[10px] text-slate-500 font-semibold block">Pertanyaan Cepat:</span>
                     <div className="flex flex-col gap-1">
                       <button
-                        onClick={() => handleSendChatMessage('Apa rekomendasi mitigasi bencana untuk wilayah yang sedang saya buka ini?')}
+                        onClick={() => onSendChatMessage?.('Apa rekomendasi mitigasi bencana untuk wilayah yang sedang saya buka ini?')}
                         className="text-[10px] bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2 py-1 rounded border border-slate-200 transition-all text-left cursor-pointer truncate"
                       >
                         💡 Rekomendasi mitigasi wilayah ini
                       </button>
                       <button
-                        onClick={() => handleSendChatMessage('Fasilitas kritis apa saja yang rentan terdampak di lokasi ini?')}
+                        onClick={() => onSendChatMessage?.('Fasilitas kritis apa saja yang rentan terdampak di lokasi ini?')}
                         className="text-[10px] bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2 py-1 rounded border border-slate-200 transition-all text-left cursor-pointer truncate"
                       >
                         🏥 Fasilitas kritis yang rentan
                       </button>
                       <button
-                        onClick={() => handleSendChatMessage('Bagaimana nomor dan kontak protokol darurat BPBD Jawa Barat?')}
+                        onClick={() => onSendChatMessage?.('Bagaimana nomor dan kontak protokol darurat BPBD Jawa Barat?')}
                         className="text-[10px] bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2 py-1 rounded border border-slate-200 transition-all text-left cursor-pointer truncate"
                       >
                         🚨 Nomor kontak darurat BPBD
@@ -1008,14 +943,14 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                   <form
                     onSubmit={(e) => {
                       e.preventDefault();
-                      handleSendChatMessage();
+                      onSendChatMessage?.();
                     }}
                     className="flex items-center gap-1.5 pt-1"
                   >
                     <input
                       type="text"
                       value={inputChatText}
-                      onChange={(e) => setInputChatText(e.target.value)}
+                      onChange={(e) => onChangeInputChatText?.(e.target.value)}
                       placeholder="Tanyakan risiko bencana..."
                       disabled={isChatSending}
                       className="flex-1 px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-emerald-500 focus:bg-white text-slate-800 placeholder:text-slate-400"
@@ -1296,153 +1231,6 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
           <span>Downloads</span>
         </button>
       </div>
-
-      {/* Maximized Chat Modal Overlay */}
-      {isChatMaximized && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 md:p-6 animate-fadeIn">
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xl w-full max-w-4xl h-[88vh] flex flex-col overflow-hidden select-text">
-            {/* Modal Header */}
-            <div className="p-4 bg-gradient-to-r from-emerald-50 via-white to-amber-50 border-b border-slate-200 flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-xs">
-                  <Bot className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2">
-                    <span>Tanya AI Bencana — Mode Layar Penuh (Maximized)</span>
-                    <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono font-bold">
-                      Qwen 2.5
-                    </span>
-                  </h3>
-                  <p className="text-xs text-slate-500">
-                    Konteks Wilayah Aktif: <strong className="text-emerald-700">{selectedDistrict?.properties?.name || 'Jawa Barat (Keseluruhan)'}</strong> • Ancaman: <strong className="text-amber-700 font-mono uppercase">{selectedHazard}</strong>
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsChatMaximized(false)}
-                  className="p-2 hover:bg-slate-100 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center gap-1.5 text-xs font-semibold cursor-pointer border border-slate-200"
-                >
-                  <Minimize2 className="w-4 h-4" />
-                  <span>Kecilkan (Minimize)</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsChatMaximized(false)}
-                  className="p-2 hover:bg-rose-50 hover:text-rose-600 rounded-lg text-slate-400 transition-all cursor-pointer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-
-            {/* Modal Chat Body */}
-            <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-slate-50/50">
-              {chatMessages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`flex items-start gap-3 ${
-                    msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'
-                  }`}
-                >
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-xs ${
-                      msg.sender === 'user'
-                        ? 'bg-emerald-600 text-white'
-                        : 'bg-amber-100 border border-amber-300 text-amber-800'
-                    }`}
-                  >
-                    {msg.sender === 'user' ? (
-                      <User className="w-4 h-4" />
-                    ) : (
-                      <Bot className="w-4 h-4" />
-                    )}
-                  </div>
-                  <div
-                    className={`p-4 rounded-2xl max-w-[82%] leading-relaxed text-xs md:text-sm shadow-xs ${
-                      msg.sender === 'user'
-                        ? 'bg-emerald-600 text-white rounded-tr-none'
-                        : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none'
-                    }`}
-                  >
-                    <p className="whitespace-pre-wrap">{msg.text}</p>
-                    <span
-                      className={`text-[10px] block mt-2 text-right font-mono ${
-                        msg.sender === 'user' ? 'text-emerald-100' : 'text-slate-400'
-                      }`}
-                    >
-                      {msg.timestamp}
-                    </span>
-                  </div>
-                </div>
-              ))}
-
-              {isChatSending && (
-                <div className="flex items-center gap-2 text-slate-500 text-xs py-2">
-                  <span className="w-4 h-4 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></span>
-                  <span>Qwen AI sedang merumuskan analisis spasial & mitigasi...</span>
-                </div>
-              )}
-            </div>
-
-            {/* Quick Chips & Input Footer */}
-            <div className="p-4 bg-white border-t border-slate-200 space-y-3 shrink-0">
-              <div className="flex items-center gap-2 overflow-x-auto pb-1">
-                <span className="text-xs text-slate-500 shrink-0 font-semibold">Pertanyaan Cepat:</span>
-                <button
-                  type="button"
-                  onClick={() => handleSendChatMessage('Apa rekomendasi mitigasi bencana untuk wilayah yang sedang saya buka ini?')}
-                  className="text-xs bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-200 transition-all cursor-pointer shrink-0"
-                >
-                  💡 Rekomendasi mitigasi wilayah ini
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSendChatMessage('Fasilitas kritis apa saja yang rentan terdampak di lokasi ini?')}
-                  className="text-xs bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-200 transition-all cursor-pointer shrink-0"
-                >
-                  🏥 Fasilitas kritis yang rentan
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSendChatMessage('Bagaimana nomor dan kontak protokol darurat BPBD Jawa Barat?')}
-                  className="text-xs bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-200 transition-all cursor-pointer shrink-0"
-                >
-                  🚨 Nomor kontak darurat BPBD
-                </button>
-              </div>
-
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSendChatMessage();
-                }}
-                className="flex items-center gap-2"
-              >
-                <input
-                  type="text"
-                  value={inputChatText}
-                  onChange={(e) => setInputChatText(e.target.value)}
-                  placeholder="Ketik pertanyaan kebencanaan atau analisis spasial di sini..."
-                  disabled={isChatSending}
-                  className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs md:text-sm focus:outline-none focus:border-emerald-500 focus:bg-white text-slate-800 placeholder:text-slate-400"
-                />
-                <button
-                  type="submit"
-                  disabled={isChatSending || !inputChatText.trim()}
-                  className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white font-bold text-xs md:text-sm rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-xs shrink-0"
-                >
-                  <span>Kirim</span>
-                  <Send className="w-4 h-4" />
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
     </aside>
   );
 };

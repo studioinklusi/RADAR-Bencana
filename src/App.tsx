@@ -7,11 +7,12 @@ import { CodeViewerModal } from './components/CodeViewerModal';
 import { MyGeometryModal } from './components/MyGeometryModal';
 import { DataGuideModal } from './components/DataGuideModal';
 import { AllDisasterIncidentsModal } from './components/AllDisasterIncidentsModal';
+import { MaximizedChatModal } from './components/MaximizedChatModal';
 import { LoginPage } from './components/LoginPage';
 import { AdminDashboardPage } from './components/AdminDashboardPage';
 
 import { ADMIN_BOUNDARIES } from './data/mockAdminBoundaries';
-import { AdminFeature, HazardType, ZonalStatistics, AIRiskAssessment, FacilityCategory, FacilitySubType, RadarInvestInput, RadarInvestResult } from './types';
+import { AdminFeature, HazardType, ZonalStatistics, AIRiskAssessment, FacilityCategory, FacilitySubType, RadarInvestInput, RadarInvestResult, ChatMessage } from './types';
 import { calculateRadarInvest } from './utils/radarInvestCalculator';
 
 
@@ -121,7 +122,84 @@ export default function App() {
   const [isDataGuideOpen, setIsDataGuideOpen] = useState<boolean>(false);
   const [showAllIncidentsMode, setShowAllIncidentsMode] = useState<boolean>(false);
   const [isAllIncidentsModalOpen, setIsAllIncidentsModalOpen] = useState<boolean>(false);
+  const [isMaximizedChatOpen, setIsMaximizedChatOpen] = useState<boolean>(false);
   const [focusedCoords, setFocusedCoords] = useState<[number, number] | null>(null);
+
+  // Chatbot State
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
+    {
+      id: 'welcome',
+      sender: 'ai',
+      text: 'Halo! Saya Asisten Tanya AI RADAR Bencana. Silakan tanyakan apapun seputar potensi bencana, analisis spasial GEE, tata ruang RTRW, atau rekomendasi mitigasi BPBD di Jawa Barat.',
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }
+  ]);
+  const [inputChatText, setInputChatText] = useState('');
+  const [isChatSending, setIsChatSending] = useState(false);
+
+  const handleSendChatMessage = async (textToSend?: string) => {
+    const text = textToSend || inputChatText.trim();
+    if (!text || isChatSending) return;
+
+    const userMsg: ChatMessage = {
+      id: Date.now().toString(),
+      sender: 'user',
+      text,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    setChatMessages((prev) => [...prev, userMsg]);
+    if (!textToSend) setInputChatText('');
+    setIsChatSending(true);
+
+    try {
+      const activeContext = {
+        districtName: selectedDistrict?.properties?.name || 'Provinsi Jawa Barat',
+        provinceName: selectedDistrict?.properties?.province || 'Jawa Barat',
+        hazardType: selectedHazard,
+        stats: stats ? {
+          highRiskHa: stats.highRiskHa,
+          mediumRiskHa: stats.mediumRiskHa,
+          lowRiskHa: stats.lowRiskHa,
+          riskCategory: stats.riskCategory,
+          totalAreaHa: stats.totalAreaHa,
+        } : null
+      };
+
+      const res = await fetch('/api/chat-ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [...chatMessages, userMsg],
+          activeContext
+        })
+      });
+
+      const data = await res.json();
+      if (data && data.success) {
+        const aiMsg: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          sender: 'ai',
+          text: data.text,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+        setChatMessages((prev) => [...prev, aiMsg]);
+      } else {
+        throw new Error(data.error || 'Gagal memproses pesan');
+      }
+    } catch (err) {
+      console.error('Chat AI Error:', err);
+      const errorMsg: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        sender: 'ai',
+        text: 'Maaf, terjadi kendala saat memproses jawaban AI. Silakan periksa koneksi Anda.',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      setChatMessages((prev) => [...prev, errorMsg]);
+    } finally {
+      setIsChatSending(false);
+    }
+  };
 
   const [lang, setLang] = useState<'ID' | 'EN'>('ID');
 
@@ -403,6 +481,12 @@ export default function App() {
           isPickingOnMap={isPickingOnMap}
           onTogglePickOnMap={() => setIsPickingOnMap(!isPickingOnMap)}
           pickedLocation={pickedLocation}
+          chatMessages={chatMessages}
+          inputChatText={inputChatText}
+          onChangeInputChatText={setInputChatText}
+          onSendChatMessage={handleSendChatMessage}
+          isChatSending={isChatSending}
+          onOpenMaximizedChat={() => setIsMaximizedChatOpen(true)}
         />
 
         {/* Center Map Box */}
@@ -481,6 +565,19 @@ export default function App() {
           setFocusedCoords(coords);
           setShowIncidents(true);
         }}
+      />
+
+      {/* Maximized Tanya AI Bencana Fullscreen Modal */}
+      <MaximizedChatModal
+        isOpen={isMaximizedChatOpen}
+        onClose={() => setIsMaximizedChatOpen(false)}
+        chatMessages={chatMessages}
+        onSendMessage={handleSendChatMessage}
+        inputChatText={inputChatText}
+        onChangeInputChatText={setInputChatText}
+        isChatSending={isChatSending}
+        selectedDistrict={selectedDistrict}
+        selectedHazard={selectedHazard}
       />
     </div>
   );

@@ -821,7 +821,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-3.5 h-3.5" />
+                    <Bot className="w-3.5 h-3.5" />
                     <span>Jalankan Analisis Laporan AI</span>
                   </>
                 )}
@@ -1219,7 +1219,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
           onClick={onRequestAiAnalysis}
           className="py-2 px-2.5 bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold text-xs border border-amber-300 rounded-lg transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
         >
-          <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+          <Bot className="w-3.5 h-3.5 text-amber-600" />
           <span>Buat analisis</span>
           <span className="text-[9px] text-amber-700 font-mono font-bold">AI</span>
         </button>

@@ -48,7 +48,7 @@ const CATEGORY_LABELS: Record<CategoryType, { name: string; icon: any; color: st
   kelas_bahaya: { name: 'Kelas Bahaya', icon: AlertTriangle, color: 'text-amber-800 border-amber-300 bg-amber-50', desc: 'Peta Raster GeoTIFF (.tif/.tiff) & Vector Klasifikasi Bahaya (Rendah, Sedang, Tinggi)' },
   indeks_bahaya: { name: 'Indeks Bahaya', icon: Activity, color: 'text-orange-800 border-orange-300 bg-orange-50', desc: 'Peta Raster GeoTIFF (.tif/.tiff) & Vector Nilai Indeks Kerawanan (0.0 - 100.0)' },
   incidents: { name: 'Titik Bencana', icon: MapPin, color: 'text-rose-800 border-rose-300 bg-rose-50', desc: 'Sebaran koordinat titik lokasi kejadian bencana' },
-  facilities: { name: 'Fasilitas Kritis & Shelter', icon: Building2, color: 'text-blue-800 border-blue-300 bg-blue-50', desc: 'Posko BPBD, RSUD, sekolah, & tempat pengungsian' },
+  facilities: { name: 'Fasilitas (Kritis & Umum)', icon: Building2, color: 'text-blue-800 border-blue-300 bg-blue-50', desc: 'Fasilitas Kritis (RSUD, Posko BPBD, Pemadam, Polisi) & Fasilitas Umum (Sekolah, Masjid, Pasar, GOR)' },
 };
 
 export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onBackToMap, onDataUploaded }) => {
@@ -416,8 +416,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onBackTo
         content = 'id,name,hazard,district,year,impact,lat,lng\nINC-2025-01,Banjir Bandang Cisarua,flood,Kabupaten Bogor,2025,350 Jiwa Mengungsi & 45 Rumah Terendam,-6.6920,106.9400\nINC-2025-02,Longsor Pelabuhanratu,landslide,Kabupaten Sukabumi,2025,Akses Jalan Jalur Selatan Terputus,-6.9850,106.5500\nINC-2025-03,Kebakaran Hutan Cikuray,wildfire,Kabupaten Garut,2025,12 Hektar Lahan Terbakar,-7.2200,107.9000';
         break;
       case 'facilities':
-        filename = 'Fasilitas_Kritis_Shelter_Sample.csv';
-        content = 'id,name,category,sub_type,district,capacity,contact,lat,lng\nFAC-001,RSUD Al-Ihsan,kritis,Rumah Sakit,Kabupaten Bandung,Kapasitas 450 Bed,022-5940872,-6.9892,107.6312\nFAC-002,Posko BPBD Kabupaten Bogor,kritis,Posko BPBD,Kabupaten Bogor,Pusdatin 24/7,0811-2001-113,-6.5950,106.7890\nFAC-003,Gedung Pengungsian Cisarua,pengungsian,Barak Pengungsian,Kabupaten Bogor,Kapasitas 1200 Jiwa,0812-9988-7766,-6.6900,106.9450';
+        filename = 'Sample_Format_Fasilitas_Kritis_dan_Umum.csv';
+        content = 'id,name,category,sub_type,district,capacity,contact,lat,lng\nFAC-001,RSUD Al-Ihsan,kritis,Rumah Sakit,Kabupaten Bandung,Kapasitas 450 Bed,022-5940872,-6.9892,107.6312\nFAC-002,Posko BPBD Kabupaten Bogor,kritis,Posko BPBD,Kabupaten Bogor,Pusdatin 24/7,0811-2001-113,-6.5950,106.7890\nFAC-003,Stasiun Damkar Cibinong,kritis,Pemadam,Kabupaten Bogor,3 Unit Mobil Pemadam,021-8753555,-6.4800,106.8500\nFAC-004,Polres Sukabumi,kritis,Polisi,Kabupaten Sukabumi,Siaga 24 Jam,0266-431010,-6.9800,106.5600\nFAC-005,SMPN 1 Cisarua (Posko Pengungsian),umum,Sekolah / Pengungsian,Kabupaten Bogor,Kapasitas 600 Jiwa,0812-9988-7766,-6.6900,106.9450\nFAC-006,Masjid Agung Pelabuhanratu,umum,Tempat Ibadah,Kabupaten Sukabumi,Kapasitas 1000 Jamaah,0857-1122-3344,-6.9880,106.5520\nFAC-007,Depo Logistik Pasar Garut,umum,Pasar / Logistik,Kabupaten Garut,Stok Beras & Tenda,0262-234567,-7.2250,107.9050\nFAC-008,GOR Jalak Harupat,umum,Gedung Olahraga,Kabupaten Bandung,Kapasitas 2500 Jiwa,022-5891122,-6.9950,107.5300';
         break;
     }
 
@@ -1182,20 +1182,20 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onBackTo
                 </div>
               )}
 
-              {/* CATEGORY 6: FASILITAS KRITIS & SHELTER */}
+              {/* CATEGORY 6: FASILITAS (KRITIS & UMUM) */}
               {targetCategory === 'facilities' && (
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-[11px] font-bold text-slate-700 mb-1 font-mono uppercase">
-                        Nama Fasilitas / Posko (name) *
+                        Nama Fasilitas / Gedung (name) *
                       </label>
                       <input
                         type="text"
                         required
                         value={facilityName}
                         onChange={(e) => setFacilityName(e.target.value)}
-                        placeholder="Contoh: RSUD Al-Ihsan"
+                        placeholder="Contoh: RSUD Al-Ihsan / GOR Jalak Harupat"
                         className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 font-sans shadow-xs"
                       />
                       <span className="text-[10px] text-slate-500 font-mono">Atribut: `name`</span>
@@ -1203,33 +1203,51 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onBackTo
 
                     <div>
                       <label className="block text-[11px] font-bold text-slate-700 mb-1 font-mono uppercase">
-                        Kategori Utama (category)
+                        Kategori Utama (category) *
                       </label>
                       <select
                         value={facilityCategory}
-                        onChange={(e) => setFacilityCategory(e.target.value)}
+                        onChange={(e) => {
+                          const newCat = e.target.value;
+                          setFacilityCategory(newCat);
+                          if (newCat === 'kritis') {
+                            setFacilitySubType('Rumah Sakit');
+                          } else {
+                            setFacilitySubType('Sekolah / Pengungsian');
+                          }
+                        }}
                         className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-sky-700 font-mono font-bold focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 shadow-xs"
                       >
-                        <option value="kritis">kritis - Fasilitas Utama Siaga</option>
-                        <option value="pengungsian">pengungsian - Tempat Pengungsian / Shelter</option>
+                        <option value="kritis">🔴 kritis — Fasilitas Kritis / Infrastruktur Vital</option>
+                        <option value="umum">🔵 umum — Fasilitas Umum / Fasum &amp; Fasos (Shelter)</option>
                       </select>
-                      <span className="text-[10px] text-slate-500 font-mono">Atribut: `category`</span>
+                      <span className="text-[10px] text-slate-500 font-mono">Atribut: `category` (`kritis` / `umum`)</span>
                     </div>
 
                     <div>
                       <label className="block text-[11px] font-bold text-slate-700 mb-1 font-mono uppercase">
-                        Sub Jenis (sub_type)
+                        Sub Jenis Fasilitas (sub_type) *
                       </label>
                       <select
                         value={facilitySubType}
                         onChange={(e) => setFacilitySubType(e.target.value)}
                         className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 font-sans shadow-xs"
                       >
-                        <option value="Rumah Sakit">Rumah Sakit</option>
-                        <option value="Posko BPBD">Posko BPBD</option>
-                        <option value="Barak Pengungsian">Barak Pengungsian</option>
-                        <option value="Sekolah / Posko Darurat">Sekolah / Posko Darurat</option>
-                        <option value="Puskesmas Siaga">Puskesmas Siaga</option>
+                        {facilityCategory === 'kritis' ? (
+                          <>
+                            <option value="Rumah Sakit">Rumah Sakit / Faskes Siaga</option>
+                            <option value="Posko BPBD">Posko BPBD / Tagana</option>
+                            <option value="Pemadam">Posko Pemadam Kebakaran (Damkar)</option>
+                            <option value="Polisi">Kantor Polisi / Koramil / TNI</option>
+                          </>
+                        ) : (
+                          <>
+                            <option value="Sekolah / Pengungsian">Sekolah / Tempat Pengungsian</option>
+                            <option value="Tempat Ibadah">Tempat Ibadah / Masjid / Gereja</option>
+                            <option value="Pasar / Logistik">Pasar &amp; Depo Logistik Pangan</option>
+                            <option value="Gedung Olahraga">Gedung Olahraga / GOR / Hall</option>
+                          </>
+                        )}
                       </select>
                       <span className="text-[10px] text-slate-500 font-mono">Atribut: `sub_type`</span>
                     </div>
@@ -1820,26 +1838,26 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onBackTo
                       <tr>
                         <td className="p-3 font-mono font-bold text-blue-700">name</td>
                         <td className="p-3 font-mono">String</td>
-                        <td className="p-3">Nama Fasilitas Kritis / Lokasi Shelter</td>
-                        <td className="p-3 font-mono text-slate-500">RSUD Al-Ihsan</td>
+                        <td className="p-3">Nama Fasilitas Kritis / Fasilitas Umum / Lokasi Shelter</td>
+                        <td className="p-3 font-mono text-slate-500">RSUD Al-Ihsan / GOR Jalak Harupat</td>
                       </tr>
                       <tr>
                         <td className="p-3 font-mono font-bold text-blue-700">category</td>
-                        <td className="p-3 font-mono">String (kritis / pengungsian)</td>
-                        <td className="p-3">Kategori Fasilitas</td>
-                        <td className="p-3 font-mono text-slate-500">kritis</td>
+                        <td className="p-3 font-mono">String (kritis / umum)</td>
+                        <td className="p-3">Kategori Fasilitas: `kritis` (Vital) atau `umum` (Fasum/Fasos)</td>
+                        <td className="p-3 font-mono text-slate-500">kritis / umum</td>
                       </tr>
                       <tr>
                         <td className="p-3 font-mono font-bold text-blue-700">sub_type</td>
                         <td className="p-3 font-mono">String</td>
-                        <td className="p-3">Rumah Sakit, Posko BPBD, Barak Pengungsian</td>
-                        <td className="p-3 font-mono text-slate-500">Rumah Sakit</td>
+                        <td className="p-3">Rumah Sakit, Posko BPBD, Pemadam, Polisi (Kritis) | Sekolah / Pengungsian, Tempat Ibadah, Pasar / Logistik, Gedung Olahraga (Umum)</td>
+                        <td className="p-3 font-mono text-slate-500">Rumah Sakit / Sekolah / Pengungsian</td>
                       </tr>
                       <tr>
                         <td className="p-3 font-mono font-bold text-blue-700">capacity</td>
                         <td className="p-3 font-mono">String</td>
-                        <td className="p-3">Informasi Daya Tampung / Bed</td>
-                        <td className="p-3 font-mono text-slate-500">Kapasitas 450 Bed</td>
+                        <td className="p-3">Informasi Daya Tampung / Bed / Logistik</td>
+                        <td className="p-3 font-mono text-slate-500">Kapasitas 450 Bed / 1200 Jiwa</td>
                       </tr>
                     </>
                   )}

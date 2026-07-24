@@ -428,7 +428,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
             <div class="bg-slate-50 p-2 rounded-lg border border-slate-200/80 mb-2 space-y-1">
               <div class="text-[8px] font-mono font-bold uppercase tracking-wider text-amber-700">
-                📋 Ketentuan KKPR (Dinas PUPR)
+                Ketentuan KKPR (Dinas PUPR)
               </div>
               <p class="text-[10px] text-slate-700 leading-snug font-sans">${props.ketentuan_kkpr}</p>
             </div>
@@ -616,7 +616,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
           <div class="bg-slate-50 p-2 rounded-lg border border-slate-200/80 mb-1.5 space-y-0.5 text-[10px]">
             <div class="text-[8px] font-mono font-bold uppercase tracking-wider text-rose-700 mb-0.5 flex items-center gap-1">
-              <span>📍 ALAMAT & LOKASI KEJADIAN</span>
+              <span>ALAMAT & LOKASI KEJADIAN</span>
             </div>
             <div class="flex items-start justify-between gap-2 text-slate-700">
               <span class="text-slate-500 font-mono shrink-0">Desa/Kel:</span>
@@ -638,7 +638,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
           <div class="bg-slate-50 p-2 rounded-lg border border-slate-200/80 mb-1.5 space-y-1">
             <div class="text-[8px] font-mono font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1">
-              <span>💥 DAMPAK BENCANA</span>
+              <span>DAMPAK BENCANA</span>
             </div>
             
             <p class="text-[10px] text-slate-700 leading-snug font-sans">
@@ -714,15 +714,15 @@ export const MapContainer: React.FC<MapContainerProps> = ({
       return categoryMatch && subTypeMatch && districtMatch;
     });
 
-    const subTypeIcons: Record<FacilitySubType, string> = {
-      'Rumah Sakit': '🏥',
-      'Posko BPBD': '🛡️',
-      'Pemadam': '🚒',
-      'Polisi': '🚔',
-      'Sekolah / Pengungsian': '🏫',
-      'Tempat Ibadah': '🕌',
-      'Pasar / Logistik': '📦',
-      'Gedung Olahraga': '🏟️',
+    const subTypeSvgIcons: Record<FacilitySubType, string> = {
+      'Rumah Sakit': `<svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v12M6 12h12"/></svg>`,
+      'Posko BPBD': `<svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.8 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>`,
+      'Pemadam': `<svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3z"/></svg>`,
+      'Polisi': `<svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+      'Sekolah / Pengungsian': `<svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
+      'Tempat Ibadah': `<svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="21" x2="21" y2="21"/><line x1="6" y1="21" x2="6" y2="11"/><line x1="10" y1="21" x2="10" y2="11"/><line x1="14" y1="21" x2="14" y2="11"/><line x1="18" y1="21" x2="18" y2="11"/><polygon points="12 3 2 10 22 10 12 3"/></svg>`,
+      'Pasar / Logistik': `<svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>`,
+      'Gedung Olahraga': `<svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="4" rx="2"/><path d="M9 9h6v6H9z"/></svg>`,
     };
 
     filteredFacilities.forEach((fac) => {
@@ -733,14 +733,14 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         ? 'text-emerald-800 bg-emerald-50 border-emerald-200'
         : 'text-blue-800 bg-blue-50 border-blue-200';
 
-      const iconSymbol = subTypeIcons[fac.subType] || (isKritis ? '🏥' : '🏫');
+      const iconSvg = subTypeSvgIcons[fac.subType] || subTypeSvgIcons['Rumah Sakit'];
 
       const customIcon = L.divIcon({
         className: 'custom-facility-pin',
         html: `
           <div class="relative group cursor-pointer">
             <div class="w-7 h-7 rounded-lg flex items-center justify-center text-xs shadow-md border-2 border-white font-bold transition-transform hover:scale-110" style="background-color: ${themeColor};">
-              <span>${iconSymbol}</span>
+              ${iconSvg}
             </div>
           </div>
         `,
@@ -766,7 +766,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
           <div class="bg-slate-50 p-2 rounded-lg border border-slate-200/80 mb-1.5 space-y-0.5 text-[10px]">
             <div class="text-[8px] font-mono font-bold uppercase tracking-wider text-emerald-700 mb-0.5 flex items-center gap-1">
-              <span>🏢 DETAIL LOKASI</span>
+              <span>DETAIL LOKASI</span>
             </div>
             <div class="flex items-start justify-between gap-2 text-slate-700">
               <span class="text-slate-500 font-mono shrink-0">Desa/Kel:</span>
@@ -788,7 +788,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
           <div class="bg-slate-50 p-2 rounded-lg border border-slate-200/80 mb-1.5 space-y-1 text-[9px]">
             <div class="text-[8px] font-mono font-bold uppercase tracking-wider text-teal-700 flex items-center gap-1">
-              <span>ℹ️ KAPASITAS & KONTAK</span>
+              <span>KAPASITAS & KONTAK</span>
             </div>
             <p class="text-slate-800 font-medium leading-snug">${fac.capacityInfo || 'Fasilitas pendukung darurat'}</p>
             ${fac.contact ? `
@@ -860,7 +860,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
       <div class="relative flex items-center justify-center">
         <span class="animate-ping absolute inline-flex h-8 w-8 rounded-full opacity-75" style="background-color: ${color}"></span>
         <div class="relative inline-flex rounded-full h-8 w-8 items-center justify-center text-white font-bold text-xs shadow-md border-2 border-white" style="background-color: ${color}">
-          💼
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
         </div>
       </div>
     `;
@@ -876,9 +876,9 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
     const popupContent = `
       <div class="p-2 text-slate-800 font-sans max-w-xs space-y-1.5 bg-white/95 rounded-xl border border-slate-200 shadow-xl backdrop-blur">
-        <div class="text-[10px] text-emerald-700 font-mono font-bold uppercase">📍 RADAR INVEST TAPAK</div>
+        <div class="text-[10px] text-emerald-700 font-mono font-bold uppercase">RADAR INVEST TAPAK</div>
         <div class="font-bold text-xs text-slate-900">${projectName}</div>
-        <div class="text-[10px] text-slate-600 font-mono">📍 ${villageName}, ${districtName}</div>
+        <div class="text-[10px] text-slate-600 font-mono">${villageName}, ${districtName}</div>
         <div class="text-[10px] text-slate-500 font-mono">X: ${lng}, Y: ${lat} • ${plotAreaHa} Ha</div>
         <div class="p-1 rounded text-[10px] font-bold text-center" style="background-color: ${color}15; color: ${color}; border: 1px solid ${color}40">
           ${feasibilityStatus}
@@ -948,7 +948,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
                   <div class="p-3 font-sans text-xs text-slate-800 bg-white/95 rounded-xl border border-slate-200 shadow-xl space-y-2">
                     <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
                       <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                        🏛️ SPASIAL ADMINISTRASI
+                        SPASIAL ADMINISTRASI
                       </span>
                       <span class="text-[10px] font-mono text-slate-500">ID: ${code}</span>
                     </div>
@@ -961,21 +961,21 @@ export const MapContainer: React.FC<MapContainerProps> = ({
                     </div>
                     <div class="p-2 bg-rose-50/70 rounded-lg border border-rose-200 space-y-1">
                       <div class="text-[10px] font-mono font-bold text-rose-800 flex items-center justify-between">
-                        <span>⚠️ POPULASI TERPAPAR BENCANA</span>
+                        <span>POPULASI TERPAPAR BENCANA</span>
                         <span>Tot: ${Number(totalPop).toLocaleString('id-ID')} Jiwa</span>
                       </div>
                       <div class="grid grid-cols-2 gap-1 text-[10px] font-mono pt-0.5">
-                        <div class="text-amber-800">⛰️ Longsor: <b>${Number(popLongsor).toLocaleString('id-ID')}</b></div>
-                        <div class="text-blue-800">🌊 Banjir: <b>${Number(popBanjir).toLocaleString('id-ID')}</b></div>
-                        <div class="text-orange-800">🔥 Kebakaran: <b>${Number(popKebakaran).toLocaleString('id-ID')}</b></div>
-                        <div class="text-rose-800">🌋 Gempa: <b>${Number(popGempa).toLocaleString('id-ID')}</b></div>
+                        <div class="text-amber-800">Longsor: <b>${Number(popLongsor).toLocaleString('id-ID')}</b></div>
+                        <div class="text-blue-800">Banjir: <b>${Number(popBanjir).toLocaleString('id-ID')}</b></div>
+                        <div class="text-orange-800">Kebakaran: <b>${Number(popKebakaran).toLocaleString('id-ID')}</b></div>
+                        <div class="text-rose-800">Gempa: <b>${Number(popGempa).toLocaleString('id-ID')}</b></div>
                       </div>
                     </div>
                   </div>
                 `;
               } else {
                 popupHtml = `<div class="p-2 text-xs font-sans text-slate-800 bg-white rounded-xl shadow-lg border border-slate-200">`;
-                popupHtml += `<div class="font-bold text-amber-700 mb-1">📁 Layer Super Admin: ${layer.name}</div>`;
+                popupHtml += `<div class="font-bold text-amber-700 mb-1">Layer Super Admin: ${layer.name}</div>`;
                 for (const [key, value] of Object.entries(merged)) {
                   popupHtml += `<div class="text-[10px]"><b class="text-slate-500">${key}:</b> ${value}</div>`;
                 }
@@ -1010,7 +1010,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
                     <div class="relative flex items-center justify-center">
                       <span class="animate-ping absolute inline-flex h-5 w-5 rounded-full bg-amber-400 opacity-60"></span>
                       <div class="relative inline-flex rounded-full h-5 w-5 items-center justify-center bg-amber-500 text-white font-black text-[10px] shadow-md border border-white">
-                        ★
+                        •
                       </div>
                     </div>
                   `,
@@ -1021,7 +1021,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
                 const marker = L.marker([lat, lng], { icon }).addTo(layerGroup);
                 const popupHtml = `
                   <div class="p-2.5 font-sans text-xs text-slate-800 bg-white/95 rounded-xl border border-slate-200 shadow-xl">
-                    <div class="text-[9px] font-mono font-bold text-amber-700 uppercase mb-1">📁 DATA ADMIN: ${layer.name}</div>
+                    <div class="text-[9px] font-mono font-bold text-amber-700 uppercase mb-1">DATA ADMIN: ${layer.name}</div>
                     <div class="font-bold text-slate-900 mb-1">${name}</div>
                     <div class="text-[10px] text-slate-500 font-mono">X: ${lng}, Y: ${lat}</div>
                   </div>
@@ -1053,7 +1053,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           <div class="p-3 font-sans text-xs text-slate-800 bg-white/95 rounded-xl border border-slate-200 shadow-xl space-y-2">
             <div class="flex items-center gap-2">
               <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 text-amber-800 border border-amber-200">
-                🗺️ RASTER GEOTIFF (.TIF)
+                RASTER GEOTIFF (.TIF)
               </span>
             </div>
             <div class="font-bold text-emerald-700 text-sm">${layer.name}</div>

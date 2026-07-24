@@ -658,7 +658,7 @@ export const DataGuideModal: React.FC<DataGuideModalProps> = ({ isOpen, onClose 
                         Deskripsi eksplisit penyebab penetapan Zona Merah: status kawasan lindung, perpotongan lintasan sesar aktif, atau ancaman bencana geologis/banjir.
                       </td>
                       <td className="p-3 font-mono text-slate-400">
-                        🌳 Status Kawasan Lindung KBAU seluas 5.5 Ha + ⚡ Perpotongan lintasan Sesar Lembang aktif.
+                        Status Kawasan Lindung KBAU seluas 5.5 Ha + Perpotongan lintasan Sesar Lembang aktif.
                       </td>
                     </tr>
                     <tr className="hover:bg-slate-800/30">

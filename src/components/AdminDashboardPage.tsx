@@ -1218,8 +1218,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onBackTo
                         }}
                         className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-sky-700 font-mono font-bold focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 shadow-xs"
                       >
-                        <option value="kritis">🔴 kritis — Fasilitas Kritis / Infrastruktur Vital</option>
-                        <option value="umum">🔵 umum — Fasilitas Umum / Fasum &amp; Fasos (Shelter)</option>
+                        <option value="kritis">kritis — Fasilitas Kritis / Infrastruktur Vital</option>
+                        <option value="umum">umum — Fasilitas Umum / Fasum &amp; Fasos (Shelter)</option>
                       </select>
                       <span className="text-[10px] text-slate-500 font-mono">Atribut: `category` (`kritis` / `umum`)</span>
                     </div>

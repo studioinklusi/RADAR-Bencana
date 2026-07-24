@@ -129,21 +129,21 @@ export const MaximizedChatModal: React.FC<MaximizedChatModalProps> = ({
               onClick={() => onSendMessage('Apa rekomendasi mitigasi bencana untuk wilayah yang sedang saya buka ini?')}
               className="text-xs bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-200 transition-all cursor-pointer shrink-0 font-medium"
             >
-              💡 Rekomendasi mitigasi wilayah ini
+              Rekomendasi mitigasi wilayah ini
             </button>
             <button
               type="button"
               onClick={() => onSendMessage('Fasilitas kritis apa saja yang rentan terdampak di lokasi ini?')}
               className="text-xs bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-200 transition-all cursor-pointer shrink-0 font-medium"
             >
-              🏥 Fasilitas kritis yang rentan
+              Fasilitas kritis yang rentan
             </button>
             <button
               type="button"
               onClick={() => onSendMessage('Bagaimana nomor dan kontak protokol darurat BPBD Jawa Barat?')}
               className="text-xs bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-200 transition-all cursor-pointer shrink-0 font-medium"
             >
-              🚨 Nomor kontak darurat BPBD
+              Nomor kontak darurat BPBD
             </button>
           </div>
 

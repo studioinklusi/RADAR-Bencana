@@ -922,19 +922,19 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                         onClick={() => onSendChatMessage?.('Apa rekomendasi mitigasi bencana untuk wilayah yang sedang saya buka ini?')}
                         className="text-[10px] bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2 py-1 rounded border border-slate-200 transition-all text-left cursor-pointer truncate"
                       >
-                        💡 Rekomendasi mitigasi wilayah ini
+                        Rekomendasi mitigasi wilayah ini
                       </button>
                       <button
                         onClick={() => onSendChatMessage?.('Fasilitas kritis apa saja yang rentan terdampak di lokasi ini?')}
                         className="text-[10px] bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2 py-1 rounded border border-slate-200 transition-all text-left cursor-pointer truncate"
                       >
-                        🏥 Fasilitas kritis yang rentan
+                        Fasilitas kritis yang rentan
                       </button>
                       <button
                         onClick={() => onSendChatMessage?.('Bagaimana nomor dan kontak protokol darurat BPBD Jawa Barat?')}
                         className="text-[10px] bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2 py-1 rounded border border-slate-200 transition-all text-left cursor-pointer truncate"
                       >
-                        🚨 Nomor kontak darurat BPBD
+                        Nomor kontak darurat BPBD
                       </button>
                     </div>
                   </div>
@@ -1085,7 +1085,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
               <div className="space-y-1.5">
                 {[
                   {
-                    name: '🏬 Kawasan Industri Cikarang (Budi Daya)',
+                    name: 'Kawasan Industri Cikarang (Budi Daya)',
                     lat: -6.3150,
                     lng: 107.1520,
                     ha: 25,
@@ -1093,7 +1093,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                     proj: 'Pembangunan Pabrik & Gudang Cikarang'
                   },
                   {
-                    name: '🌲 Ciwidey Patuha (Kawasan Lindung)',
+                    name: 'Ciwidey Patuha (Kawasan Lindung)',
                     lat: -7.1650,
                     lng: 107.4120,
                     ha: 15,
@@ -1101,7 +1101,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                     proj: 'Pengembangan Resort Ciwidey'
                   },
                   {
-                    name: '🏙️ Lembang (Resapan Air & Sesar)',
+                    name: 'Lembang (Resapan Air & Sesar)',
                     lat: -6.8120,
                     lng: 107.6210,
                     ha: 8,
@@ -1109,7 +1109,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                     proj: 'Kawasan Komersial Lembang'
                   },
                   {
-                    name: '🌊 Pesisir Cirebon (Rob Pesisir)',
+                    name: 'Pesisir Cirebon (Rob Pesisir)',
                     lat: -6.7410,
                     lng: 108.5420,
                     ha: 20,
@@ -1117,7 +1117,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                     proj: 'Pusat Logistik Pesisir Cirebon'
                   },
                   {
-                    name: '🗻 Cugenang Cianjur (Zona Sesar)',
+                    name: 'Cugenang Cianjur (Zona Sesar)',
                     lat: -6.8020,
                     lng: 107.1120,
                     ha: 12,
@@ -1162,8 +1162,9 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                   </button>
                 </div>
                 <div className="text-xs font-bold text-slate-900">{radarInvestResult.projectName}</div>
-                <div className="text-[10px] text-slate-600 font-mono">
-                  📍 {radarInvestResult.districtName} ({radarInvestResult.villageName})
+                <div className="text-[10px] text-slate-600 font-mono flex items-center gap-1">
+                  <MapPin className="w-3 h-3 text-emerald-600 shrink-0" />
+                  <span>{radarInvestResult.districtName} ({radarInvestResult.villageName})</span>
                 </div>
                 
                 <div className={`p-2 rounded-lg text-[10px] font-bold text-center font-mono border ${

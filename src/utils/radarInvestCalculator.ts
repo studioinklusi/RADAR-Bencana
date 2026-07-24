@@ -137,39 +137,39 @@ export function calculateRadarInvest(input: RadarInvestInput): RadarInvestResult
     feasibilitySummary = `Lokasi tapak ini dikategorikan ZONA MERAH karena berada pada zona berisiko tinggi / tumpang tindih dengan tutupan kawasan yang dilindungi secara hukum.`;
     
     if (isProtectedZone) {
-      feasibilityReasons.push(`🌳 STATUS KAWASAN LINDUNG: Lahan seluas ${protectedAreaHa} Ha (${(protectedRatio * 100).toFixed(0)}% dari total plot) tumpang tindih dengan ${zoneCategory} yang dilarang untuk alih fungsi non-konservasi.`);
+      feasibilityReasons.push(`STATUS KAWASAN LINDUNG: Lahan seluas ${protectedAreaHa} Ha (${(protectedRatio * 100).toFixed(0)}% dari total plot) tumpang tindih dengan ${zoneCategory} yang dilarang untuk alih fungsi non-konservasi.`);
     } else {
-      feasibilityReasons.push(`⚠️ TINGKAT KERENTANAN EKSTREM: Seluas ${highRiskAreaHa} Ha (${(highRiskRatio * 100).toFixed(0)}% dari plot) berada pada zona kerentanan bencana sangat tinggi.`);
+      feasibilityReasons.push(`TINGKAT KERENTANAN EKSTREM: Seluas ${highRiskAreaHa} Ha (${(highRiskRatio * 100).toFixed(0)}% dari plot) berada pada zona kerentanan bencana sangat tinggi.`);
     }
 
     if (highRiskHazards.length > 0) {
-      feasibilityReasons.push(`🌋 POTENSI BENCANA KATEGORI TINGGI: Teridentifikasi ancaman ${highRiskHazards.join(', ')}.`);
+      feasibilityReasons.push(`POTENSI BENCANA KATEGORI TINGGI: Teridentifikasi ancaman ${highRiskHazards.join(', ')}.`);
     }
 
     if (isSesarZone) {
-      feasibilityReasons.push(`⚡ ZONA BANTALAN SESAR AKTIF: Titik koordinat melintasi zona patahan aktif tektonik yang memiliki risiko kerusakan fisik fatal bagi struktur bangunan.`);
+      feasibilityReasons.push(`ZONA BANTALAN SESAR AKTIF: Titik koordinat melintasi zona patahan aktif tektonik yang memiliki risiko kerusakan fisik fatal bagi struktur bangunan.`);
     }
 
-    feasibilityReasons.push(`🚫 KETENTUAN HUKUM & KKPR: Pengajuan KKPR untuk kegiatan ${sector} di lokasi ini berpotensi besar DITOLAK oleh Dinas PUPR & BPN demi keselamatan publik dan kelestarian lingkungan.`);
+    feasibilityReasons.push(`KETENTUAN HUKUM & KKPR: Pengajuan KKPR untuk kegiatan ${sector} di lokasi ini berpotensi besar DITOLAK oleh Dinas PUPR & BPN demi keselamatan publik dan kelestarian lingkungan.`);
 
   } else if (feasibilityStatus.includes('ZONA KUNING')) {
     feasibilitySummary = `Lokasi tapak dikategorikan ZONA KUNING. Pembangunan dapat dipertimbangkan namun membutuhkan rekayasa mitigasi fisik dan persetujuan KKPR Bersyarat.`;
     
-    feasibilityReasons.push(`🛡️ STATUS KAWASAN PENYANGGA: Berada pada ${zoneCategory} yang mewajibkan penyediaan RTH minimal ${(protectedRatio * 100).toFixed(0)}% (${protectedAreaHa} Ha).`);
+    feasibilityReasons.push(`STATUS KAWASAN PENYANGGA: Berada pada ${zoneCategory} yang mewajibkan penyediaan RTH minimal ${(protectedRatio * 100).toFixed(0)}% (${protectedAreaHa} Ha).`);
     
     if (highRiskHazards.length > 0 || medRiskHazards.length > 0) {
       const allHazards = [...highRiskHazards, ...medRiskHazards];
-      feasibilityReasons.push(`🌊 POTENSI BENCANA TERIDENTIFIKASI: Terdapat ancaman ${allHazards.join(', ')}.`);
+      feasibilityReasons.push(`POTENSI BENCANA TERIDENTIFIKASI: Terdapat ancaman ${allHazards.join(', ')}.`);
     }
 
-    feasibilityReasons.push(`📋 KETENTUAN KKPR BERSYARAT: Diwajibkan menyusun dokumen AMDAL/UKL-UPL, rekomendasi rekayasa sipil tahan bencana dari PUPR, serta retensi banjir.`);
+    feasibilityReasons.push(`KETENTUAN KKPR BERSYARAT: Diwajibkan menyusun dokumen AMDAL/UKL-UPL, rekomendasi rekayasa sipil tahan bencana dari PUPR, serta retensi banjir.`);
 
   } else {
     feasibilitySummary = `Lokasi tapak dikategorikan ZONA HIJAU (Sangat Layak). Lahan sesuai dengan peruntukan tata ruang kawasan budi daya dan memiliki tingkat risiko bencana rendah.`;
     
-    feasibilityReasons.push(`✅ KAWASAN BUDI DAYA: Sesuai dengan RTRW ${matchedDistrictName} untuk peruntukan ${sector}.`);
-    feasibilityReasons.push(`🛡️ RISIKO BENCANA RENDAH: Kondisi geologis dan topografi stabil dengan aksesibilitas yang baik.`);
-    feasibilityReasons.push(`📝 KKPR DIPROYEKSIKAN SETUJU: Proses perizinan tata ruang dan lingkungan dapat diproses melalui prosedur standar.`);
+    feasibilityReasons.push(`KAWASAN BUDI DAYA: Sesuai dengan RTRW ${matchedDistrictName} untuk peruntukan ${sector}.`);
+    feasibilityReasons.push(`RISIKO BENCANA RENDAH: Kondisi geologis dan topografi stabil dengan aksesibilitas yang baik.`);
+    feasibilityReasons.push(`KKPR DIPROYEKSIKAN SETUJU: Proses perizinan tata ruang dan lingkungan dapat diproses melalui prosedur standar.`);
   }
 
   // KKPR (Kesesuaian Kegiatan Pemanfaatan Ruang)

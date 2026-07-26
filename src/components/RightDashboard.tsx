@@ -81,6 +81,12 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
     }
   }, [radarInvestResult]);
 
+  useEffect(() => {
+    if (aiAssessment || isAiLoading) {
+      setActiveTab('ai');
+    }
+  }, [aiAssessment, isAiLoading]);
+
   const hazardConfig = HAZARD_LAYERS[selectedHazard];
 
   // Filter facilities clipped by selected district

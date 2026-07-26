@@ -1,0 +1,44 @@
+{
+  "bounds": [
+    [
+      -7.490877093968661,
+      109.36131290164195
+    ],
+    [
+      -7.114774742890197,
+      109.91781922023145
+    ]
+  ],
+  "hazards": {
+    "flood": {
+      "min_val": 0.0012345679569989443,
+      "max_val": 0.8916116952896118,
+      "index_png": "/hazard_rasters/flood_index.png",
+      "class_png": "/hazard_rasters/flood_class.png"
+    },
+    "flashflood": {
+      "min_val": 0.001002882607281208,
+      "max_val": 1.0,
+      "index_png": "/hazard_rasters/flashflood_index.png",
+      "class_png": "/hazard_rasters/flashflood_class.png"
+    },
+    "landslide": {
+      "min_val": 0.0,
+      "max_val": 1.0,
+      "index_png": "/hazard_rasters/landslide_index.png",
+      "class_png": "/hazard_rasters/landslide_class.png"
+    },
+    "earthquake": {
+      "min_val": 0.28190797567367554,
+      "max_val": 0.5096022486686707,
+      "index_png": "/hazard_rasters/earthquake_index.png",
+      "class_png": "/hazard_rasters/earthquake_class.png"
+    },
+    "liquefaction": {
+      "min_val": 0.08968715369701385,
+      "max_val": 0.4448150098323822,
+      "index_png": "/hazard_rasters/liquefaction_index.png",
+      "class_png": "/hazard_rasters/liquefaction_class.png"
+    }
+  }
+}

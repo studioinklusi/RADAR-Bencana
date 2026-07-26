@@ -546,7 +546,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     polaRuangLayerRef.current = layer;
   }, [showPolaRuang]);
 
-  // Render Simulated GEE Hazard Raster Overlay
+  // Render Real 30-meter Disaster Risk Index Raster Overlay (from INDEKS BENCANA 30 GeoTIFFs)
   useEffect(() => {
     if (!leafletMap.current) return;
     const map = leafletMap.current;
@@ -558,119 +558,21 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
     if (!showHazardLayer) return;
 
-    const canvas = document.createElement('canvas');
-    canvas.width = 600;
-    canvas.height = 600;
-    const ctx = canvas.getContext('2d');
+    // Real 30-meter GeoTIFF bounds for Banjarnegara
+    const bounds: L.LatLngBoundsExpression = [
+      [-7.490877093968661, 109.36131290164195],
+      [-7.114774742890197, 109.91781922023145]
+    ];
 
-    if (ctx) {
-      const palette = HAZARD_LAYERS[selectedHazard].colorPalette;
-      const colors = [palette.low, palette.medium, palette.high];
+    const overlayUrl = `/hazard_rasters/${selectedHazard}_${hazardRenderMode}.png`;
 
-      const cols = 60;
-      const rows = 60;
-      const cellW = canvas.width / cols;
-      const cellH = canvas.height / rows;
+    const overlay = L.imageOverlay(overlayUrl, bounds, {
+      opacity: opacity,
+      interactive: false,
+    }).addTo(map);
 
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          const nx = c / cols - 0.5;
-          const ny = r / rows - 0.5;
-          const dist = Math.sqrt(nx * nx + ny * ny);
-
-          if (dist > 0.48) continue;
-
-          let val = Math.sin(c * 0.15) * Math.cos(r * 0.15);
-          if (selectedHazard === 'flood') val += (r / rows) * 0.8;
-          if (selectedHazard === 'landslide') val += (c / cols) * 0.9;
-
-          let indexVal = (val + 0.8) / 2.6;
-          indexVal = Math.max(0.0, Math.min(1.0, indexVal));
-
-          if (hazardRenderMode === 'class') {
-            let colorIdx = 0;
-            if (indexVal > 0.58) colorIdx = 2;
-            else if (indexVal > 0.30) colorIdx = 1;
-
-            ctx.fillStyle = colors[colorIdx];
-          } else {
-            let rG: number, gG: number, bG: number;
-            if (indexVal <= 0.5) {
-              const t = indexVal / 0.5;
-              rG = Math.round(16 + t * (245 - 16));
-              gG = Math.round(185 + t * (158 - 185));
-              bG = Math.round(129 + t * (11 - 129));
-            } else {
-              const t = (indexVal - 0.5) / 0.5;
-              rG = Math.round(245 + t * (244 - 245));
-              gG = Math.round(158 + t * (63 - 158));
-              bG = Math.round(11 + t * (94 - 11));
-            }
-            ctx.fillStyle = `rgb(${rG}, ${gG}, ${bG})`;
-          }
-
-          ctx.fillRect(c * cellW, r * cellH, cellW - 0.5, cellH - 0.5);
-        }
-      }
-
-      let minLat = 90, maxLat = -90, minLng = 180, maxLng = -180;
-
-      if (selectedVillage) {
-        const matchedDesa = DESA_BOUNDARIES.features.find(
-          (f: any) => f.properties.name.toLowerCase() === selectedVillage.toLowerCase()
-        );
-        if (matchedDesa && matchedDesa.geometry) {
-          let coords = matchedDesa.geometry.coordinates[0];
-          if (Array.isArray(coords[0][0])) {
-            coords = coords[0];
-          }
-          coords.forEach(([lng, lat]: [number, number]) => {
-            if (lat < minLat) minLat = lat;
-            if (lat > maxLat) maxLat = lat;
-            if (lng < minLng) minLng = lng;
-            if (lng > maxLng) maxLng = lng;
-          });
-        }
-      } else if (selectedDistrict) {
-        let coords = selectedDistrict.geometry.coordinates[0];
-        if (Array.isArray(coords[0][0])) {
-          coords = coords[0];
-        }
-        coords.forEach(([lng, lat]: [number, number]) => {
-          if (lat < minLat) minLat = lat;
-          if (lat > maxLat) maxLat = lat;
-          if (lng < minLng) minLng = lng;
-          if (lng > maxLng) maxLng = lng;
-        });
-      } else {
-        adminBoundaries.features.forEach((feat) => {
-          let coords = feat.geometry.coordinates[0];
-          if (Array.isArray(coords[0][0])) {
-            coords = coords[0];
-          }
-          coords.forEach(([lng, lat]: [number, number]) => {
-            if (lat < minLat) minLat = lat;
-            if (lat > maxLat) maxLat = lat;
-            if (lng < minLng) minLng = lng;
-            if (lng > maxLng) maxLng = lng;
-          });
-        });
-      }
-
-      const bounds: L.LatLngBoundsExpression = [
-        [minLat, minLng],
-        [maxLat, maxLng],
-      ];
-
-      const overlayUrl = canvas.toDataURL();
-      const overlay = L.imageOverlay(overlayUrl, bounds, {
-        opacity: opacity,
-        interactive: false,
-      }).addTo(map);
-
-      rasterCanvasOverlayRef.current = overlay;
-    }
-  }, [selectedHazard, selectedDistrict, selectedVillage, opacity, showHazardLayer, hazardRenderMode]);
+    rasterCanvasOverlayRef.current = overlay;
+  }, [selectedHazard, opacity, showHazardLayer, hazardRenderMode]);
 
   // Render Interactive Disaster Incident Markers (Titik Bencana)
   useEffect(() => {

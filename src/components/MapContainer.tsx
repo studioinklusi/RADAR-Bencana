@@ -122,7 +122,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   const [selectedYear, setSelectedYear] = useState<number>(2024);
   const [basemapStyle, setBasemapStyle] = useState<'google_hybrid' | 'google_satellite' | 'osm' | 'positron' | 'esri_satellite'>('positron');
   const [showLegend, setShowLegend] = useState<boolean>(true);
-  const [groupingMode, setGroupingMode] = useState<string>('Wilayah / Kabupaten');
+  const [groupingMode, setGroupingMode] = useState<string>('Kecamatan & Desa');
   const [isPlayingTimelapse, setIsPlayingTimelapse] = useState<boolean>(false);
   const [isTimelineVisible, setIsTimelineVisible] = useState<boolean>(true);
   const [isScaleVisible, setIsScaleVisible] = useState<boolean>(true);
@@ -1146,10 +1146,9 @@ export const MapContainer: React.FC<MapContainerProps> = ({
               onChange={(e) => setGroupingMode(e.target.value)}
               className="bg-white/95 border border-slate-200 text-slate-800 text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:border-emerald-500 font-semibold shadow-md backdrop-blur-md cursor-pointer appearance-none pr-8"
             >
-              <option value="Wilayah / Kabupaten">Kelompokkan: Wilayah</option>
-              <option value="Provinsi">Kelompokkan: Provinsi</option>
-              <option value="DAS (Daerah Aliran Sungai)">Kelompokkan: DAS</option>
-              <option value="Kelas Risk">Kelompokkan: Kelas Risk</option>
+              <option value="Kecamatan & Desa">Kelompokkan: Kecamatan &amp; Desa</option>
+              <option value="DAS (Daerah Aliran Sungai)">Kelompokkan: DAS (Sungai)</option>
+              <option value="Kelas Risk">Kelompokkan: Kelas Risiko</option>
             </select>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-2.5 pointer-events-none" />
           </div>

@@ -34,7 +34,7 @@ function saveLayersIndex(layers: any[]) {
 // Qwen AI Risk & Vulnerability Assessment
 app.post('/api/generate-ai-report', async (req: Request, res: Response) => {
   try {
-    const { districtName, provinceName = 'Jawa Barat', stats, hazardType = 'flood' } = req.body;
+    const { districtName, provinceName = 'Jawa Tengah', stats, hazardType = 'flood' } = req.body;
 
     const qwenApiKey = process.env.QWEN_API_KEY;
 
@@ -119,17 +119,15 @@ app.post('/api/chat-ai', async (req: Request, res: Response) => {
 
     const systemPrompt = `Anda adalah "Asisten Tanya AI RADAR Bencana", pakar SIG dan Analis Penanggulangan Bencana BPBD Kabupaten Banjarnegara.
 
-ATURAN UTAMA & DOMAIN GUARDRAILS (SANGAT KETAT):
-1. Anda HANYA BOLEH MENJAWAB pertanyaan yang berkaitan dengan:
-   - Kebencanaan (Tanah Longsor, Banjir, Banjir Bandang, Gempa Bumi, Likuifaksi, dll).
-   - Analisis Spasial, Peta SIG, Google Earth Engine (GEE), Pola Ruang RTRW & Kesesuaian Kegiatan Pemanfaatan Ruang (KKPR).
-   - Statistik risiko bencana wilayah Kabupaten Banjarnegara & Indonesia.
-   - Prosedur tanggap darurat, mitigasi risiko, evakuasi, dan nomor kontak darurat BPBD Banjarnegara (0286) 592881 / 0812-2630-111 / BNPB / SAR.
-   - Fitur-fitur aplikasi RADAR Bencana ini.
-2. Jika pengguna mengajukan pertanyaan DI LUAR DOMAIN (misalnya resep makanan, hiburan, pemrograman umum, politik luar negeri, gosip, dll):
-   - Jawab dengan sopan dan ramah bahwa Anda adalah Asisten Spesialis Kebencanaan RADAR Bencana dan hanya dapat membantu menjawab topik seputar kebencanaan, analisis risiko spasial, dan tata ruang GIS.
-   - Arahkan pengguna kembali untuk bertanya mengenai risiko bencana atau peta wilayah yang sedang aktif.
-3. Jawablah menggunakan Bahasa Indonesia yang profesional, jelas, ramah, dan ringkas. Gunakan poin-poin jika menjelaskan langkah mitigasi.
+ATURAN UTAMA & DOMAIN GUARDRAILS (SANGAT KETAT & EKSKLUSIF BANJARNEGARA):
+1. APLIKASI INI 100% EKSKLUSIF UNTUK KABUPATEN BANJARNEGARA, JAWA TENGAH!
+   - Seluruh 18 Kecamatan (Wanayasa, Kalibening, Pandanarum, Karangkobar, Batur, Pejawaran, Pagentan, Madukara, Banjarmangu, Sigaluh, Banjarnegara, Pagedongan, Bawang, Purwanegara, Mandiraja, Purwareja Klampok, Susukan, Rakit) dan 276 Desa di dalamnya ADALAH WILAYAH KABUPATEN BANJARNEGARA, JAWA TENGAH.
+   - JANGAN PERNAH MENYEBUT PURWAKARTA, JAWA BARAT, TASIKMALAYA, ATAU REGION LAIN DI LUAR BANJARNEGARA.
+   - Jika pengguna menanyakan "Wanayasa", yang dimaksud SELALU Kecamatan Wanayasa di Kabupaten Banjarnegara, Jawa Tengah (bukan Purwakarta Jawa Barat).
+2. Anda HANYA BOLEH MENJAWAB pertanyaan yang berkaitan dengan kebencanaan, analisis spasial GEE, tata ruang RTRW/KKPR, dan wilayah Kabupaten Banjarnegara.
+3. WAJIB GUNAKAN TABEL MARKDOWN untuk menyajikan data statistik risiko spasial, paparan fasilitas kritis, dan matriks rekomendasi BPBD.
+4. Jawablah menggunakan Bahasa Indonesia yang profesional, ramah, dan sangat rinci.
+5. Selalu sertakan Kontak Darurat Mako BPBD Banjarnegara: (0286) 592881 / WhatsApp 0812-2630-111.
 
 DATA KONTEKS SPASIAL AKTIF DI PETA SAAT INI:
 - Wilayah Terpilih: ${districtName}, ${provinceName}

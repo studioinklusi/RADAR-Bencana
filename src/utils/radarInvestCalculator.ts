@@ -5,13 +5,16 @@ export function calculateRadarInvest(input: RadarInvestInput): RadarInvestResult
   const { lat, lng, plotAreaHa, sector, projectName } = input;
 
   // 1. Determine administrative district
-  let matchedDistrictName = 'Kabupaten Bandung';
-  let matchedSubdistrict = 'Kecamatan Margaasih';
-  let matchedVillage = 'Desa Lagadar';
+  let matchedDistrictName = 'Kecamatan Banjarnegara';
+  let matchedSubdistrict = 'Kecamatan Banjarnegara';
+  let matchedVillage = 'Desa Kutabanjarnegara';
 
   // Check against ADMIN_BOUNDARIES
   for (const feature of ADMIN_BOUNDARIES.features) {
-    const coords = feature.geometry.coordinates[0];
+    let coords = feature.geometry.coordinates[0];
+    if (Array.isArray(coords[0][0])) {
+      coords = coords[0]; // MultiPolygon
+    }
     let minLng = 180, maxLng = -180, minLat = 90, maxLat = -90;
     for (const p of coords) {
       if (p[0] < minLng) minLng = p[0];
@@ -22,26 +25,20 @@ export function calculateRadarInvest(input: RadarInvestInput): RadarInvestResult
 
     if (lng >= minLng && lng <= maxLng && lat >= minLat && lat <= maxLat) {
       matchedDistrictName = feature.properties.name;
+      matchedSubdistrict = feature.properties.name;
       break;
     }
   }
 
   // Refine village/subdistrict based on location
-  if (matchedDistrictName.includes('Cianjur')) {
-    matchedSubdistrict = 'Kecamatan Cugenang';
-    matchedVillage = 'Desa Cibulakan';
-  } else if (matchedDistrictName.includes('Cirebon')) {
-    matchedSubdistrict = 'Kecamatan Kesambi';
-    matchedVillage = 'Desa Sunyaragi';
-  } else if (matchedDistrictName.includes('Garut')) {
-    matchedSubdistrict = 'Kecamatan Tarogong Kaler';
-    matchedVillage = 'Desa Rancabango';
-  } else if (matchedDistrictName.includes('Bogor')) {
-    matchedSubdistrict = 'Kecamatan Puncak / Cisarua';
-    matchedVillage = 'Desa Tugu Utara';
-  } else if (matchedDistrictName.includes('Bandung Barat') || matchedDistrictName.includes('Kota Bandung')) {
-    matchedSubdistrict = 'Kecamatan Lembang';
-    matchedVillage = 'Desa Cikole';
+  if (matchedDistrictName.includes('Banjarmangu')) {
+    matchedVillage = 'Desa Pekandangan';
+  } else if (matchedDistrictName.includes('Batur')) {
+    matchedVillage = 'Desa Dieng Kulon';
+  } else if (matchedDistrictName.includes('Karangkobar')) {
+    matchedVillage = 'Desa Leksana';
+  } else if (matchedDistrictName.includes('Pagentan')) {
+    matchedVillage = 'Desa Aribaya';
   }
 
   // 2. Spatial Classification (Kawasan Lindung vs Budi Daya)

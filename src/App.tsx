@@ -29,6 +29,7 @@ const ALL_FACILITY_SUBTYPES: FacilitySubType[] = [
 
 export default function App() {
   const [selectedDistrict, setSelectedDistrict] = useState<AdminFeature | null>(null);
+  const [selectedVillage, setSelectedVillage] = useState<string | null>(null);
   const [selectedHazard, setSelectedHazard] = useState<HazardType>('flood');
   const [opacity, setOpacity] = useState<number>(0.85);
   const [showHazardLayer, setShowHazardLayer] = useState<boolean>(true);
@@ -38,9 +39,10 @@ export default function App() {
   const [showIncidents, setShowIncidents] = useState<boolean>(true);
   const [selectedIncidentHazards, setSelectedIncidentHazards] = useState<HazardType[]>([
     'flood',
+    'flashflood',
     'landslide',
-    'wildfire',
-    'coastal',
+    'earthquake',
+    'liquefaction',
   ]);
 
   const [showFacilities, setShowFacilities] = useState<boolean>(true);
@@ -130,7 +132,7 @@ export default function App() {
     {
       id: 'welcome',
       sender: 'ai',
-      text: 'Halo! Saya Asisten Tanya AI RADAR Bencana. Silakan tanyakan apapun seputar potensi bencana, analisis spasial GEE, tata ruang RTRW, atau rekomendasi mitigasi BPBD di Jawa Barat.',
+      text: 'Halo! Saya Asisten Tanya AI RADAR Bencana. Silakan tanyakan apapun seputar potensi bencana, analisis spasial GEE, tata ruang RTRW, atau rekomendasi mitigasi BPBD di Kabupaten Banjarnegara.',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -154,8 +156,8 @@ export default function App() {
 
     try {
       const activeContext = {
-        districtName: selectedDistrict?.properties?.name || 'Provinsi Jawa Barat',
-        provinceName: selectedDistrict?.properties?.province || 'Jawa Barat',
+        districtName: selectedDistrict?.properties?.name || 'Kabupaten Banjarnegara',
+        provinceName: selectedDistrict?.properties?.province || 'Jawa Tengah',
         hazardType: selectedHazard,
         stats: stats ? {
           highRiskHa: stats.highRiskHa,
@@ -266,7 +268,7 @@ export default function App() {
         hospitalsExposed: p.hospital_count,
         schoolsExposed: p.school_count,
         bridgesExposed: p.bridge_count,
-        riskCategory: tinggi > sedang ? 'Tinggi' : 'Sedang',
+        riskCategory: tinggi > sedang ? 'High' : 'Moderate',
         overallScore: Math.round((tinggi / total) * 100),
         isClipped: true,
         computedAt: new Date().toISOString(),
@@ -301,9 +303,9 @@ export default function App() {
       const lowPct = Number(((sumRendah / sumTotal) * 100).toFixed(1));
 
       setStats({
-        districtId: 'REGIONAL_JAWA_BARAT',
-        districtName: 'Jawa Barat (Keseluruhan)',
-        provinceName: 'Jawa Barat',
+        districtId: 'REGIONAL_BANJARNEGARA',
+        districtName: 'Banjarnegara (Keseluruhan)',
+        provinceName: 'Jawa Tengah',
         totalAreaHa: sumTotal,
         highRiskHa: sumTinggi,
         mediumRiskHa: sumSedang,
@@ -315,7 +317,7 @@ export default function App() {
         hospitalsExposed: sumHospitals,
         schoolsExposed: sumSchools,
         bridgesExposed: sumBridges,
-        riskCategory: 'Tinggi',
+        riskCategory: 'High',
         overallScore: Math.round((sumTinggi / sumTotal) * 100),
         isClipped: false,
         computedAt: new Date().toISOString(),
@@ -330,10 +332,11 @@ export default function App() {
     setIsAiLoading(true);
     const districtName = selectedDistrict
       ? selectedDistrict.properties.name
-      : 'Provinsi Jawa Barat';
+      : 'Kabupaten Banjarnegara';
+
     const provinceName = selectedDistrict
-      ? selectedDistrict.properties.province
-      : 'Jawa Barat';
+      ? selectedDistrict.properties.province || 'Jawa Tengah'
+      : 'Banjarnegara';
 
     try {
       const response = await fetch('/api/generate-ai-report', {
@@ -399,6 +402,7 @@ export default function App() {
   // Reset clipped boundary view
   const handleResetView = () => {
     setSelectedDistrict(null);
+    setSelectedVillage(null);
     setAiAssessment(null);
   };
 
@@ -435,7 +439,12 @@ export default function App() {
       <Header
         districts={ADMIN_BOUNDARIES.features}
         selectedDistrict={selectedDistrict}
-        onSelectDistrict={setSelectedDistrict}
+        selectedVillage={selectedVillage}
+        onSelectDistrict={(d) => {
+          setSelectedDistrict(d);
+          setSelectedVillage(null);
+        }}
+        onSelectVillage={setSelectedVillage}
         onOpenCodeViewer={() => setIsCodeModalOpen(true)}
         onOpenGeometryModal={() => setIsGeometryModalOpen(true)}
         onNavigateToLogin={() => navigateTo('/login')}
@@ -493,7 +502,12 @@ export default function App() {
         <MapContainer
           adminBoundaries={ADMIN_BOUNDARIES}
           selectedDistrict={selectedDistrict}
-          onSelectDistrict={setSelectedDistrict}
+          selectedVillage={selectedVillage}
+          onSelectDistrict={(d) => {
+            setSelectedDistrict(d);
+            setSelectedVillage(null);
+          }}
+          onSelectVillage={setSelectedVillage}
           selectedHazard={selectedHazard}
           showHazardLayer={showHazardLayer}
           onToggleHazardLayer={() => setShowHazardLayer(!showHazardLayer)}
@@ -525,6 +539,7 @@ export default function App() {
         {/* Right Dashboard Analytics & Sunburst Chart Panel */}
         <RightDashboard
           selectedDistrict={selectedDistrict}
+          selectedVillage={selectedVillage}
           selectedHazard={selectedHazard}
           stats={stats}
           aiAssessment={aiAssessment}

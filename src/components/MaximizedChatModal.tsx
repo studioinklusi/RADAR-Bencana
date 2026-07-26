@@ -1,5 +1,6 @@
 import React from 'react';
 import { Bot, User, Send, Minimize2, X, Sparkles } from 'lucide-react';
+import { ChatMessageRenderer } from './ChatMessageRenderer';
 import { ChatMessage, AdminFeature, HazardType } from '../types';
 
 interface MaximizedChatModalProps {
@@ -44,7 +45,7 @@ export const MaximizedChatModal: React.FC<MaximizedChatModalProps> = ({
                 </span>
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Konteks Wilayah Aktif: <strong className="text-emerald-700 font-semibold">{selectedDistrict?.properties?.name || 'Jawa Barat (Keseluruhan)'}</strong> • Ancaman: <strong className="text-amber-700 font-mono uppercase font-bold">{selectedHazard}</strong>
+                Konteks Wilayah Aktif: <strong className="text-emerald-700 font-semibold">{selectedDistrict?.properties?.name || 'Banjarnegara (Keseluruhan)'}</strong> • Ancaman: <strong className="text-amber-700 font-mono uppercase font-bold">{selectedHazard}</strong>
               </p>
             </div>
           </div>
@@ -97,7 +98,7 @@ export const MaximizedChatModal: React.FC<MaximizedChatModalProps> = ({
                     : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none shadow-xs'
                 }`}
               >
-                <p className="whitespace-pre-wrap leading-relaxed">{msg.text}</p>
+                <ChatMessageRenderer content={msg.text} isUser={msg.sender === 'user'} />
                 <span
                   className={`text-[10px] block mt-2 text-right font-mono ${
                     msg.sender === 'user' ? 'text-emerald-100' : 'text-slate-400'
@@ -140,7 +141,7 @@ export const MaximizedChatModal: React.FC<MaximizedChatModalProps> = ({
             </button>
             <button
               type="button"
-              onClick={() => onSendMessage('Bagaimana nomor dan kontak protokol darurat BPBD Jawa Barat?')}
+              onClick={() => onSendMessage('Bagaimana nomor dan kontak protokol darurat BPBD Kabupaten Banjarnegara?')}
               className="text-xs bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-200 transition-all cursor-pointer shrink-0 font-medium"
             >
               Nomor kontak darurat BPBD

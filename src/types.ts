@@ -1,4 +1,4 @@
-export type HazardType = 'flood' | 'landslide' | 'wildfire' | 'coastal';
+export type HazardType = 'flood' | 'flashflood' | 'landslide' | 'earthquake' | 'liquefaction';
 
 export interface HazardLayerConfig {
   id: HazardType;
@@ -19,16 +19,18 @@ export interface AdminProperties {
   id: string;
   code: string;
   name: string;
-  type: string;
+  type?: string;
   province: string;
   population: number;
-  area_km2: number;
+  area_km2?: number;
   total_area_ha: number;
-  density_per_km2: number;
-  hospital_count: number;
-  school_count: number;
-  bridge_count: number;
-  primary_vulnerability: string;
+  density_per_km2?: number;
+  hospital_count?: number;
+  school_count?: number;
+  bridge_count?: number;
+  primary_vulnerability?: string;
+  subdistrict?: string;
+  district?: string;
   luas_risiko_tinggi_ha?: number;
   luas_risiko_sedang_ha?: number;
   luas_risiko_rendah_ha?: number;

@@ -21,6 +21,7 @@ import { HAZARD_LAYERS } from '../data/hazardLayers';
 
 interface MapViewProps {
   selectedDistrict: AdminFeature | null;
+  selectedVillage?: string | null;
   onSelectDistrict: (district: AdminFeature | null) => void;
   activeHazard: HazardType;
   hazardRenderMode?: 'class' | 'index';
@@ -31,6 +32,7 @@ interface MapViewProps {
 
 export const MapView: React.FC<MapViewProps> = ({
   selectedDistrict,
+  selectedVillage,
   onSelectDistrict,
   activeHazard,
   hazardRenderMode = 'class',
@@ -53,8 +55,8 @@ export const MapView: React.FC<MapViewProps> = ({
 
     // Dark Map Base
     const map = L.map(mapContainerRef.current, {
-      center: [-6.85, 107.6],
-      zoom: 9,
+      center: [-7.395, 109.695],
+      zoom: 11,
       zoomControl: false,
       attributionControl: false
     });
@@ -175,10 +177,7 @@ export const MapView: React.FC<MapViewProps> = ({
     // Target features to clip: either single selected district or all
     const featuresToDraw = district 
       ? [district] 
-      : [
-          ADMIN_BOUNDARIES.features[0], // Kuningan
-          ADMIN_BOUNDARIES.features[1]  // Cirebon
-        ];
+      : ADMIN_BOUNDARIES.features;
 
     const currentLayerConfig = HAZARD_LAYERS[hazard];
     const colors = [
@@ -278,17 +277,17 @@ export const MapView: React.FC<MapViewProps> = ({
 
       {/* Breadcrumb Bar at Map Top Left */}
       <div className="absolute top-3 left-4 z-20 flex items-center space-x-1.5 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium text-slate-700 shadow-sm">
-        <RotateCcw 
-          onClick={handleResetView} 
-          className="w-3.5 h-3.5 text-slate-500 hover:text-emerald-600 cursor-pointer mr-1 transition-colors" 
-          title="Reset View" 
-        />
-        <span className="hover:text-emerald-700 cursor-pointer" onClick={handleResetView}>Indonesia</span>
+        <button onClick={handleResetView} title="Reset View" className="inline-flex items-center">
+          <RotateCcw className="w-3.5 h-3.5 text-slate-500 hover:text-emerald-600 cursor-pointer mr-1 transition-colors" />
+        </button>
+        <span className="hover:text-emerald-700 cursor-pointer font-medium" onClick={handleResetView}>Kab. Banjarnegara</span>
         <span className="text-slate-400">/</span>
-        <span className="hover:text-emerald-700 cursor-pointer" onClick={handleResetView}>Jawa</span>
+        <span className="hover:text-emerald-700 cursor-pointer" onClick={handleResetView}>
+          {selectedDistrict ? selectedDistrict.properties.name : 'Semua Kecamatan'}
+        </span>
         <span className="text-slate-400">/</span>
         <span className="text-emerald-700 font-semibold">
-          {selectedDistrict ? selectedDistrict.properties.name : 'Jawa Barat'}
+          {selectedVillage ? selectedVillage : (selectedDistrict ? 'Semua Desa' : 'Seluruh Desa')}
         </span>
       </div>
 

@@ -57,7 +57,7 @@ app.post('/api/generate-ai-report', async (req: Request, res: Response) => {
       });
     }
 
-    const prompt = `Anda adalah Spesialis SIG (GIS Specialist) dan Ahli Penanggulangan Bencana Sistem RADAR Bencana Jawa Barat.
+    const prompt = `Anda adalah Spesialis SIG dan Ahli Penanggulangan Bencana Sistem RADAR Bencana Kabupaten Banjarnegara.
 Berikan analisis teknis mendalam dan rekomendasi aksi kebencanaan untuk:
 - Wilayah: ${districtName}, ${provinceName}
 - Jenis Ancaman: ${hazardType}
@@ -79,7 +79,7 @@ Wajib merespons HANYA dalam format JSON valid sebagai berikut:
       body: JSON.stringify({
         model: 'qwen-plus',
         messages: [
-          { role: 'system', content: 'Anda adalah pakar Analisis Spasial & Mitigasi Bencana Jawa Barat. Output HANYA dalam format JSON.' },
+          { role: 'system', content: 'Anda adalah pakar Analisis Spasial & Mitigasi Bencana Kabupaten Banjarnegara. Output HANYA dalam format JSON.' },
           { role: 'user', content: prompt }
         ],
         response_format: { type: 'json_object' }
@@ -111,20 +111,20 @@ app.post('/api/chat-ai', async (req: Request, res: Response) => {
     }
 
     const {
-      districtName = 'Jawa Barat (Keseluruhan)',
-      provinceName = 'Jawa Barat',
-      hazardType = 'flood',
+      districtName = 'Banjarnegara (Keseluruhan)',
+      provinceName = 'Jawa Tengah',
+      hazardType = 'landslide',
       stats = null
     } = activeContext;
 
-    const systemPrompt = `Anda adalah "Asisten Tanya AI RADAR Bencana", pakar SIG dan Analis Penanggulangan Bencana BPBD Jawa Barat.
+    const systemPrompt = `Anda adalah "Asisten Tanya AI RADAR Bencana", pakar SIG dan Analis Penanggulangan Bencana BPBD Kabupaten Banjarnegara.
 
 ATURAN UTAMA & DOMAIN GUARDRAILS (SANGAT KETAT):
 1. Anda HANYA BOLEH MENJAWAB pertanyaan yang berkaitan dengan:
-   - Kebencanaan (Banjir, Tanah Longsor, Kebakaran Hutan/Lahan, Abrasi/Banjir Pesisir, Gempa, dll).
+   - Kebencanaan (Tanah Longsor, Banjir, Banjir Bandang, Gempa Bumi, Likuifaksi, dll).
    - Analisis Spasial, Peta SIG, Google Earth Engine (GEE), Pola Ruang RTRW & Kesesuaian Kegiatan Pemanfaatan Ruang (KKPR).
-   - Statistik risiko bencana wilayah Jawa Barat & Indonesia.
-   - Prosedur tanggap darurat, mitigasi risiko, evakuasi, dan nomor kontak darurat BPBD/BNPB/SAR.
+   - Statistik risiko bencana wilayah Kabupaten Banjarnegara & Indonesia.
+   - Prosedur tanggap darurat, mitigasi risiko, evakuasi, dan nomor kontak darurat BPBD Banjarnegara (0286) 592881 / 0812-2630-111 / BNPB / SAR.
    - Fitur-fitur aplikasi RADAR Bencana ini.
 2. Jika pengguna mengajukan pertanyaan DI LUAR DOMAIN (misalnya resep makanan, hiburan, pemrograman umum, politik luar negeri, gosip, dll):
    - Jawab dengan sopan dan ramah bahwa Anda adalah Asisten Spesialis Kebencanaan RADAR Bencana dan hanya dapat membantu menjawab topik seputar kebencanaan, analisis risiko spasial, dan tata ruang GIS.
@@ -134,7 +134,7 @@ ATURAN UTAMA & DOMAIN GUARDRAILS (SANGAT KETAT):
 DATA KONTEKS SPASIAL AKTIF DI PETA SAAT INI:
 - Wilayah Terpilih: ${districtName}, ${provinceName}
 - Jenis Ancaman Aktif: ${hazardType.toUpperCase()}
-- Ringkasan Statistik Spasial Terkini: ${stats ? JSON.stringify(stats) : 'Seluruh Wilayah Jawa Barat'}
+- Ringkasan Statistik Spasial Terkini: ${stats ? JSON.stringify(stats) : 'Seluruh Kabupaten Banjarnegara'}
 Gunakan data statistik spasial di atas jika pengguna menanyakan lokasi atau angka spesifik di wilayah aktif tersebut.`;
 
     const formattedMessages = [

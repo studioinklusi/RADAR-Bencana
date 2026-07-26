@@ -65,12 +65,14 @@ export const AllDisasterIncidentsModal: React.FC<AllDisasterIncidentsModalProps>
     switch (type) {
       case 'flood':
         return { name: 'Banjir Luapan', bg: 'bg-blue-50 text-blue-800 border-blue-200' };
+      case 'flashflood':
+        return { name: 'Banjir Bandang', bg: 'bg-cyan-50 text-cyan-800 border-cyan-200' };
       case 'landslide':
-        return { name: 'Longsor / Gerakan Tanah', bg: 'bg-amber-50 text-amber-800 border-amber-200' };
-      case 'wildfire':
-        return { name: 'Karhutla / Kebakaran', bg: 'bg-rose-50 text-rose-800 border-rose-200' };
-      case 'coastal':
-        return { name: 'Gelombang Pesisir / Surge', bg: 'bg-teal-50 text-teal-800 border-teal-200' };
+        return { name: 'Tanah Longsor', bg: 'bg-amber-50 text-amber-800 border-amber-200' };
+      case 'earthquake':
+        return { name: 'Gempa Bumi', bg: 'bg-purple-50 text-purple-800 border-purple-200' };
+      case 'liquefaction':
+        return { name: 'Likuifaksi', bg: 'bg-rose-50 text-rose-800 border-rose-200' };
       default:
         return { name: type, bg: 'bg-slate-100 text-slate-700 border-slate-200' };
     }
@@ -95,7 +97,7 @@ export const AllDisasterIncidentsModal: React.FC<AllDisasterIncidentsModalProps>
                 </span>
               </div>
               <p className="text-xs text-slate-500">
-                Database histori titik bencana alam Provinsi Jawa Barat (2018–2025)
+                Database histori titik bencana alam Kabupaten Banjarnegara (2022–2026)
               </p>
             </div>
           </div>
@@ -135,7 +137,7 @@ export const AllDisasterIncidentsModal: React.FC<AllDisasterIncidentsModalProps>
                 <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
               </div>
               <div className="text-xl font-black text-rose-700 font-mono">{totalIncidents} Event</div>
-              <div className="text-[10px] text-slate-500">2018 - 2025 (Jawa Barat)</div>
+              <div className="text-[10px] text-slate-500">2022 - 2026 (Banjarnegara)</div>
             </div>
 
             <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">

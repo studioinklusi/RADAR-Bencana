@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { ChatMessageRenderer } from './ChatMessageRenderer';
 import { 
   Flame, 
   Waves, 
   Mountain, 
   CloudRain, 
+  Activity,
+  Zap,
   Info, 
   ChevronRight, 
   ChevronDown, 
@@ -70,6 +73,7 @@ interface LeftSidebarProps {
   onClearRadarInvest?: () => void;
   isPickingOnMap?: boolean;
   onTogglePickOnMap?: () => void;
+  pickedLocation?: { lat: number; lng: number } | null;
   selectedDistrict?: AdminFeature | null;
   stats?: ZonalStatistics | null;
   chatMessages?: ChatMessage[];
@@ -185,9 +189,10 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
 
   const hazardIcons: Record<HazardType, React.ReactNode> = {
     flood: <Waves className="w-4 h-4 text-blue-600" />,
+    flashflood: <CloudRain className="w-4 h-4 text-cyan-600" />,
     landslide: <Mountain className="w-4 h-4 text-amber-600" />,
-    wildfire: <Flame className="w-4 h-4 text-orange-600" />,
-    coastal: <CloudRain className="w-4 h-4 text-teal-600" />,
+    earthquake: <Activity className="w-4 h-4 text-purple-600" />,
+    liquefaction: <Zap className="w-4 h-4 text-rose-600" />,
   };
 
   return (
@@ -243,7 +248,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 <div className="flex items-center gap-2 uppercase tracking-wider text-[11px] text-slate-700">
                   <MapPin className="w-3.5 h-3.5 text-emerald-600" />
                   <span>WILAYAH</span>
-                  <Info className="w-3 h-3 text-slate-400" title="Batas Administrasi Kabupaten/Kota Jawa Barat" />
+                  <Info className="w-3 h-3 text-slate-400" />
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -287,7 +292,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 <div className="flex items-center gap-2 uppercase tracking-wider text-[11px] text-slate-700">
                   <Compass className="w-3.5 h-3.5 text-teal-600" />
                   <span>POLA RUANG (RTRW)</span>
-                  <Info className="w-3 h-3 text-slate-400" title="Zonasi Tata Ruang Kawasan Lindung & Kawasan Budi Daya RTRW Dinas PUPR" />
+                  <Info className="w-3 h-3 text-slate-400" />
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className={`w-2 h-2 rounded-full ${showPolaRuang ? 'bg-teal-500 animate-pulse' : 'bg-slate-300'}`}></span>
@@ -387,7 +392,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 >
                   <Flame className="w-3.5 h-3.5 text-amber-600" />
                   <span>LAYER BAHAYA BENCANA</span>
-                  <Info className="w-3 h-3 text-slate-400" title="Dataset Raster .TIF GEE (Opsi Sub-Layer: Kelas Bahaya 1-3 & Indeks Bahaya 0.0-1.0)" />
+                  <Info className="w-3 h-3 text-slate-400" />
                 </button>
 
                 <div className="flex items-center gap-2">
@@ -506,7 +511,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 <div className="flex items-center gap-2 uppercase tracking-wider text-[11px] text-slate-700">
                   <MapPin className="w-3.5 h-3.5 text-amber-600" />
                   <span>TITIK KEJADIAN BENCANA</span>
-                  <Info className="w-3 h-3 text-slate-400" title="Layer Lokasi Kejadian Bencana Lapangan" />
+                  <Info className="w-3 h-3 text-slate-400" />
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className={`w-2 h-2 rounded-full ${showIncidents ? 'bg-amber-500 animate-pulse' : 'bg-slate-300'}`}></span>
@@ -585,7 +590,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 <div className="flex items-center gap-2 uppercase tracking-wider text-[11px] text-slate-700">
                   <Building2 className="w-3.5 h-3.5 text-emerald-600" />
                   <span>LAYER FASILITAS</span>
-                  <Info className="w-3 h-3 text-slate-400" title="Layer Lokasi Fasilitas Kritis & Fasilitas Umum" />
+                  <Info className="w-3 h-3 text-slate-400" />
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className={`w-2 h-2 rounded-full ${showFacilities ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`}></span>
@@ -894,7 +899,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                               : 'bg-slate-50 border border-slate-200 text-slate-700 rounded-tl-none shadow-2xs'
                           }`}
                         >
-                          <p className="whitespace-pre-wrap text-[11px]">{msg.text}</p>
+                          <ChatMessageRenderer content={msg.text} isUser={msg.sender === 'user'} />
                           <span
                             className={`text-[8px] block mt-1 text-right font-mono ${
                               msg.sender === 'user' ? 'text-emerald-100' : 'text-slate-400'
@@ -931,7 +936,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                         Fasilitas kritis yang rentan
                       </button>
                       <button
-                        onClick={() => onSendChatMessage?.('Bagaimana nomor dan kontak protokol darurat BPBD Jawa Barat?')}
+                        onClick={() => onSendChatMessage?.('Bagaimana nomor dan kontak protokol darurat BPBD Kabupaten Banjarnegara?')}
                         className="text-[10px] bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2 py-1 rounded border border-slate-200 transition-all text-left cursor-pointer truncate"
                       >
                         Nomor kontak darurat BPBD

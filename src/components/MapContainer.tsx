@@ -33,11 +33,14 @@ import { HAZARD_LAYERS } from '../data/hazardLayers';
 import { DISASTER_INCIDENTS } from '../data/mockDisasterIncidents';
 import { MOCK_FACILITIES } from '../data/mockFacilities';
 import { POLA_RUANG_DATA } from '../data/mockPolaRuang';
+import { DESA_BOUNDARIES } from '../data/mockDesaBoundaries';
 
 interface MapContainerProps {
   adminBoundaries: AdminFeatureCollection;
   selectedDistrict: AdminFeature | null;
+  selectedVillage?: string | null;
   onSelectDistrict: (district: AdminFeature | null) => void;
+  onSelectVillage?: (village: string | null) => void;
   selectedHazard: HazardType;
   showHazardLayer?: boolean;
   onToggleHazardLayer?: () => void;
@@ -70,7 +73,9 @@ interface MapContainerProps {
 export const MapContainer: React.FC<MapContainerProps> = ({
   adminBoundaries,
   selectedDistrict,
+  selectedVillage,
   onSelectDistrict,
+  onSelectVillage,
   selectedHazard,
   showHazardLayer = true,
   onToggleHazardLayer,
@@ -102,6 +107,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   const mapRef = useRef<HTMLDivElement>(null);
   const leafletMap = useRef<L.Map | null>(null);
   const geojsonLayerRef = useRef<L.GeoJSON | null>(null);
+  const desaLayerRef = useRef<L.GeoJSON | null>(null);
   const polaRuangLayerRef = useRef<L.GeoJSON | null>(null);
   const rasterCanvasOverlayRef = useRef<L.ImageOverlay | null>(null);
   const incidentsLayerRef = useRef<L.LayerGroup | null>(null);
@@ -358,6 +364,93 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     geojsonLayerRef.current = layer;
   }, [adminBoundaries, selectedDistrict, showAdminBoundaries, onSelectDistrict]);
 
+  // Render Desa Vector Layer (276 Desa in Banjarnegara)
+  useEffect(() => {
+    if (!leafletMap.current) return;
+    const map = leafletMap.current;
+
+    if (desaLayerRef.current) {
+      map.removeLayer(desaLayerRef.current);
+      desaLayerRef.current = null;
+    }
+
+    if (!showAdminBoundaries) return;
+
+    // Filter desas by selected district if a district is selected
+    const desasToRender = selectedDistrict
+      ? DESA_BOUNDARIES.features.filter(
+          (f: any) =>
+            f.properties.subdistrict.toLowerCase().includes(selectedDistrict.properties.name.toLowerCase()) ||
+            selectedDistrict.properties.name.toLowerCase().includes(f.properties.subdistrict.toLowerCase())
+        )
+      : DESA_BOUNDARIES.features;
+
+    const layer = L.geoJSON({ type: 'FeatureCollection', features: desasToRender } as any, {
+      style: (feature: any) => {
+        const isSelected = selectedVillage && selectedVillage.toLowerCase() === feature?.properties?.name?.toLowerCase();
+        return {
+          color: isSelected ? '#059669' : '#334155',
+          weight: isSelected ? 2.5 : 0.8,
+          opacity: isSelected ? 0.95 : 0.45,
+          fillColor: isSelected ? '#10b981' : '#64748b',
+          fillOpacity: isSelected ? 0.25 : 0.04,
+          dashArray: '2, 2',
+        };
+      },
+      onEachFeature: (feature: any, polygonLayer: L.Layer) => {
+        const props = feature.properties;
+        polygonLayer.bindTooltip(
+          `
+          <div class="p-1 font-sans">
+            <div class="font-bold text-slate-800 text-xs">${props.name}</div>
+            <div class="text-[10px] text-slate-500 font-mono">${props.subdistrict} • ${props.district}</div>
+            <div class="text-[9px] text-emerald-700 font-mono">Luas: ${props.total_area_ha?.toLocaleString()} Ha</div>
+          </div>
+          `,
+          { sticky: true, direction: 'top' }
+        );
+
+        polygonLayer.on('click', (e) => {
+          L.DomEvent.stopPropagation(e);
+          if (onSelectVillage) {
+            onSelectVillage(props.name);
+          }
+          if (polygonLayer instanceof L.Polygon) {
+            map.fitBounds(polygonLayer.getBounds(), { padding: [40, 40], maxZoom: 14 });
+          }
+        });
+      },
+    }).addTo(map);
+
+    desaLayerRef.current = layer;
+  }, [selectedDistrict, selectedVillage, showAdminBoundaries, onSelectVillage]);
+
+  // Smooth Zoom-in effect when selectedVillage changes
+  useEffect(() => {
+    if (!leafletMap.current || !selectedVillage) return;
+    const map = leafletMap.current;
+
+    const matchedDesa = DESA_BOUNDARIES.features.find(
+      (f: any) => f.properties.name.toLowerCase() === selectedVillage.toLowerCase()
+    );
+
+    if (matchedDesa && matchedDesa.geometry) {
+      let coords = matchedDesa.geometry.coordinates[0];
+      if (Array.isArray(coords[0][0])) {
+        coords = coords[0];
+      }
+      let minLat = 90, maxLat = -90, minLng = 180, maxLng = -180;
+      coords.forEach(([lng, lat]: [number, number]) => {
+        if (lat < minLat) minLat = lat;
+        if (lat > maxLat) maxLat = lat;
+        if (lng < minLng) minLng = lng;
+        if (lng > maxLng) maxLng = lng;
+      });
+
+      map.fitBounds([[minLat, minLng], [maxLat, maxLng]], { padding: [60, 60], maxZoom: 15 });
+    }
+  }, [selectedVillage]);
+
   // Render Pola Ruang RTRW Vector Layer
   useEffect(() => {
     if (!leafletMap.current) return;
@@ -520,25 +613,54 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         }
       }
 
-      let bounds: L.LatLngBoundsExpression = [
-        [-7.70, 106.35],
-        [-6.25, 108.80],
-      ];
+      let minLat = 90, maxLat = -90, minLng = 180, maxLng = -180;
 
-      if (selectedDistrict) {
-        const coords = selectedDistrict.geometry.coordinates[0];
-        let minLat = 90, maxLat = -90, minLng = 180, maxLng = -180;
+      if (selectedVillage) {
+        const matchedDesa = DESA_BOUNDARIES.features.find(
+          (f: any) => f.properties.name.toLowerCase() === selectedVillage.toLowerCase()
+        );
+        if (matchedDesa && matchedDesa.geometry) {
+          let coords = matchedDesa.geometry.coordinates[0];
+          if (Array.isArray(coords[0][0])) {
+            coords = coords[0];
+          }
+          coords.forEach(([lng, lat]: [number, number]) => {
+            if (lat < minLat) minLat = lat;
+            if (lat > maxLat) maxLat = lat;
+            if (lng < minLng) minLng = lng;
+            if (lng > maxLng) maxLng = lng;
+          });
+        }
+      } else if (selectedDistrict) {
+        let coords = selectedDistrict.geometry.coordinates[0];
+        if (Array.isArray(coords[0][0])) {
+          coords = coords[0];
+        }
         coords.forEach(([lng, lat]: [number, number]) => {
           if (lat < minLat) minLat = lat;
           if (lat > maxLat) maxLat = lat;
           if (lng < minLng) minLng = lng;
           if (lng > maxLng) maxLng = lng;
         });
-        bounds = [
-          [minLat, minLng],
-          [maxLat, maxLng],
-        ];
+      } else {
+        adminBoundaries.features.forEach((feat) => {
+          let coords = feat.geometry.coordinates[0];
+          if (Array.isArray(coords[0][0])) {
+            coords = coords[0];
+          }
+          coords.forEach(([lng, lat]: [number, number]) => {
+            if (lat < minLat) minLat = lat;
+            if (lat > maxLat) maxLat = lat;
+            if (lng < minLng) minLng = lng;
+            if (lng > maxLng) maxLng = lng;
+          });
+        });
       }
+
+      const bounds: L.LatLngBoundsExpression = [
+        [minLat, minLng],
+        [maxLat, maxLng],
+      ];
 
       const overlayUrl = canvas.toDataURL();
       const overlay = L.imageOverlay(overlayUrl, bounds, {
@@ -548,7 +670,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
       rasterCanvasOverlayRef.current = overlay;
     }
-  }, [selectedHazard, selectedDistrict, opacity, showHazardLayer, hazardRenderMode]);
+  }, [selectedHazard, selectedDistrict, selectedVillage, opacity, showHazardLayer, hazardRenderMode]);
 
   // Render Interactive Disaster Incident Markers (Titik Bencana)
   useEffect(() => {
@@ -574,13 +696,15 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     filteredIncidents.forEach((incident) => {
       const hazardColor = 
         incident.hazardType === 'flood' ? '#2563eb' :
+        incident.hazardType === 'flashflood' ? '#0891b2' :
         incident.hazardType === 'landslide' ? '#d97706' :
-        incident.hazardType === 'wildfire' ? '#ea580c' : '#0d9488';
+        incident.hazardType === 'earthquake' ? '#9333ea' : '#e11d48';
 
       const hazardBadgeText =
         incident.hazardType === 'flood' ? 'Banjir' :
+        incident.hazardType === 'flashflood' ? 'Banjir Bandang' :
         incident.hazardType === 'landslide' ? 'Longsor' :
-        incident.hazardType === 'wildfire' ? 'Karhutla' : 'Gelombang/Coastal';
+        incident.hazardType === 'earthquake' ? 'Gempa' : 'Likuifaksi';
 
       const customIcon = L.divIcon({
         className: 'custom-disaster-pin',
@@ -1092,119 +1216,123 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         </div>
       )}
 
-      {/* Floating Top Left Legend Panel */}
-      <div className="absolute top-4 left-4 z-20 bg-white/95 border border-slate-200 rounded-xl shadow-lg p-3 w-64 backdrop-blur-md">
-        <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-100">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">Legenda Hazard</span>
+      {/* Floating Top Controls & Legend Bar (Top-Right Aligned) */}
+      <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2 pointer-events-none">
+        {/* Floating Top Right Controls Bar */}
+        <div className="flex flex-wrap items-center justify-end gap-2 pointer-events-auto">
+          {/* Dropdown: Basemap Selection */}
+          <div className="relative flex items-center">
+            <select
+              value={basemapStyle}
+              onChange={(e) => setBasemapStyle(e.target.value as any)}
+              className="bg-white/95 border border-slate-200 text-slate-800 text-xs rounded-lg pl-8 pr-8 py-1.5 focus:outline-none focus:border-emerald-500 font-semibold shadow-md backdrop-blur-md cursor-pointer appearance-none"
+            >
+              <option value="positron">Basemap: CartoDB Positron (Light)</option>
+              <option value="google_hybrid">Basemap: Google Satellite (Hybrid)</option>
+              <option value="google_satellite">Basemap: Google Satellite (Pure)</option>
+              <option value="osm">Basemap: OpenStreetMap (OSM)</option>
+              <option value="esri_satellite">Basemap: Esri World Satellite</option>
+            </select>
+            <Map className="w-3.5 h-3.5 text-emerald-600 absolute left-2.5 pointer-events-none" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 pointer-events-none" />
           </div>
-          <button
-            onClick={() => setShowLegend(!showLegend)}
-            className="text-slate-400 hover:text-slate-700 text-xs"
-          >
-            {showLegend ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-          </button>
-        </div>
 
-        {showLegend && (
-          <div className="space-y-2 text-xs">
-            <div className="flex items-center justify-between text-[11px] font-bold text-emerald-700 font-mono">
-              <span>{HAZARD_LAYERS[selectedHazard].name}</span>
-              <span className="text-[10px] text-slate-500">
-                {showHazardLayer ? (hazardRenderMode === 'class' ? 'Kelas (1-3)' : 'Indeks (0-1)') : 'Mati'}
-              </span>
-            </div>
-
-            {!showHazardLayer ? (
-              <div className="py-2 px-2.5 bg-slate-50 rounded-lg border border-slate-200 text-[11px] text-slate-500 italic text-center">
-                Layer Bahaya Bencana Non-aktif
-              </div>
-            ) : hazardRenderMode === 'class' ? (
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded shrink-0" style={{ backgroundColor: HAZARD_LAYERS[selectedHazard].colorPalette.high }}></span>
-                  <span className="text-slate-700 text-[11px]">3 - Tinggi (High Vulnerability)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded shrink-0" style={{ backgroundColor: HAZARD_LAYERS[selectedHazard].colorPalette.medium }}></span>
-                  <span className="text-slate-700 text-[11px]">2 - Sedang (Moderate Hazard)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded shrink-0" style={{ backgroundColor: HAZARD_LAYERS[selectedHazard].colorPalette.low }}></span>
-                  <span className="text-slate-700 text-[11px]">1 - Rendah (Low Danger)</span>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-1 pt-1">
-                <div className="h-3 rounded bg-gradient-to-r from-[#10b981] via-[#f59e0b] to-[#f43f5e] border border-slate-200 shadow-inner" />
-                <div className="flex justify-between text-[9px] font-mono font-bold">
-                  <span className="text-emerald-700">0.0 (Rendah)</span>
-                  <span className="text-amber-700">0.5 (Sedang)</span>
-                  <span className="text-rose-700">1.0 (Tinggi)</span>
-                </div>
-              </div>
-            )}
-
-            {/* Incident Toggle Status in Legend */}
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono">
-              <button
-                onClick={onToggleIncidents}
-                className="flex items-center gap-1.5 text-amber-700 hover:underline font-semibold"
-              >
-                <MapPin className="w-3 h-3" />
-                <span>{showIncidents ? 'Titik Bencana: Aktif' : 'Titik Bencana: Mati'}</span>
-              </button>
-              <span className="text-emerald-700 font-bold">{selectedYear}</span>
-            </div>
+          {/* Dropdown: Kelompokkan berdasar... */}
+          <div className="relative">
+            <select
+              value={groupingMode}
+              onChange={(e) => setGroupingMode(e.target.value)}
+              className="bg-white/95 border border-slate-200 text-slate-800 text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:border-emerald-500 font-semibold shadow-md backdrop-blur-md cursor-pointer appearance-none pr-8"
+            >
+              <option value="Wilayah / Kabupaten">Kelompokkan: Wilayah</option>
+              <option value="Provinsi">Kelompokkan: Provinsi</option>
+              <option value="DAS (Daerah Aliran Sungai)">Kelompokkan: DAS</option>
+              <option value="Kelas Risk">Kelompokkan: Kelas Risk</option>
+            </select>
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-2.5 pointer-events-none" />
           </div>
-        )}
-      </div>
 
-      {/* Floating Top Right Controls Bar */}
-      <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-        {/* Dropdown: Basemap Selection */}
-        <div className="relative flex items-center">
-          <select
-            value={basemapStyle}
-            onChange={(e) => setBasemapStyle(e.target.value as any)}
-            className="bg-white/95 border border-slate-200 text-slate-800 text-xs rounded-lg pl-8 pr-8 py-1.5 focus:outline-none focus:border-emerald-500 font-semibold shadow-md backdrop-blur-md cursor-pointer appearance-none"
-          >
-            <option value="positron">Basemap: CartoDB Positron (Light)</option>
-            <option value="google_hybrid">Basemap: Google Satellite (Hybrid)</option>
-            <option value="google_satellite">Basemap: Google Satellite (Pure)</option>
-            <option value="osm">Basemap: OpenStreetMap (OSM)</option>
-            <option value="esri_satellite">Basemap: Esri World Satellite</option>
-          </select>
-          <Map className="w-3.5 h-3.5 text-emerald-600 absolute left-2.5 pointer-events-none" />
-          <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 pointer-events-none" />
+          {/* Quick Toolbar Icons */}
+          <div className="bg-white/95 border border-slate-200 rounded-lg p-1 flex items-center gap-1 shadow-md backdrop-blur-md">
+            <button
+              onClick={onResetView}
+              className="p-1.5 text-slate-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-md transition-colors flex items-center gap-1 text-xs px-2 font-medium"
+              title="Reset Peta ke Tampilan Kabupaten Banjarnegara"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-amber-600" />
+              <span className="hidden sm:inline font-mono text-[11px]">Reset View</span>
+            </button>
+          </div>
         </div>
 
-        {/* Dropdown: Kelompokkan berdasar... */}
-        <div className="relative">
-          <select
-            value={groupingMode}
-            onChange={(e) => setGroupingMode(e.target.value)}
-            className="bg-white/95 border border-slate-200 text-slate-800 text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:border-emerald-500 font-semibold shadow-md backdrop-blur-md cursor-pointer appearance-none pr-8"
-          >
-            <option value="Wilayah / Kabupaten">Kelompokkan: Wilayah</option>
-            <option value="Provinsi">Kelompokkan: Provinsi</option>
-            <option value="DAS (Daerah Aliran Sungai)">Kelompokkan: DAS</option>
-            <option value="Kelas Risk">Kelompokkan: Kelas Risk</option>
-          </select>
-          <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-2.5 pointer-events-none" />
-        </div>
+        {/* Legenda Hazard Box (Positioned Under Filter Controls) */}
+        <div className="bg-white/95 border border-slate-200 rounded-xl shadow-lg p-3 w-64 backdrop-blur-md pointer-events-auto">
+          <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-100">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">Legenda Hazard</span>
+            </div>
+            <button
+              onClick={() => setShowLegend(!showLegend)}
+              className="text-slate-400 hover:text-slate-700 text-xs p-0.5 rounded hover:bg-slate-100 transition-colors cursor-pointer"
+              title={showLegend ? "Sembunyikan Legenda" : "Tampilkan Legenda"}
+            >
+              {showLegend ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+            </button>
+          </div>
 
-        {/* Quick Toolbar Icons */}
-        <div className="bg-white/95 border border-slate-200 rounded-lg p-1 flex items-center gap-1 shadow-md backdrop-blur-md">
-          <button
-            onClick={onResetView}
-            className="p-1.5 text-slate-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-md transition-colors flex items-center gap-1 text-xs px-2 font-medium"
-            title="Reset Peta ke Tampilan Wilayah Jawa Barat"
-          >
-            <RotateCcw className="w-3.5 h-3.5 text-amber-600" />
-            <span className="hidden sm:inline font-mono text-[11px]">Reset View</span>
-          </button>
+          {showLegend && (
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center justify-between text-[11px] font-bold text-emerald-700 font-mono">
+                <span>{HAZARD_LAYERS[selectedHazard].name}</span>
+                <span className="text-[10px] text-slate-500">
+                  {showHazardLayer ? (hazardRenderMode === 'class' ? 'Kelas (1-3)' : 'Indeks (0-1)') : 'Mati'}
+                </span>
+              </div>
+
+              {!showHazardLayer ? (
+                <div className="py-2 px-2.5 bg-slate-50 rounded-lg border border-slate-200 text-[11px] text-slate-500 italic text-center">
+                  Layer Bahaya Bencana Non-aktif
+                </div>
+              ) : hazardRenderMode === 'class' ? (
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded shrink-0" style={{ backgroundColor: HAZARD_LAYERS[selectedHazard].colorPalette.high }}></span>
+                    <span className="text-slate-700 text-[11px]">3 - Tinggi (High Vulnerability)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded shrink-0" style={{ backgroundColor: HAZARD_LAYERS[selectedHazard].colorPalette.medium }}></span>
+                    <span className="text-slate-700 text-[11px]">2 - Sedang (Moderate Hazard)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded shrink-0" style={{ backgroundColor: HAZARD_LAYERS[selectedHazard].colorPalette.low }}></span>
+                    <span className="text-slate-700 text-[11px]">1 - Rendah (Low Danger)</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-1 pt-1">
+                  <div className="h-3 rounded bg-gradient-to-r from-[#10b981] via-[#f59e0b] to-[#f43f5e] border border-slate-200 shadow-inner" />
+                  <div className="flex justify-between text-[9px] font-mono font-bold">
+                    <span className="text-emerald-700">0.0 (Rendah)</span>
+                    <span className="text-amber-700">0.5 (Sedang)</span>
+                    <span className="text-rose-700">1.0 (Tinggi)</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Incident Toggle Status in Legend */}
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono">
+                <button
+                  onClick={onToggleIncidents}
+                  className="flex items-center gap-1.5 text-amber-700 hover:underline font-semibold cursor-pointer"
+                >
+                  <MapPin className="w-3 h-3" />
+                  <span>{showIncidents ? 'Titik Bencana: Aktif' : 'Titik Bencana: Mati'}</span>
+                </button>
+                <span className="text-emerald-700 font-bold">{selectedYear}</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -1225,7 +1353,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
       <div className="absolute bottom-4 left-4 right-4 z-20 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 pointer-events-none">
         {/* Timeline Slider with Play/Pause Timelapse */}
         {isTimelineVisible ? (
-          <div className="bg-white/95 border border-slate-200 rounded-xl px-3.5 py-2 shadow-lg flex items-center gap-2.5 backdrop-blur-md pointer-events-auto max-w-2xl w-full">
+          <div className="bg-white/95 border border-slate-200 rounded-xl px-3 py-2 shadow-lg flex items-center gap-2 backdrop-blur-md pointer-events-auto flex-1 min-w-0 overflow-x-auto scrollbar-none">
             {/* Play / Pause Timelapse Button */}
             <button
               onClick={() => setIsPlayingTimelapse(!isPlayingTimelapse)}
@@ -1357,7 +1485,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
         {/* Scale & Coordinates Footer Bar */}
         {isScaleVisible ? (
-          <div className="bg-white/95 border border-slate-200 rounded-xl px-3.5 py-2.5 shadow-md flex items-center gap-3 text-xs font-mono backdrop-blur-md pointer-events-auto">
+          <div className="bg-white/95 border border-slate-200 rounded-xl px-3 py-2 shadow-md flex items-center gap-2.5 text-xs font-mono backdrop-blur-md pointer-events-auto shrink-0">
             {/* Scale bar indicator */}
             <div className="flex items-center gap-2 pr-3 border-r border-slate-200">
               <span className="text-slate-500 text-[10px]">Scale:</span>

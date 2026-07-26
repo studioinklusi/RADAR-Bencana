@@ -45,6 +45,7 @@ import { MOCK_FACILITIES } from '../data/mockFacilities';
 
 interface RightDashboardProps {
   selectedDistrict: AdminFeature | null;
+  selectedVillage?: string | null;
   selectedHazard: HazardType;
   stats: ZonalStatistics | null;
   aiAssessment: AIRiskAssessment | null;
@@ -56,6 +57,7 @@ interface RightDashboardProps {
 
 export const RightDashboard: React.FC<RightDashboardProps> = ({
   selectedDistrict,
+  selectedVillage,
   selectedHazard,
   stats,
   aiAssessment,
@@ -121,7 +123,7 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
 
   const districtName = selectedDistrict
     ? selectedDistrict.properties.name
-    : 'Jawa Barat (Full Region)';
+    : 'Banjarnegara (Seluruh Kabupaten)';
   const totalArea = stats ? stats.totalAreaHa.toLocaleString() : '12,980,500';
 
   return (
@@ -131,7 +133,7 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-mono font-semibold">
             <MapPin className="w-3.5 h-3.5" />
-            <span>{selectedDistrict ? selectedDistrict.properties.type : 'Provinsi'}</span>
+            <span>{selectedVillage ? 'Desa / Kelurahan' : (selectedDistrict ? 'Kecamatan' : 'Kabupaten')}</span>
           </div>
           <div className="flex items-center gap-1">
             <button
@@ -154,9 +156,13 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
           </div>
         </div>
 
-        <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">{districtName}</h2>
+        <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
+          {selectedVillage ? selectedVillage : districtName}
+        </h2>
         <p className="text-[11px] text-slate-500 font-mono mt-0.5">
-          Wilayah • Hazard berdasarkan kelas • 2024
+          {selectedVillage
+            ? `${selectedDistrict?.properties?.name || 'Kecamatan'} • Kab. Banjarnegara`
+            : `Kab. Banjarnegara • Hazard berdasarkan kelas • 2024`}
         </p>
 
         {/* Action Badge Button */}
@@ -291,7 +297,7 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
                     <span>FASILITAS &amp; INFRASTRUKTUR</span>
                   </div>
                   <p className="text-[10px] text-slate-500 font-mono mt-0.5">
-                    {selectedDistrict ? `Kliping Wilayah: ${districtName}` : 'Seluruh Jawa Barat'}
+                    {selectedDistrict ? `Kliping Wilayah: ${districtName}` : 'Seluruh Kabupaten Banjarnegara'}
                   </p>
                 </div>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-50 border border-emerald-200 text-emerald-800">

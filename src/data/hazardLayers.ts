@@ -3,58 +3,72 @@ import { HazardLayerConfig, HazardType } from '../types';
 export const HAZARD_LAYERS: Record<HazardType, HazardLayerConfig> = {
   flood: {
     id: 'flood',
-    name: 'Flood Risk Index (100-Yr Return)',
-    description: '100-year flood inundation depth modeled using Google Earth Engine Sentinel-1 SAR & Copernicus DEM data.',
-    unit: 'meters inundation',
-    geeAsset: 'projects/gee-disaster-mapping/assets/flood_hazard_100yr_v2',
+    name: 'Indeks Risiko Banjir',
+    description: 'Peta kelas risiko banjir genangan Kabupaten Banjarnegara berdasarkan analisis DAS Sungai Serayu & anak sungai.',
+    unit: 'kelas risiko',
+    geeAsset: 'projects/gee-disaster-mapping/assets/banjarnegara_flood_risk',
     colorPalette: {
-      low: '#10b981',     // Hijau (Rendah - Kelas 1)
-      medium: '#f59e0b',  // Kuning (Sedang - Kelas 2)
-      high: '#f43f5e',    // Merah (Tinggi - Kelas 3)
+      low: '#10b981',     // Hijau (Rendah - DN 1)
+      medium: '#f59e0b',  // Kuning (Sedang - DN 2)
+      high: '#f43f5e',    // Merah (Tinggi - DN 3)
       extreme: '#9f1239', // Dark Crimson
     },
-    rangeText: '0.1m - 4.5m Inundation Depth',
+    rangeText: 'Rendah – Sedang – Tinggi',
+  },
+  flashflood: {
+    id: 'flashflood',
+    name: 'Indeks Risiko Banjir Bandang',
+    description: 'Peta kelas risiko banjir bandang alur sungai sempit & lereng curam Kabupaten Banjarnegara.',
+    unit: 'kelas risiko',
+    geeAsset: 'projects/gee-disaster-mapping/assets/banjarnegara_flashflood_risk',
+    colorPalette: {
+      low: '#10b981',     // Hijau (Rendah - DN 1)
+      medium: '#f59e0b',  // Kuning (Sedang - DN 2)
+      high: '#f43f5e',    // Merah (Tinggi - DN 3)
+      extreme: '#9f1239', // Dark Crimson
+    },
+    rangeText: 'Rendah – Sedang – Tinggi',
   },
   landslide: {
     id: 'landslide',
-    name: 'Landslide Susceptibility Index',
-    description: 'Slope, rainfall intensity, soil saturation, and fault line proximity raster derived from GEE SRTM + CHIRPS.',
-    unit: 'vulnerability score (0-100)',
-    geeAsset: 'projects/gee-disaster-mapping/assets/landslide_susceptibility_2025',
+    name: 'Indeks Kerentanan Longsor',
+    description: 'Peta kelas kerentanan tanah longsor berdasarkan kemiringan lereng, curah hujan, dan jenis tanah wilayah Banjarnegara.',
+    unit: 'kelas risiko',
+    geeAsset: 'projects/gee-disaster-mapping/assets/banjarnegara_landslide_susceptibility',
     colorPalette: {
-      low: '#10b981',     // Hijau (Rendah - Kelas 1)
-      medium: '#f59e0b',  // Kuning (Sedang - Kelas 2)
-      high: '#f43f5e',    // Merah (Tinggi - Kelas 3)
+      low: '#10b981',     // Hijau (Rendah - DN 1)
+      medium: '#f59e0b',  // Kuning (Sedang - DN 2)
+      high: '#f43f5e',    // Merah (Tinggi - DN 3)
       extreme: '#9f1239', // Dark Crimson
     },
-    rangeText: 'Score 0 to 100',
+    rangeText: 'Rendah – Sedang – Tinggi',
   },
-  wildfire: {
-    id: 'wildfire',
-    name: 'Wildfire Exposure & Canopy Density',
-    description: 'MODIS/VIIRS thermal anomaly historic density combined with Sentinel-2 NDVI canopy dryness index.',
-    unit: 'burn severity / fuel load',
-    geeAsset: 'projects/gee-disaster-mapping/assets/wildfire_fuel_exposure_2025',
+  earthquake: {
+    id: 'earthquake',
+    name: 'Indeks Risiko Gempa Bumi',
+    description: 'Peta kelas risiko gempa bumi berdasarkan proximity sesar aktif & data historis guncangan di wilayah Banjarnegara.',
+    unit: 'kelas risiko',
+    geeAsset: 'projects/gee-disaster-mapping/assets/banjarnegara_earthquake_risk',
     colorPalette: {
-      low: '#10b981',     // Hijau (Rendah - Kelas 1)
-      medium: '#f59e0b',  // Kuning (Sedang - Kelas 2)
-      high: '#f43f5e',    // Merah (Tinggi - Kelas 3)
+      low: '#10b981',     // Hijau (Rendah - DN 1)
+      medium: '#f59e0b',  // Kuning (Sedang - DN 2)
+      high: '#f43f5e',    // Merah (Tinggi - DN 3)
       extreme: '#9f1239', // Dark Crimson
     },
-    rangeText: 'Low to Severe Fire Danger',
+    rangeText: 'Rendah – Sedang – Tinggi',
   },
-  coastal: {
-    id: 'coastal',
-    name: 'Coastal Storm Surge & Inundation',
-    description: 'Sea level rise projection + storm surge elevation zone calculated using ETOPO1 global relief.',
-    unit: 'surge elevation above MSL',
-    geeAsset: 'projects/gee-disaster-mapping/assets/coastal_surge_risk_50yr',
+  liquefaction: {
+    id: 'liquefaction',
+    name: 'Indeks Risiko Likuifaksi',
+    description: 'Peta kelas risiko likuifaksi tanah akibat getaran gempa di kawasan aluvial DAS Serayu, Banjarnegara.',
+    unit: 'kelas risiko',
+    geeAsset: 'projects/gee-disaster-mapping/assets/banjarnegara_liquefaction_risk',
     colorPalette: {
-      low: '#10b981',     // Hijau (Rendah - Kelas 1)
-      medium: '#f59e0b',  // Kuning (Sedang - Kelas 2)
-      high: '#f43f5e',    // Merah (Tinggi - Kelas 3)
+      low: '#10b981',     // Hijau (Rendah - DN 1)
+      medium: '#f59e0b',  // Kuning (Sedang - DN 2)
+      high: '#f43f5e',    // Merah (Tinggi - DN 3)
       extreme: '#9f1239', // Dark Crimson
     },
-    rangeText: '0m to 5m Surge Height',
+    rangeText: 'Rendah – Sedang – Tinggi',
   },
 };

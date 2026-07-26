@@ -61,7 +61,7 @@ export const MyGeometryModal: React.FC<MyGeometryModalProps> = ({
           code: 'CUSTOM-AOI',
           name: areaName || 'Custom AOI Geometry',
           type: 'Custom Area of Interest',
-          province: 'Jawa Barat',
+          province: 'Jawa Tengah',
           population: 45000,
           area_km2: 120.5,
           total_area_ha: 12050,

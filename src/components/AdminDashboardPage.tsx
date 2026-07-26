@@ -65,7 +65,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onBackTo
   // Category 1: Admin Boundary Form State
   const [adminName, setAdminName] = useState('Kabupaten Bogor');
   const [adminCode, setAdminCode] = useState('3201');
-  const [adminProvince, setAdminProvince] = useState('Jawa Barat');
+  const [adminProvince, setAdminProvince] = useState('Jawa Tengah');
   const [adminTotalArea, setAdminTotalArea] = useState('298620');
   const [adminPopulation, setAdminPopulation] = useState('5427068');
   const [adminRiskHigh, setAdminRiskHigh] = useState('104500');
@@ -397,7 +397,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onBackTo
     switch (category) {
       case 'admin_boundary':
         filename = 'SHP_Batas_Administrasi_Sample.csv';
-        content = 'code,name,province,total_area_ha,population,luas_risiko_tinggi_ha,luas_risiko_sedang_ha,luas_risiko_rendah_ha\n3201,Kabupaten Bogor,Jawa Barat,298620,5427068,104500,119400,74720\n3202,Kabupaten Sukabumi,Jawa Barat,414570,2725400,165800,145000,103770\n3203,Kabupaten Cianjur,Jawa Barat,361435,2477560,142000,130000,89435';
+        content = 'code,name,province,total_area_ha,population,luas_risiko_tinggi_ha,luas_risiko_sedang_ha,luas_risiko_rendah_ha\n330401,Kecamatan Banjarmangu,Jawa Tengah,5380,52000,1703,2100,1577\n330402,Kecamatan Banjarnegara,Jawa Tengah,2620,68000,750,1100,770\n330403,Kecamatan Batur,Jawa Tengah,4780,38000,1950,1800,1030';
         break;
       case 'pola_ruang':
         filename = 'Pola_Ruang_RTRW_Sample.csv';
@@ -626,7 +626,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onBackTo
                         type="text"
                         value={adminProvince}
                         onChange={(e) => setAdminProvince(e.target.value)}
-                        placeholder="Jawa Barat"
+                        placeholder="Jawa Tengah"
                         className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 font-sans focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 shadow-xs"
                       />
                       <span className="text-[10px] text-slate-500 font-mono">Atribut: `province`</span>

@@ -215,7 +215,7 @@ export const DataGuideModal: React.FC<DataGuideModalProps> = ({ isOpen, onClose 
                       <td className="p-3 font-mono text-slate-400">String</td>
                       <td className="p-3 font-bold text-amber-400">Wajib</td>
                       <td className="p-3">Nama Provinsi tempat wilayah berada.</td>
-                      <td className="p-3 font-mono text-slate-400">Jawa Barat</td>
+                      <td className="p-3 font-mono text-slate-400">Jawa Tengah</td>
                     </tr>
                     <tr className="hover:bg-slate-800/30">
                       <td className="p-3 font-mono font-bold text-emerald-400">luas_ha / total_area_ha</td>

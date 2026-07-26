@@ -61,7 +61,7 @@ export const CustomGeoModal: React.FC<CustomGeoModalProps> = ({
           code: 'CUSTOM',
           name: feature.properties?.name || 'Kustom Poligon Area',
           type: 'Custom Geometry',
-          province: 'Jawa Barat',
+          province: 'Jawa Tengah',
           population: feature.properties?.population || 120000,
           area_km2: 150,
           total_area_ha: 15000,

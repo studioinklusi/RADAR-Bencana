@@ -1,0 +1,17 @@
+[
+  {
+    "id": "layer_1784873592929",
+    "name": "Batas Administrasi Test",
+    "category": "admin_boundary",
+    "type": "geojson",
+    "filename": "1784873592925_test_batas_admin.geojson",
+    "originalFilename": "test_batas_admin.geojson",
+    "url": "/uploads/1784873592925_test_batas_admin.geojson",
+    "uploadTime": "2026-07-24T06:13:12.929Z",
+    "rowCount": 1,
+    "description": "",
+    "content": "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{\"name\":\"Kecamatan Test\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[107.6,-6.9]}}]}",
+    "spatialAttributes": null,
+    "fieldMapping": null
+  }
+]

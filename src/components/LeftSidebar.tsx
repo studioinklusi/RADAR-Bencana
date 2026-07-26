@@ -128,12 +128,12 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
   const [activeTab, setActiveTab] = useState<'tema' | 'ai' | 'invest'>('tema');
   const [expandedSection, setExpandedSection] = useState<'wilayah' | 'polaruang' | 'hazard' | 'incidents' | 'facilities' | null>('polaruang');
 
-  // Form state for Radar Invest
-  const [investLat, setInvestLat] = useState<number>(-6.9175);
-  const [investLng, setInvestLng] = useState<number>(107.6191);
+  // Form state for Radar Invest (Default to Banjarnegara Pusat)
+  const [investLat, setInvestLat] = useState<number>(-7.3970);
+  const [investLng, setInvestLng] = useState<number>(109.6970);
   const [investPlotHa, setInvestPlotHa] = useState<number>(10);
   const [investSector, setInvestSector] = useState<string>('Manufaktur & Kawasan Industri');
-  const [investProjectName, setInvestProjectName] = useState<string>('Rencana Pembangunan Industri');
+  const [investProjectName, setInvestProjectName] = useState<string>('Rencana Proyek Usaha');
 
   const [isChatMinimized, setIsChatMinimized] = useState(false);
 
@@ -1082,52 +1082,52 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
               </button>
             </form>
 
-            {/* Quick Presets Sample Locations in Jabar */}
+            {/* Quick Presets Sample Locations in Banjarnegara */}
             <div className="bg-white border border-slate-200 rounded-xl p-3 space-y-2 shadow-xs">
               <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono">
-                LOKASI CONTOH PRESET (SIMULASI JABAR)
+                LOKASI CONTOH PRESET (STRATEGIS BANJARNEGARA)
               </div>
               <div className="space-y-1.5">
                 {[
                   {
-                    name: 'Kawasan Industri Cikarang (Budi Daya)',
-                    lat: -6.3150,
-                    lng: 107.1520,
+                    name: 'Kawasan Industri Bawang (Budi Daya)',
+                    lat: -7.4215,
+                    lng: 109.6350,
                     ha: 25,
                     sec: 'Manufaktur & Kawasan Industri',
-                    proj: 'Pembangunan Pabrik & Gudang Cikarang'
+                    proj: 'Kawasan Industri Bawang'
                   },
                   {
-                    name: 'Ciwidey Patuha (Kawasan Lindung)',
-                    lat: -7.1650,
-                    lng: 107.4120,
+                    name: 'Dataran Tinggi Dieng - Batur (Kawasan Lindung)',
+                    lat: -7.2150,
+                    lng: 109.9120,
                     ha: 15,
                     sec: 'Pariwisata & Resort / Hotel',
-                    proj: 'Pengembangan Resort Ciwidey'
+                    proj: 'Resort Agrowisata Dieng'
                   },
                   {
-                    name: 'Lembang (Resapan Air & Sesar)',
-                    lat: -6.8120,
-                    lng: 107.6210,
-                    ha: 8,
-                    sec: 'Perumahan & Real Estate',
-                    proj: 'Kawasan Komersial Lembang'
+                    name: 'Kawasan Agrowisata Wanayasa (Zona Longsor)',
+                    lat: -7.2579,
+                    lng: 109.9158,
+                    ha: 10,
+                    sec: 'Pertanian & Komoditas',
+                    proj: 'Sentra Agrowisata Wanayasa'
                   },
                   {
-                    name: 'Pesisir Cirebon (Rob Pesisir)',
-                    lat: -6.7410,
-                    lng: 108.5420,
-                    ha: 20,
-                    sec: 'Manufaktur & Kawasan Industri',
-                    proj: 'Pusat Logistik Pesisir Cirebon'
-                  },
-                  {
-                    name: 'Cugenang Cianjur (Zona Sesar)',
-                    lat: -6.8020,
-                    lng: 107.1120,
+                    name: 'Bantaran DAS Serayu - Sigaluh (Zona Banjir)',
+                    lat: -7.3920,
+                    lng: 109.7350,
                     ha: 12,
                     sec: 'Energi, Pertambangan & Infrastruktur',
-                    proj: 'Depot Sub-Stasiun Cugenang'
+                    proj: 'Sub-Stasiun Logistik Sigaluh'
+                  },
+                  {
+                    name: 'Kawasan Komersial Banjarnegara Kota',
+                    lat: -7.3980,
+                    lng: 109.6980,
+                    ha: 8,
+                    sec: 'Perumahan & Real Estate',
+                    proj: 'Kawasan Komersial Banjarnegara Kota'
                   },
                 ].map((preset, idx) => (
                   <button

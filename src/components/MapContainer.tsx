@@ -349,7 +349,11 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           { closeButton: true }
         );
 
-        polygonLayer.on('click', (e) => {
+        polygonLayer.on('click', (e: any) => {
+          if (isPickingOnMap && onMapClickSelect) {
+            onMapClickSelect(e.latlng.lat, e.latlng.lng);
+            return;
+          }
           L.DomEvent.stopPropagation(e);
           onSelectDistrict(feature as AdminFeature);
 
@@ -362,7 +366,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     }).addTo(map);
 
     geojsonLayerRef.current = layer;
-  }, [adminBoundaries, selectedDistrict, showAdminBoundaries, onSelectDistrict]);
+  }, [adminBoundaries, selectedDistrict, showAdminBoundaries, onSelectDistrict, isPickingOnMap, onMapClickSelect]);
 
   // Render Desa Vector Layer (276 Desa in Banjarnegara)
   useEffect(() => {
@@ -410,7 +414,11 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           { sticky: true, direction: 'top' }
         );
 
-        polygonLayer.on('click', (e) => {
+        polygonLayer.on('click', (e: any) => {
+          if (isPickingOnMap && onMapClickSelect) {
+            onMapClickSelect(e.latlng.lat, e.latlng.lng);
+            return;
+          }
           L.DomEvent.stopPropagation(e);
           if (onSelectVillage) {
             onSelectVillage(props.name);
@@ -423,7 +431,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     }).addTo(map);
 
     desaLayerRef.current = layer;
-  }, [selectedDistrict, selectedVillage, showAdminBoundaries, onSelectVillage]);
+  }, [selectedDistrict, selectedVillage, showAdminBoundaries, onSelectVillage, isPickingOnMap, onMapClickSelect]);
 
   // Smooth Zoom-in effect when selectedVillage changes
   useEffect(() => {
@@ -534,7 +542,11 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           { closeButton: true }
         );
 
-        polygonLayer.on('click', (e) => {
+        polygonLayer.on('click', (e: any) => {
+          if (isPickingOnMap && onMapClickSelect) {
+            onMapClickSelect(e.latlng.lat, e.latlng.lng);
+            return;
+          }
           L.DomEvent.stopPropagation(e);
           if (polygonLayer instanceof L.Polygon) {
             map.fitBounds(polygonLayer.getBounds(), { padding: [40, 40], maxZoom: 12 });
@@ -544,7 +556,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     }).addTo(map);
 
     polaRuangLayerRef.current = layer;
-  }, [showPolaRuang]);
+  }, [showPolaRuang, isPickingOnMap, onMapClickSelect]);
 
   // Render Real 30-meter Disaster Risk Index Raster Overlay (from INDEKS BENCANA 30 GeoTIFFs)
   useEffect(() => {
@@ -919,8 +931,16 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     marker.bindPopup(popupContent, { className: 'custom-leaflet-popup' });
     circle.bindPopup(popupContent, { className: 'custom-leaflet-popup' });
 
-    map.flyTo([lat, lng], 13, { duration: 1.5 });
+    // Automatically open popup marker
+    marker.openPopup();
 
+    // Only pan map if point is outside current viewport to prevent disorienting jumps/shifts
+    const currentBounds = map.getBounds();
+    const pinLatLng = L.latLng(lat, lng);
+
+    if (!currentBounds.contains(pinLatLng)) {
+      map.panTo([lat, lng], { animate: true, duration: 1.0 });
+    }
   }, [radarInvestResult]);
 
   // Render Super Admin Custom Uploaded Layers (CSV / GeoJSON)

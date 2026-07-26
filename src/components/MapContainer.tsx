@@ -558,10 +558,10 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
     if (!showHazardLayer) return;
 
-    // Real 30-meter GeoTIFF bounds for Banjarnegara
+    // Real 30-meter GeoTIFF bounds for Banjarnegara (EPSG:3395 WGS84)
     const bounds: L.LatLngBoundsExpression = [
-      [-7.490877093968661, 109.36131290164195],
-      [-7.114774742890197, 109.91781922023145]
+      [-7.540781817456455, 109.36131288641874],
+      [-7.162227603288682, 109.9178192049308]
     ];
 
     const overlayUrl = `/hazard_rasters/${selectedHazard}_${hazardRenderMode}.png`;

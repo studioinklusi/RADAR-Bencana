@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import { 
   Maximize2, 
+  Minimize2,
   Layers, 
   RotateCcw, 
   Eye, 
@@ -68,6 +69,8 @@ interface MapContainerProps {
   onOpenAllIncidentsModal?: () => void;
   focusedCoords?: [number, number] | null;
   customUploadedLayers?: any[];
+  isFullscreen?: boolean;
+  onToggleFullscreen?: () => void;
 }
 
 export const MapContainer: React.FC<MapContainerProps> = ({
@@ -103,6 +106,8 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   onOpenAllIncidentsModal,
   focusedCoords = null,
   customUploadedLayers = [],
+  isFullscreen = false,
+  onToggleFullscreen,
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const leafletMap = useRef<L.Map | null>(null);
@@ -1184,12 +1189,36 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           <div className="bg-white/95 border border-slate-200 rounded-lg p-1 flex items-center gap-1 shadow-md backdrop-blur-md">
             <button
               onClick={onResetView}
-              className="p-1.5 text-slate-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-md transition-colors flex items-center gap-1 text-xs px-2 font-medium"
+              className="p-1.5 text-slate-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-md transition-colors flex items-center gap-1 text-xs px-2 font-medium cursor-pointer"
               title="Reset Peta ke Tampilan Kabupaten Banjarnegara"
             >
               <RotateCcw className="w-3.5 h-3.5 text-amber-600" />
               <span className="hidden sm:inline font-mono text-[11px]">Reset View</span>
             </button>
+
+            {onToggleFullscreen && (
+              <button
+                onClick={onToggleFullscreen}
+                className={`p-1.5 rounded-md transition-all flex items-center gap-1.5 text-xs px-2 font-medium cursor-pointer ${
+                  isFullscreen
+                    ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-xs'
+                    : 'text-slate-700 hover:text-emerald-700 hover:bg-emerald-50'
+                }`}
+                title={isFullscreen ? 'Keluar Mode Fullscreen Peta (Tekan Esc)' : 'Tampilkan Peta Layar Penuh (Fullscreen)'}
+              >
+                {isFullscreen ? (
+                  <>
+                    <Minimize2 className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline font-mono text-[11px]">Keluar Fullscreen</span>
+                  </>
+                ) : (
+                  <>
+                    <Maximize2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span className="hidden sm:inline font-mono text-[11px]">Fullscreen</span>
+                  </>
+                )}
+              </button>
+            )}
           </div>
         </div>
 

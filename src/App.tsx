@@ -52,6 +52,31 @@ export default function App() {
   ]);
   const [selectedFacilitySubTypes, setSelectedFacilitySubTypes] = useState<FacilitySubType[]>(ALL_FACILITY_SUBTYPES);
 
+  // Map Fullscreen State & Handler
+  const [isMapFullscreen, setIsMapFullscreen] = useState<boolean>(false);
+
+  const handleToggleMapFullscreen = () => {
+    const nextState = !isMapFullscreen;
+    setIsMapFullscreen(nextState);
+    if (nextState) {
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    } else {
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsMapFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
   const handleToggleIncidentHazard = (hazard: HazardType) => {
     setSelectedIncidentHazards((prev) =>
       prev.includes(hazard)
@@ -572,66 +597,70 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
   return (
     <div className="flex flex-col h-screen w-screen bg-slate-50 text-slate-800 overflow-hidden font-sans">
       {/* Top Header */}
-      <Header
-        districts={ADMIN_BOUNDARIES.features}
-        selectedDistrict={selectedDistrict}
-        selectedVillage={selectedVillage}
-        onSelectDistrict={(d) => {
-          setSelectedDistrict(d);
-          setSelectedVillage(null);
-        }}
-        onSelectVillage={setSelectedVillage}
-        onOpenGeometryModal={() => setIsGeometryModalOpen(true)}
-        onNavigateToLogin={() => navigateTo('/login')}
-        onResetView={handleResetView}
-        lang={lang}
-        onToggleLang={() => setLang(lang === 'ID' ? 'EN' : 'ID')}
-      />
+      {!isMapFullscreen && (
+        <Header
+          districts={ADMIN_BOUNDARIES.features}
+          selectedDistrict={selectedDistrict}
+          selectedVillage={selectedVillage}
+          onSelectDistrict={(d) => {
+            setSelectedDistrict(d);
+            setSelectedVillage(null);
+          }}
+          onSelectVillage={setSelectedVillage}
+          onOpenGeometryModal={() => setIsGeometryModalOpen(true)}
+          onNavigateToLogin={() => navigateTo('/login')}
+          onResetView={handleResetView}
+          lang={lang}
+          onToggleLang={() => setLang(lang === 'ID' ? 'EN' : 'ID')}
+        />
+      )}
 
       {/* Main Web GIS Three-Pane Layout */}
       <div className="flex flex-1 overflow-hidden relative">
         {/* Left Sidebar Control Panel */}
-        <LeftSidebar
-          selectedDistrict={selectedDistrict}
-          stats={stats}
-          selectedHazard={selectedHazard}
-          onSelectHazard={setSelectedHazard}
-          showHazardLayer={showHazardLayer}
-          onToggleHazardLayer={() => setShowHazardLayer(!showHazardLayer)}
-          hazardRenderMode={hazardRenderMode}
-          onChangeHazardRenderMode={setHazardRenderMode}
-          opacity={opacity}
-          onChangeOpacity={setOpacity}
-          showAdminBoundaries={showAdminBoundaries}
-          onToggleAdminBoundaries={() => setShowAdminBoundaries(!showAdminBoundaries)}
-          showPolaRuang={showPolaRuang}
-          onTogglePolaRuang={() => setShowPolaRuang(!showPolaRuang)}
-          showIncidents={showIncidents}
-          onToggleIncidents={() => setShowIncidents(!showIncidents)}
-          selectedIncidentHazards={selectedIncidentHazards}
-          onToggleIncidentHazard={handleToggleIncidentHazard}
-          showFacilities={showFacilities}
-          onToggleFacilities={() => setShowFacilities(!showFacilities)}
-          selectedFacilityCategories={selectedFacilityCategories}
-          onToggleFacilityCategory={handleToggleFacilityCategory}
-          selectedFacilitySubTypes={selectedFacilitySubTypes}
-          onToggleFacilitySubType={handleToggleFacilitySubType}
-          onRequestAiAnalysis={handleRequestAiAnalysis}
-          onExportData={handleExportData}
-          isAiLoading={isAiLoading}
-          radarInvestResult={radarInvestResult}
-          onRunRadarInvest={handleRunRadarInvest}
-          onClearRadarInvest={() => setRadarInvestResult(null)}
-          isPickingOnMap={isPickingOnMap}
-          onTogglePickOnMap={() => setIsPickingOnMap(!isPickingOnMap)}
-          pickedLocation={pickedLocation}
-          chatMessages={chatMessages}
-          inputChatText={inputChatText}
-          onChangeInputChatText={setInputChatText}
-          onSendChatMessage={handleSendChatMessage}
-          isChatSending={isChatSending}
-          onOpenMaximizedChat={() => setIsMaximizedChatOpen(true)}
-        />
+        {!isMapFullscreen && (
+          <LeftSidebar
+            selectedDistrict={selectedDistrict}
+            stats={stats}
+            selectedHazard={selectedHazard}
+            onSelectHazard={setSelectedHazard}
+            showHazardLayer={showHazardLayer}
+            onToggleHazardLayer={() => setShowHazardLayer(!showHazardLayer)}
+            hazardRenderMode={hazardRenderMode}
+            onChangeHazardRenderMode={setHazardRenderMode}
+            opacity={opacity}
+            onChangeOpacity={setOpacity}
+            showAdminBoundaries={showAdminBoundaries}
+            onToggleAdminBoundaries={() => setShowAdminBoundaries(!showAdminBoundaries)}
+            showPolaRuang={showPolaRuang}
+            onTogglePolaRuang={() => setShowPolaRuang(!showPolaRuang)}
+            showIncidents={showIncidents}
+            onToggleIncidents={() => setShowIncidents(!showIncidents)}
+            selectedIncidentHazards={selectedIncidentHazards}
+            onToggleIncidentHazard={handleToggleIncidentHazard}
+            showFacilities={showFacilities}
+            onToggleFacilities={() => setShowFacilities(!showFacilities)}
+            selectedFacilityCategories={selectedFacilityCategories}
+            onToggleFacilityCategory={handleToggleFacilityCategory}
+            selectedFacilitySubTypes={selectedFacilitySubTypes}
+            onToggleFacilitySubType={handleToggleFacilitySubType}
+            onRequestAiAnalysis={handleRequestAiAnalysis}
+            onExportData={handleExportData}
+            isAiLoading={isAiLoading}
+            radarInvestResult={radarInvestResult}
+            onRunRadarInvest={handleRunRadarInvest}
+            onClearRadarInvest={() => setRadarInvestResult(null)}
+            isPickingOnMap={isPickingOnMap}
+            onTogglePickOnMap={() => setIsPickingOnMap(!isPickingOnMap)}
+            pickedLocation={pickedLocation}
+            chatMessages={chatMessages}
+            inputChatText={inputChatText}
+            onChangeInputChatText={setInputChatText}
+            onSendChatMessage={handleSendChatMessage}
+            isChatSending={isChatSending}
+            onOpenMaximizedChat={() => setIsMaximizedChatOpen(true)}
+          />
+        )}
 
         {/* Center Map Box */}
         <MapContainer
@@ -669,21 +698,24 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
           onOpenAllIncidentsModal={() => setIsAllIncidentsModalOpen(true)}
           focusedCoords={focusedCoords}
           customUploadedLayers={uploadedLayers}
+          isFullscreen={isMapFullscreen}
+          onToggleFullscreen={handleToggleMapFullscreen}
         />
 
         {/* Right Dashboard Analytics & Sunburst Chart Panel */}
-        <RightDashboard
-          selectedDistrict={selectedDistrict}
-          selectedVillage={selectedVillage}
-          selectedHazard={selectedHazard}
-          stats={stats}
-          aiAssessment={aiAssessment}
-          isAiLoading={isAiLoading}
-          onRequestAiAnalysis={handleRequestAiAnalysis}
-          onExportData={handleExportData}
-          radarInvestResult={radarInvestResult}
-        />
-
+        {!isMapFullscreen && (
+          <RightDashboard
+            selectedDistrict={selectedDistrict}
+            selectedVillage={selectedVillage}
+            selectedHazard={selectedHazard}
+            stats={stats}
+            aiAssessment={aiAssessment}
+            isAiLoading={isAiLoading}
+            onRequestAiAnalysis={handleRequestAiAnalysis}
+            onExportData={handleExportData}
+            radarInvestResult={radarInvestResult}
+          />
+        )}
       </div>
 
       {/* Custom Geometry Modal */}

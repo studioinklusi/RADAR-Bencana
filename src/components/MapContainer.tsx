@@ -581,7 +581,13 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     const overlay = L.imageOverlay(overlayUrl, bounds, {
       opacity: opacity,
       interactive: false,
+      className: 'smooth-raster-overlay',
     }).addTo(map);
+
+    const imgEl = overlay.getElement();
+    if (imgEl) {
+      imgEl.style.imageRendering = 'auto';
+    }
 
     rasterCanvasOverlayRef.current = overlay;
   }, [selectedHazard, opacity, showHazardLayer, hazardRenderMode]);

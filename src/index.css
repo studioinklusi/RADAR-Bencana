@@ -39,6 +39,13 @@
   z-index: 10;
 }
 
+/* Smooth Bilinear Interpolation for Hazard Rasters */
+.smooth-raster-overlay {
+  image-rendering: auto !important;
+  image-rendering: smooth !important;
+  image-rendering: -webkit-optimize-contrast !important;
+}
+
 .leaflet-control-zoom {
   border: 1px solid #e2e8f0 !important;
   border-radius: 10px !important;

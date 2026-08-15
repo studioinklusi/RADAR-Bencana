@@ -3,7 +3,6 @@ import { Header } from './components/Header';
 import { LeftSidebar } from './components/LeftSidebar';
 import { MapContainer } from './components/MapContainer';
 import { RightDashboard } from './components/RightDashboard';
-import { CodeViewerModal } from './components/CodeViewerModal';
 import { MyGeometryModal } from './components/MyGeometryModal';
 import { DataGuideModal } from './components/DataGuideModal';
 import { AllDisasterIncidentsModal } from './components/AllDisasterIncidentsModal';
@@ -119,7 +118,6 @@ export default function App() {
   const [isMapLoading, setIsMapLoading] = useState<boolean>(false);
   const [isAiLoading, setIsAiLoading] = useState<boolean>(false);
 
-  const [isCodeModalOpen, setIsCodeModalOpen] = useState<boolean>(false);
   const [isGeometryModalOpen, setIsGeometryModalOpen] = useState<boolean>(false);
   const [isDataGuideOpen, setIsDataGuideOpen] = useState<boolean>(false);
   const [showAllIncidentsMode, setShowAllIncidentsMode] = useState<boolean>(false);
@@ -582,7 +580,6 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
           setSelectedVillage(null);
         }}
         onSelectVillage={setSelectedVillage}
-        onOpenCodeViewer={() => setIsCodeModalOpen(true)}
         onOpenGeometryModal={() => setIsGeometryModalOpen(true)}
         onNavigateToLogin={() => navigateTo('/login')}
         onResetView={handleResetView}
@@ -687,12 +684,6 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
         />
 
       </div>
-
-      {/* Code Inspector Modal (Step 1 & Step 2 Code) */}
-      <CodeViewerModal
-        isOpen={isCodeModalOpen}
-        onClose={() => setIsCodeModalOpen(false)}
-      />
 
       {/* Custom Geometry Modal */}
       <MyGeometryModal

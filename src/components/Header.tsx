@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Search, 
   MapPin, 
-  Code2, 
   Globe, 
   Layers, 
   ChevronDown,
   Upload,
   RotateCcw,
-  ShieldCheck
+  MoreVertical,
+  ShieldCheck,
+  LogIn
 } from 'lucide-react';
 import { AdminFeature } from '../types';
 import { DESA_BOUNDARIES } from '../data/mockDesaBoundaries';
@@ -19,7 +20,6 @@ interface HeaderProps {
   selectedVillage?: string | null;
   onSelectDistrict: (district: AdminFeature | null) => void;
   onSelectVillage?: (village: string | null) => void;
-  onOpenCodeViewer: () => void;
   onOpenGeometryModal: () => void;
   onNavigateToLogin: () => void;
   onResetView: () => void;
@@ -33,7 +33,6 @@ export const Header: React.FC<HeaderProps> = ({
   selectedVillage,
   onSelectDistrict,
   onSelectVillage,
-  onOpenCodeViewer,
   onOpenGeometryModal,
   onNavigateToLogin,
   onResetView,
@@ -42,6 +41,19 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+  const moreMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (moreMenuRef.current && !moreMenuRef.current.contains(e.target as Node)) {
+        setIsMoreMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const filteredDistricts = districts.filter((d) =>
     d.properties.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -223,36 +235,41 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         )}
 
-        {/* Super Admin Routing Button */}
-        <button
-          onClick={onNavigateToLogin}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white border border-emerald-500/30 rounded-lg text-xs font-semibold shadow-sm shadow-emerald-600/30 transition-all active:scale-95"
-          title="Login Portal Super Admin"
-        >
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-100" />
-          <span>Super Admin</span>
-        </button>
-
-        {/* Python FastAPI + GEE Code Inspector Button */}
-        <button
-          onClick={onOpenCodeViewer}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold rounded-lg shadow-sm shadow-amber-500/30 transition-all border border-amber-400/30 active:scale-95"
-          title="Inspect Python FastAPI & GEE reduceRegion backend code"
-        >
-          <Code2 className="w-3.5 h-3.5 text-amber-100" />
-          <span className="hidden md:inline">GEE Backend Code</span>
-          <span className="md:hidden">Code</span>
-        </button>
-
         {/* Language switch */}
         <button
           onClick={onToggleLang}
           className="p-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg border border-slate-200 text-xs font-mono flex items-center gap-1 transition-colors"
-          title="Switch Language"
+          title="Ganti Bahasa"
         >
           <Globe className="w-3.5 h-3.5 text-slate-500" />
           <span className="font-semibold">{lang}</span>
         </button>
+
+        {/* More menu dropdown (⋯) — contains Admin Login */}
+        <div className="relative" ref={moreMenuRef}>
+          <button
+            onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
+            className="p-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-200 transition-colors"
+            title="Menu lainnya"
+          >
+            <MoreVertical className="w-4 h-4" />
+          </button>
+
+          {isMoreMenuOpen && (
+            <div className="absolute right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50 min-w-[180px] animate-in fade-in slide-in-from-top-1 duration-150">
+              <button
+                onClick={() => {
+                  onNavigateToLogin();
+                  setIsMoreMenuOpen(false);
+                }}
+                className="w-full px-3.5 py-2.5 text-left text-xs text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 flex items-center gap-2.5 transition-colors"
+              >
+                <LogIn className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="font-medium">Login Admin</span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

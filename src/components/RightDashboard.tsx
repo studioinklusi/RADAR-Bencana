@@ -107,19 +107,19 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
   const chartData = stats
     ? [
         {
-          name: 'Tinggi (High Risk - Class 3)',
+          name: 'Risiko Tinggi',
           value: stats.highRiskHa,
           pct: stats.highRiskPct,
           color: hazardConfig.colorPalette.high,
         },
         {
-          name: 'Sedang (Moderate - Class 2)',
+          name: 'Risiko Sedang',
           value: stats.mediumRiskHa,
           pct: stats.mediumRiskPct,
           color: hazardConfig.colorPalette.medium,
         },
         {
-          name: 'Rendah (Low Hazard - Class 1)',
+          name: 'Risiko Rendah',
           value: stats.lowRiskHa,
           pct: stats.lowRiskPct,
           color: hazardConfig.colorPalette.low,
@@ -168,7 +168,7 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
         <p className="text-[11px] text-slate-500 font-mono mt-0.5">
           {selectedVillage
             ? `${selectedDistrict?.properties?.name || 'Kecamatan'} • Kab. Banjarnegara`
-            : `Kab. Banjarnegara • Hazard berdasarkan kelas • 2024`}
+            : `Kab. Banjarnegara • Tingkat risiko bencana • 2024`}
         </p>
 
         {/* Action Badge Button */}
@@ -177,7 +177,7 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
             <Eye className="w-3.5 h-3.5 text-emerald-600" />
             <span>Divisualisasikan pada peta</span>
           </div>
-          <span className="text-[10px] text-slate-500 font-mono">GEE reduceRegion</span>
+          <span className="text-[10px] text-slate-500 font-mono">Data satelit</span>
         </div>
       </div>
 
@@ -192,7 +192,7 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
           }`}
         >
           <PieIcon className="w-3.5 h-3.5 text-emerald-600" />
-          <span>Statistik Luas</span>
+          <span>Ringkasan</span>
         </button>
         <button
           onClick={() => setActiveTab('invest')}
@@ -217,7 +217,7 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
           }`}
         >
           <Bot className="w-3.5 h-3.5 text-amber-500" />
-          <span>Laporan AI</span>
+          <span>Analisis AI</span>
         </button>
       </div>
 
@@ -228,7 +228,7 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
             {/* Donut / Sunburst Chart Section */}
             <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
               <div className="text-xs font-bold text-slate-800 mb-2 flex items-center justify-between">
-                <span>DISTRIBUSI HAZARD (HA)</span>
+                <span>SEBARAN RISIKO BENCANA</span>
                 <span className="text-[10px] font-mono text-emerald-700 font-bold">Total: {totalArea} ha</span>
               </div>
 
@@ -268,11 +268,11 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
 
                 {/* Donut Hole Center Text */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <span className="text-[10px] text-slate-500 font-mono uppercase font-bold">Status Risk</span>
+                  <span className="text-[10px] text-slate-500 font-mono uppercase font-bold">Status Risiko</span>
                   <span className={`text-sm font-extrabold font-mono ${
                     stats?.riskCategory === 'Critical' ? 'text-rose-600' : 'text-amber-600'
                   }`}>
-                    {stats?.riskCategory || 'High'}
+                    {stats?.riskCategory === 'High' ? 'Tinggi' : stats?.riskCategory === 'Moderate' ? 'Sedang' : stats?.riskCategory || 'Tinggi'}
                   </span>
                 </div>
               </div>

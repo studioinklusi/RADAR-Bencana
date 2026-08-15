@@ -1191,7 +1191,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-100">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">Legenda Hazard</span>
+              <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">Legenda Risiko</span>
             </div>
             <button
               onClick={() => setShowLegend(!showLegend)}
@@ -1207,7 +1207,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
               <div className="flex items-center justify-between text-[11px] font-bold text-emerald-700 font-mono">
                 <span>{HAZARD_LAYERS[selectedHazard].name}</span>
                 <span className="text-[10px] text-slate-500">
-                  {showHazardLayer ? (hazardRenderMode === 'class' ? 'Kelas (1-3)' : 'Indeks (0-1)') : 'Mati'}
+                  {showHazardLayer ? (hazardRenderMode === 'class' ? 'Tingkat' : 'Indeks') : 'Mati'}
                 </span>
               </div>
 
@@ -1219,15 +1219,15 @@ export const MapContainer: React.FC<MapContainerProps> = ({
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded shrink-0" style={{ backgroundColor: HAZARD_LAYERS[selectedHazard].colorPalette.high }}></span>
-                    <span className="text-slate-700 text-[11px]">3 - Tinggi (High Vulnerability)</span>
+                    <span className="text-slate-700 text-[11px]">Risiko Tinggi</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded shrink-0" style={{ backgroundColor: HAZARD_LAYERS[selectedHazard].colorPalette.medium }}></span>
-                    <span className="text-slate-700 text-[11px]">2 - Sedang (Moderate Hazard)</span>
+                    <span className="text-slate-700 text-[11px]">Risiko Sedang</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded shrink-0" style={{ backgroundColor: HAZARD_LAYERS[selectedHazard].colorPalette.low }}></span>
-                    <span className="text-slate-700 text-[11px]">1 - Rendah (Low Danger)</span>
+                    <span className="text-slate-700 text-[11px]">Risiko Rendah</span>
                   </div>
                 </div>
               ) : (
@@ -1248,7 +1248,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
                   className="flex items-center gap-1.5 text-amber-700 hover:underline font-semibold cursor-pointer"
                 >
                   <MapPin className="w-3 h-3" />
-                  <span>{showIncidents ? 'Titik Bencana: Aktif' : 'Titik Bencana: Mati'}</span>
+                  <span>{showIncidents ? 'Lokasi Bencana: Aktif' : 'Lokasi Bencana: Mati'}</span>
                 </button>
                 <span className="text-emerald-700 font-bold">{selectedYear}</span>
               </div>
@@ -1263,8 +1263,8 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xl flex items-center gap-3">
             <span className="w-5 h-5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></span>
             <div className="text-xs">
-              <div className="font-bold text-slate-800">Memotong Raster GEE (.clip)...</div>
-              <div className="text-[10px] text-slate-500 font-mono">Menghitung reduceRegion zonal statistics</div>
+              <div className="font-bold text-slate-800">Memproses data wilayah...</div>
+              <div className="text-[10px] text-slate-500 font-mono">Menghitung statistik risiko bencana</div>
             </div>
           </div>
         </div>

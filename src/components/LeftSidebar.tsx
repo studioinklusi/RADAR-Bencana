@@ -270,14 +270,14 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                         onChange={onToggleAdminBoundaries}
                         className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
                       />
-                      <span>Batas Administrasi (Vector)</span>
+                      <span>Batas Wilayah</span>
                     </span>
                     <span className="text-[10px] text-emerald-700 font-mono bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                      8 Kab/Kota
+                      8 Kecamatan
                     </span>
                   </label>
                   <p className="text-[11px] text-slate-500 leading-relaxed">
-                    Klik pada polygon kabupaten/kota di peta untuk memotong data raster hazard GEE secara spesifik.
+                    Klik pada wilayah di peta untuk melihat detail data risiko bencana secara spesifik.
                   </p>
                 </div>
               )}
@@ -330,7 +330,6 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                   <div className="space-y-1.5 pt-1">
                     <div className="text-[10px] text-slate-500 font-mono uppercase tracking-wider flex items-center justify-between">
                       <span>Legenda Pola Ruang RTRW:</span>
-                      <span className="text-teal-700 font-semibold">Vector SHP</span>
                     </div>
 
                     <div className="space-y-1 text-[11px]">
@@ -431,8 +430,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                   {/* Sub-layer Selector Tabs: Kelas Bahaya vs Indeks Bahaya */}
                   <div className="space-y-1">
                     <div className="text-[10px] font-mono uppercase text-slate-500 font-bold flex justify-between">
-                      <span>Sub-Layer Tampilan Raster:</span>
-                      <span className="text-emerald-700">Format .tif</span>
+                      <span>Tampilan Peta:</span>
                     </div>
                     <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200 text-[10px] font-mono font-bold">
                       <button
@@ -445,7 +443,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                         }`}
                       >
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                        <span>Kelas Bahaya (1 - 3)</span>
+                        <span>Tingkat Bahaya (Kelas)</span>
                       </button>
                       <button
                         type="button"
@@ -457,7 +455,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                         }`}
                       >
                         <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                        <span>Indeks Bahaya (0.0 - 1.0)</span>
+                        <span>Indeks Bahaya (Kontinu)</span>
                       </button>
                     </div>
                   </div>
@@ -491,7 +489,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                           <div className="mt-2 flex items-center justify-between text-[10px] text-slate-500 font-mono pt-1.5 border-t border-slate-100">
                             <span>Satuan: {layer.unit}</span>
                             <span className="text-emerald-700 font-medium">
-                              {hazardRenderMode === 'class' ? 'Diskrit (1=Low, 2=Med, 3=High)' : 'Kontinu Index (0.0 - 1.0)'}
+                              {hazardRenderMode === 'class' ? 'Rendah → Sedang → Tinggi' : 'Indeks 0.0 (rendah) - 1.0 (tinggi)'}
                             </span>
                           </div>
                         </div>

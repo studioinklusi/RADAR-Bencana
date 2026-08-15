@@ -69,7 +69,7 @@ Wajib merespons HANYA dalam format JSON valid sebagai berikut:
     const contentStr = data.choices?.[0]?.message?.content || '{}';
     const parsed = JSON.parse(contentStr);
 
-    return res.status(200).json({ success: true, report: parsed, provider: 'Qwen 2.5 (Alibaba Cloud)' });
+    return res.status(200).json({ success: true, report: parsed, provider: 'RADAR AI (Engine)' });
   } catch (err: any) {
     console.error('Vercel serverless generate-ai-report error:', err);
     return res.status(500).json({ success: false, error: err.message });

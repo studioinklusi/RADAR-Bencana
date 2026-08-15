@@ -22,7 +22,7 @@ export const FloatingAiChatButton: React.FC<FloatingAiChatButtonProps> = ({
         <span className="tracking-wide">Tanya AI Bencana</span>
         <span className="bg-white/20 text-amber-100 text-[10px] px-2 py-0.5 rounded-full font-mono font-bold flex items-center gap-1">
           <Sparkles className="w-2.5 h-2.5 text-amber-300" />
-          Qwen AI
+          RADAR AI
         </span>
       </button>
     </div>

@@ -731,7 +731,7 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
                   <span>Analisis Risiko Bencana AI</span>
                 </div>
                 <span className="text-[9px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-mono font-bold border border-amber-200">
-                  Qwen 2.5 AI
+                  RADAR AI
                 </span>
               </div>
 

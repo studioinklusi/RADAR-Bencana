@@ -41,7 +41,7 @@ export const MaximizedChatModal: React.FC<MaximizedChatModalProps> = ({
               <h3 className="font-bold text-slate-800 text-base flex items-center gap-2">
                 <span>Tanya AI Bencana — Mode Layar Penuh (Fullscreen)</span>
                 <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono font-bold border border-emerald-200">
-                  Qwen 2.5
+                  RADAR AI
                 </span>
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
@@ -113,7 +113,7 @@ export const MaximizedChatModal: React.FC<MaximizedChatModalProps> = ({
           {isChatSending && (
             <div className="flex items-center gap-2 text-slate-500 text-xs py-2 bg-white/80 p-3 rounded-xl border border-slate-200 inline-flex shadow-xs">
               <span className="w-4 h-4 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></span>
-              <span>Qwen AI sedang merumuskan analisis spasial & mitigasi bencana...</span>
+              <span>RADAR AI sedang merumuskan analisis spasial &amp; mitigasi bencana...</span>
             </div>
           )}
         </div>

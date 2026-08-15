@@ -90,7 +90,7 @@ Wajib merespons HANYA dalam format JSON valid sebagai berikut:
     const contentStr = data.choices?.[0]?.message?.content || '{}';
     const parsed = JSON.parse(contentStr);
 
-    res.json({ success: true, report: parsed, provider: 'Qwen 2.5 (Alibaba Cloud)' });
+    res.json({ success: true, report: parsed, provider: 'RADAR AI (Engine)' });
   } catch (err: any) {
     console.error('Qwen AI error:', err);
     res.status(500).json({ success: false, error: err.message });

@@ -1223,31 +1223,41 @@ export const MapContainer: React.FC<MapContainerProps> = ({
                   Layer Bahaya Bencana Non-aktif
                 </div>
               ) : (
-                <div className="space-y-1 pt-1 font-sans">
-                  {/* Top scale values: 0, 0.3, 0.6, 1 */}
-                  <div className="flex justify-between text-[10px] font-mono font-bold text-slate-800 px-0.5">
-                    <span>0</span>
-                    <span className="-ml-1">0.3</span>
-                    <span className="ml-1">0.6</span>
-                    <span>1</span>
+                <div className="space-y-2.5 pt-1">
+                  {/* Continuous Gradient Bar with Floating Scale Markers */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[10px] font-mono text-slate-500 font-bold px-0.5">
+                      <span>0</span>
+                      <span className="text-emerald-700">0.3</span>
+                      <span className="text-amber-700">0.6</span>
+                      <span className="text-rose-700">1.0</span>
+                    </div>
+
+                    <div
+                      className="relative h-3 rounded-full border border-slate-200/90 shadow-inner overflow-hidden"
+                      style={{
+                        background: 'linear-gradient(to right, #15803d 0%, #84cc16 30%, #facc15 45%, #f97316 60%, #dc2626 100%)',
+                      }}
+                    >
+                      <div className="absolute top-0 bottom-0 left-[30%] w-[1.5px] bg-white/80 shadow-xs" />
+                      <div className="absolute top-0 bottom-0 left-[60%] w-[1.5px] bg-white/80 shadow-xs" />
+                    </div>
                   </div>
 
-                  {/* Gradient scale bar with vertical dividers */}
-                  <div
-                    className="relative h-6 border-2 border-slate-900 overflow-hidden shadow-xs"
-                    style={{
-                      background: 'linear-gradient(to right, #006400 0%, #7cb342 30%, #ffee58 35%, #ff9800 60%, #ef4444 100%)',
-                    }}
-                  >
-                    <div className="absolute top-0 bottom-0 left-[30%] w-[1.5px] bg-slate-900" />
-                    <div className="absolute top-0 bottom-0 left-[60%] w-[1.5px] bg-slate-900" />
-                  </div>
-
-                  {/* Category boxes: RENDAH | SEDANG | TINGGI */}
-                  <div className="grid grid-cols-[30%_30%_40%] border-2 border-slate-900 border-t-0 text-center font-extrabold text-[10px] tracking-wider text-slate-900 bg-white">
-                    <div className="py-1 border-r-2 border-slate-900">RENDAH</div>
-                    <div className="py-1 border-r-2 border-slate-900">SEDANG</div>
-                    <div className="py-1">TINGGI</div>
+                  {/* Seamless Category Pill Badges */}
+                  <div className="grid grid-cols-3 gap-1.5 pt-0.5">
+                    <div className="bg-emerald-50/80 border border-emerald-200/90 rounded-lg py-1 px-1 text-center shadow-2xs">
+                      <div className="text-[10px] font-extrabold text-emerald-800 tracking-tight">RENDAH</div>
+                      <div className="text-[9px] font-mono text-emerald-600 font-medium">0 - 0.3</div>
+                    </div>
+                    <div className="bg-amber-50/80 border border-amber-200/90 rounded-lg py-1 px-1 text-center shadow-2xs">
+                      <div className="text-[10px] font-extrabold text-amber-800 tracking-tight">SEDANG</div>
+                      <div className="text-[9px] font-mono text-amber-600 font-medium">0.3 - 0.6</div>
+                    </div>
+                    <div className="bg-rose-50/80 border border-rose-200/90 rounded-lg py-1 px-1 text-center shadow-2xs">
+                      <div className="text-[10px] font-extrabold text-rose-800 tracking-tight">TINGGI</div>
+                      <div className="text-[9px] font-mono text-rose-600 font-medium">0.6 - 1.0</div>
+                    </div>
                   </div>
                 </div>
               )}

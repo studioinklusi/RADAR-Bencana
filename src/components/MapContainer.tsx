@@ -587,6 +587,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     const imgEl = overlay.getElement();
     if (imgEl) {
       imgEl.style.imageRendering = 'auto';
+      imgEl.style.filter = 'contrast(1.18) saturate(1.15)';
     }
 
     rasterCanvasOverlayRef.current = overlay;

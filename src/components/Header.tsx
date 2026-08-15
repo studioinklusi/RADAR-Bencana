@@ -103,7 +103,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Middle Search & Custom Geometry button */}
-      <div className="flex items-center gap-2 max-w-md w-full px-4">
+      <div className="flex items-center gap-2.5 flex-1 max-w-xl mx-2 sm:mx-4">
         <div className="relative flex-1">
           <div className="relative flex items-center">
             <Search className="w-4 h-4 absolute left-3 text-slate-400 pointer-events-none" />

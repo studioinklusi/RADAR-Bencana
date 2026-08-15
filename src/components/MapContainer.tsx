@@ -1295,11 +1295,11 @@ export const MapContainer: React.FC<MapContainerProps> = ({
       <div className="absolute bottom-4 left-4 right-4 z-20 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 pointer-events-none">
         {/* Timeline Slider with Play/Pause Timelapse */}
         {isTimelineVisible ? (
-          <div className="bg-white/95 border border-slate-200 rounded-xl px-3 py-2 shadow-lg flex items-center gap-2 backdrop-blur-md pointer-events-auto flex-1 min-w-0 overflow-x-auto scrollbar-none">
+          <div className="bg-white/95 border border-slate-200 rounded-2xl p-2.5 shadow-xl flex flex-wrap items-center gap-2 backdrop-blur-md pointer-events-auto max-w-full">
             {/* Play / Pause Timelapse Button */}
             <button
               onClick={() => setIsPlayingTimelapse(!isPlayingTimelapse)}
-              className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
                 isPlayingTimelapse
                   ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/30 animate-pulse'
                   : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm shadow-emerald-600/30'
@@ -1320,15 +1320,15 @@ export const MapContainer: React.FC<MapContainerProps> = ({
             </button>
 
             {/* Selected Year Badge */}
-            <div className="flex items-center gap-1 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-lg shrink-0 font-mono">
+            <div className="flex items-center gap-1 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl shrink-0 font-mono">
               <Calendar className="w-3.5 h-3.5 text-emerald-600" />
               <span className="text-xs font-black text-emerald-800">{selectedYear}</span>
             </div>
 
             {/* Compact & Proportional Slider Container */}
-            <div className="flex-1 flex flex-col justify-center px-1 min-w-[120px] sm:min-w-[180px]">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-bold text-slate-500 font-mono shrink-0">2018</span>
+            <div className="flex items-center gap-2 px-1 shrink-0 w-44 sm:w-56">
+              <span className="text-[10px] font-bold text-slate-500 font-mono shrink-0">2018</span>
+              <div className="flex-1 flex flex-col justify-center">
                 <input
                   type="range"
                   min="2018"
@@ -1338,30 +1338,29 @@ export const MapContainer: React.FC<MapContainerProps> = ({
                   onChange={(e) => setSelectedYear(parseInt(e.target.value))}
                   className="custom-slider w-full cursor-pointer"
                 />
-                <span className="text-[10px] font-bold text-slate-500 font-mono shrink-0">2025</span>
+                {/* Clickable Tick Dots */}
+                <div className="flex justify-between items-center px-1 mt-0.5 text-[8px] font-mono text-slate-400">
+                  {[2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025].map((yr) => (
+                    <button
+                      key={yr}
+                      onClick={() => setSelectedYear(yr)}
+                      className={`transition-all hover:text-emerald-600 font-bold cursor-pointer ${
+                        selectedYear === yr ? 'text-emerald-700 scale-125' : 'text-slate-400'
+                      }`}
+                      title={`Pilih tahun ${yr}`}
+                    >
+                      •
+                    </button>
+                  ))}
+                </div>
               </div>
-
-              {/* Clickable Tick Dots / Quick Year Selectors */}
-              <div className="flex justify-between items-center px-[18px] mt-0.5 text-[8px] font-mono text-slate-400">
-                {[2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025].map((yr) => (
-                  <button
-                    key={yr}
-                    onClick={() => setSelectedYear(yr)}
-                    className={`transition-all hover:text-emerald-600 font-bold cursor-pointer ${
-                      selectedYear === yr ? 'text-emerald-700 scale-125' : 'text-slate-400'
-                    }`}
-                    title={`Pilih tahun ${yr}`}
-                  >
-                    •
-                  </button>
-                ))}
-              </div>
+              <span className="text-[10px] font-bold text-slate-500 font-mono shrink-0">2025</span>
             </div>
 
             {/* Toggle Incident Pins */}
             <button
               onClick={onToggleIncidents}
-              className={`p-1.5 rounded-lg border text-xs flex items-center gap-1 font-mono shrink-0 transition-colors cursor-pointer ${
+              className={`px-2.5 py-1.5 rounded-xl border text-xs flex items-center gap-1.5 font-mono shrink-0 transition-colors cursor-pointer ${
                 showIncidents && !showAllIncidentsMode
                   ? 'bg-amber-50 border-amber-300 text-amber-800 font-semibold'
                   : 'bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900'
@@ -1369,7 +1368,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
               title="Tampilkan / Sembunyikan Titik Kejadian Bencana Tahun Aktif"
             >
               <MapPin className="w-3.5 h-3.5 text-amber-600" />
-              <span className="hidden sm:inline text-[10px]">Titik ({selectedYear})</span>
+              <span className="text-[10px]">Titik ({selectedYear})</span>
             </button>
 
             {/* Button: Kejadian Bencana Secara Keseluruhan */}
@@ -1377,7 +1376,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
               onClick={() => {
                 if (onToggleAllIncidentsMode) onToggleAllIncidentsMode();
               }}
-              className={`p-1.5 rounded-lg border text-xs flex items-center gap-1 font-mono shrink-0 transition-all cursor-pointer ${
+              className={`px-2.5 py-1.5 rounded-xl border text-xs flex items-center gap-1.5 font-mono shrink-0 transition-all cursor-pointer ${
                 showAllIncidentsMode
                   ? 'bg-rose-50 border-rose-300 text-rose-800 font-bold shadow-xs'
                   : 'bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900'
@@ -1385,18 +1384,14 @@ export const MapContainer: React.FC<MapContainerProps> = ({
               title="Tampilkan / Sembunyikan Semua Kejadian Bencana (2018-2025)"
             >
               <Flame className={`w-3.5 h-3.5 ${showAllIncidentsMode ? 'text-orange-600 animate-pulse' : 'text-rose-600'}`} />
-              <span className={`px-1 py-0.2 rounded text-[9px] font-mono font-bold ${
-                showAllIncidentsMode ? 'bg-rose-600 text-white' : 'bg-slate-200 text-slate-700'
-              }`}>
-                {DISASTER_INCIDENTS.length}
-              </span>
+              <span className="text-[10px]">Semua ({DISASTER_INCIDENTS.length})</span>
             </button>
 
             {/* Detail Rekap Modal Button */}
             {onOpenAllIncidentsModal && (
               <button
                 onClick={onOpenAllIncidentsModal}
-                className="p-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-amber-700 transition-colors flex items-center gap-1 text-[10px] font-mono shrink-0 cursor-pointer"
+                className="p-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-amber-700 transition-colors flex items-center gap-1 text-[10px] font-mono shrink-0 cursor-pointer"
                 title="Buka Rekapitulasi & Tabel Kejadian Bencana"
               >
                 <ListFilter className="w-3.5 h-3.5 text-amber-600" />
@@ -1406,7 +1401,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
             {/* Hide Timeline Toggle Button */}
             <button
               onClick={() => setIsTimelineVisible(false)}
-              className="p-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors shrink-0 cursor-pointer"
+              className="p-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors shrink-0 cursor-pointer ml-auto"
               title="Sembunyikan Panel Timelapse & Timeline"
             >
               <EyeOff className="w-3.5 h-3.5 text-slate-500" />

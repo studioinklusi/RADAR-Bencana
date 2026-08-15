@@ -7,6 +7,7 @@ import { MyGeometryModal } from './components/MyGeometryModal';
 import { DataGuideModal } from './components/DataGuideModal';
 import { AllDisasterIncidentsModal } from './components/AllDisasterIncidentsModal';
 import { MaximizedChatModal } from './components/MaximizedChatModal';
+import { FloatingAiChatButton } from './components/FloatingAiChatButton';
 import { LoginPage } from './components/LoginPage';
 import { AdminDashboardPage } from './components/AdminDashboardPage';
 
@@ -708,6 +709,11 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
           setFocusedCoords(coords);
           setShowIncidents(true);
         }}
+      />
+
+      {/* Floating AI Chat Assistant Button (Bottom Right) */}
+      <FloatingAiChatButton
+        onOpenChat={() => setIsMaximizedChatOpen(true)}
       />
 
       {/* Maximized Tanya AI Bencana Fullscreen Modal */}

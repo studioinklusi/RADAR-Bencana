@@ -724,44 +724,47 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
         ) : (
           /* AI Risk Report View */
           <div className="space-y-4">
-            <div className="bg-gradient-to-br from-white via-emerald-50/20 to-amber-50/20 border border-emerald-200 rounded-xl p-4 space-y-3 shadow-xs">
+            <div className="bg-gradient-to-b from-amber-50/50 via-white to-emerald-50/30 border border-amber-200/80 rounded-xl p-4 shadow-xs space-y-3">
               <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                <div className="flex items-center gap-2 text-amber-700 font-bold text-xs">
-                  <Sparkles className="w-4 h-4 text-amber-500" />
-                  <span>Qwen 2.5 Flash Risk Assessment</span>
+                <div className="flex items-center gap-2 font-extrabold text-xs text-slate-800">
+                  <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
+                  <span>Analisis Risiko Bencana AI</span>
                 </div>
-                <span className="text-[9px] bg-amber-50 text-amber-800 px-2 py-0.5 rounded font-mono font-bold border border-amber-200">
-                  REAL-TIME AI
+                <span className="text-[9px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-mono font-bold border border-amber-200">
+                  Qwen 2.5 AI
                 </span>
               </div>
 
               {isAiLoading ? (
-                <div className="py-8 text-center space-y-2">
-                  <span className="w-6 h-6 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin inline-block"></span>
-                  <p className="text-xs text-slate-500 font-mono">Memproses raster GEE &amp; menghasilkan rekomendasi BPBD...</p>
+                <div className="py-10 text-center space-y-3">
+                  <span className="w-7 h-7 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin inline-block"></span>
+                  <div className="space-y-1">
+                    <p className="text-xs font-bold text-slate-800">Memproses Data Risiko Spasial...</p>
+                    <p className="text-[10px] text-slate-500 font-mono">Menghasilkan laporan rekomendasi BPBD untuk {districtName}</p>
+                  </div>
                 </div>
               ) : aiAssessment ? (
-                <div className="space-y-3 text-xs">
+                <div className="space-y-4 text-xs">
                   {/* Executive Summary */}
                   <div>
-                    <h4 className="font-bold text-slate-800 mb-1 flex items-center gap-1.5">
-                      <FileText className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>Ringkasan Eksekutif Satelit GEE</span>
+                    <h4 className="font-bold text-slate-800 mb-1.5 flex items-center gap-1.5">
+                      <FileText className="w-4 h-4 text-emerald-600" />
+                      <span>Ringkasan Eksekutif Spasial</span>
                     </h4>
-                    <p className="text-slate-700 text-[11px] leading-relaxed bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs">
+                    <p className="text-slate-700 text-[11px] leading-relaxed bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
                       {aiAssessment.executiveSummary}
                     </p>
                   </div>
 
                   {/* Vulnerabilities */}
                   <div>
-                    <h4 className="font-bold text-slate-800 mb-1 flex items-center gap-1.5">
-                      <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                    <h4 className="font-bold text-slate-800 mb-1.5 flex items-center gap-1.5">
+                      <AlertTriangle className="w-4 h-4 text-amber-600" />
                       <span>Faktor Kerentanan Utama</span>
                     </h4>
-                    <ul className="space-y-1 pl-1">
+                    <ul className="space-y-1.5 bg-amber-50/40 p-2.5 rounded-xl border border-amber-100">
                       {aiAssessment.vulnerabilityFactors.map((v, i) => (
-                        <li key={i} className="text-slate-700 text-[11px] flex items-start gap-1.5">
+                        <li key={i} className="text-slate-700 text-[11px] flex items-start gap-2">
                           <span className="text-amber-600 font-bold">•</span>
                           <span>{v}</span>
                         </li>
@@ -771,13 +774,13 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
 
                   {/* Immediate Action Plan */}
                   <div>
-                    <h4 className="font-bold text-slate-800 mb-1 flex items-center gap-1.5">
-                      <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
+                    <h4 className="font-bold text-slate-800 mb-1.5 flex items-center gap-1.5">
+                      <ShieldAlert className="w-4 h-4 text-rose-600" />
                       <span>Rencana Aksi Tanggap Darurat BPBD</span>
                     </h4>
-                    <ul className="space-y-1 pl-1">
+                    <ul className="space-y-1.5 bg-rose-50/30 p-2.5 rounded-xl border border-rose-100">
                       {aiAssessment.immediateActionPlan.map((action, i) => (
-                        <li key={i} className="text-slate-700 text-[11px] flex items-start gap-1.5">
+                        <li key={i} className="text-slate-700 text-[11px] flex items-start gap-2">
                           <span className="text-rose-600 font-bold">{i + 1}.</span>
                           <span>{action}</span>
                         </li>
@@ -786,19 +789,38 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
                   </div>
 
                   {/* Emergency Hotline */}
-                  <div className="p-2.5 bg-white border border-slate-200 rounded-lg text-center font-mono shadow-xs">
-                    <span className="text-[10px] text-slate-500 block">Protokol Kontak Darurat:</span>
+                  <div className="p-3 bg-white border border-slate-200 rounded-xl text-center font-mono shadow-2xs">
+                    <span className="text-[10px] text-slate-500 block font-semibold mb-0.5">Protokol Kontak Darurat:</span>
                     <span className="text-xs font-bold text-emerald-700">{aiAssessment.emergencyContactProtocol}</span>
+                  </div>
+
+                  {/* Re-generate Button */}
+                  <div className="pt-2 text-center">
+                    <button
+                      onClick={onRequestAiAnalysis}
+                      className="py-1.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[11px] rounded-lg transition-all inline-flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Sparkles className="w-3 h-3 text-amber-500" />
+                      <span>Perbarui Analisis AI</span>
+                    </button>
                   </div>
                 </div>
               ) : (
-                <div className="py-6 text-center space-y-3">
-                  <p className="text-xs text-slate-500">Klik tombol di bawah untuk meminta Qwen AI menganalisis statistik raster GEE untuk {districtName}.</p>
+                <div className="py-8 px-2 text-center space-y-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-100 to-amber-100 border border-emerald-200 flex items-center justify-center mx-auto text-emerald-700 shadow-inner">
+                    <Sparkles className="w-6 h-6 text-amber-500 animate-pulse" />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-extrabold text-slate-800 text-sm">Analisis Risiko Spasial AI</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed max-w-xs mx-auto">
+                      Dapatkan ringkasan eksekutif, analisis faktor kerentanan geologi/iklim, dan rekomendasi aksi darurat BPBD untuk <span className="font-bold text-slate-700">{districtName}</span>.
+                    </p>
+                  </div>
                   <button
                     onClick={onRequestAiAnalysis}
-                    className="py-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow-sm shadow-emerald-600/30 transition-all inline-flex items-center gap-1.5 cursor-pointer"
+                    className="py-2.5 px-5 bg-gradient-to-r from-emerald-600 via-teal-600 to-amber-600 hover:from-emerald-700 hover:to-amber-700 text-white font-bold text-xs rounded-xl shadow-md shadow-emerald-600/30 hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer active:scale-95"
                   >
-                    <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                    <Sparkles className="w-4 h-4 text-amber-300" />
                     <span>Jalankan Analisis AI BPBD</span>
                   </button>
                 </div>

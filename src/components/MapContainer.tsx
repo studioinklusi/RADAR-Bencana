@@ -1152,74 +1152,79 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
       {/* Floating Top Controls & Legend Bar (Top-Right Aligned) */}
       <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2 pointer-events-none">
-        {/* Floating Top Right Controls Bar */}
-        <div className="flex flex-wrap items-center justify-end gap-2 pointer-events-auto">
+        {/* Single Integrated Top Right Controls Bar */}
+        <div className="bg-white/95 border border-slate-200/90 rounded-2xl p-1.5 shadow-xl flex items-center gap-1.5 backdrop-blur-md pointer-events-auto shrink-0 max-w-full overflow-x-auto scrollbar-none">
           {/* Dropdown: Basemap Selection */}
           <div className="relative flex items-center">
+            <Map className="w-3.5 h-3.5 text-emerald-600 absolute left-2 pointer-events-none" />
             <select
               value={basemapStyle}
               onChange={(e) => setBasemapStyle(e.target.value as any)}
-              className="bg-white/95 border border-slate-200 text-slate-800 text-xs rounded-lg pl-8 pr-8 py-1.5 focus:outline-none focus:border-emerald-500 font-semibold shadow-md backdrop-blur-md cursor-pointer appearance-none"
+              className="bg-transparent text-slate-800 text-xs rounded-xl pl-7 pr-6 py-1 focus:outline-none font-bold cursor-pointer appearance-none border-0"
+              title="Pilih Gaya Peta Dasaran (Basemap)"
             >
-              <option value="positron">Basemap: CartoDB Positron (Light)</option>
-              <option value="google_hybrid">Basemap: Google Satellite (Hybrid)</option>
-              <option value="google_satellite">Basemap: Google Satellite (Pure)</option>
-              <option value="osm">Basemap: OpenStreetMap (OSM)</option>
-              <option value="esri_satellite">Basemap: Esri World Satellite</option>
+              <option value="positron">Positron (Light)</option>
+              <option value="google_hybrid">Satellite (Hybrid)</option>
+              <option value="google_satellite">Satellite (Pure)</option>
+              <option value="osm">OpenStreetMap</option>
+              <option value="esri_satellite">Esri Satellite</option>
             </select>
-            <Map className="w-3.5 h-3.5 text-emerald-600 absolute left-2.5 pointer-events-none" />
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 pointer-events-none" />
+            <ChevronDown className="w-3 h-3 text-slate-400 absolute right-1.5 pointer-events-none" />
           </div>
 
+          <div className="h-4 w-px bg-slate-200 shrink-0" />
+
           {/* Dropdown: Kelompokkan berdasar... */}
-          <div className="relative">
+          <div className="relative flex items-center">
             <select
               value={groupingMode}
               onChange={(e) => setGroupingMode(e.target.value)}
-              className="bg-white/95 border border-slate-200 text-slate-800 text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:border-emerald-500 font-semibold shadow-md backdrop-blur-md cursor-pointer appearance-none pr-8"
+              className="bg-transparent text-slate-800 text-xs rounded-xl pl-2 pr-6 py-1 focus:outline-none font-bold cursor-pointer appearance-none border-0"
+              title="Kelompokkan Batas Wilayah Peta"
             >
-              <option value="Kecamatan & Desa">Kelompokkan: Kecamatan &amp; Desa</option>
-              <option value="DAS (Daerah Aliran Sungai)">Kelompokkan: DAS (Sungai)</option>
-              <option value="Kelas Risk">Kelompokkan: Kelas Risiko</option>
+              <option value="Kecamatan & Desa">Zone: Kec &amp; Desa</option>
+              <option value="DAS (Daerah Aliran Sungai)">Zone: DAS (Sungai)</option>
+              <option value="Kelas Risk">Zone: Kelas Risiko</option>
             </select>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-2.5 pointer-events-none" />
+            <ChevronDown className="w-3 h-3 text-slate-400 absolute right-1.5 pointer-events-none" />
           </div>
 
-          {/* Quick Toolbar Icons */}
-          <div className="bg-white/95 border border-slate-200 rounded-lg p-1 flex items-center gap-1 shadow-md backdrop-blur-md">
+          <div className="h-4 w-px bg-slate-200 shrink-0" />
+
+          {/* Quick Reset View Button */}
+          <button
+            onClick={onResetView}
+            className="p-1 text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/80 rounded-xl transition-colors flex items-center gap-1 text-xs px-2 font-semibold cursor-pointer shrink-0"
+            title="Reset Peta ke Tampilan Kabupaten Banjarnegara"
+          >
+            <RotateCcw className="w-3.5 h-3.5 text-amber-600" />
+            <span className="hidden sm:inline font-mono text-[11px]">Reset</span>
+          </button>
+
+          {/* Fullscreen Button */}
+          {onToggleFullscreen && (
             <button
-              onClick={onResetView}
-              className="p-1.5 text-slate-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-md transition-colors flex items-center gap-1 text-xs px-2 font-medium cursor-pointer"
-              title="Reset Peta ke Tampilan Kabupaten Banjarnegara"
+              onClick={onToggleFullscreen}
+              className={`p-1 rounded-xl transition-all flex items-center gap-1 text-xs px-2 font-semibold cursor-pointer shrink-0 ${
+                isFullscreen
+                  ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-xs'
+                  : 'text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/80'
+              }`}
+              title={isFullscreen ? 'Keluar Mode Fullscreen Peta (Tekan Esc)' : 'Tampilkan Peta Layar Penuh (Fullscreen)'}
             >
-              <RotateCcw className="w-3.5 h-3.5 text-amber-600" />
-              <span className="hidden sm:inline font-mono text-[11px]">Reset View</span>
+              {isFullscreen ? (
+                <>
+                  <Minimize2 className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline font-mono text-[11px]">Keluar</span>
+                </>
+              ) : (
+                <>
+                  <Maximize2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span className="hidden sm:inline font-mono text-[11px]">Fullscreen</span>
+                </>
+              )}
             </button>
-
-            {onToggleFullscreen && (
-              <button
-                onClick={onToggleFullscreen}
-                className={`p-1.5 rounded-md transition-all flex items-center gap-1.5 text-xs px-2 font-medium cursor-pointer ${
-                  isFullscreen
-                    ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-xs'
-                    : 'text-slate-700 hover:text-emerald-700 hover:bg-emerald-50'
-                }`}
-                title={isFullscreen ? 'Keluar Mode Fullscreen Peta (Tekan Esc)' : 'Tampilkan Peta Layar Penuh (Fullscreen)'}
-              >
-                {isFullscreen ? (
-                  <>
-                    <Minimize2 className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline font-mono text-[11px]">Keluar Fullscreen</span>
-                  </>
-                ) : (
-                  <>
-                    <Maximize2 className="w-3.5 h-3.5 text-emerald-600" />
-                    <span className="hidden sm:inline font-mono text-[11px]">Fullscreen</span>
-                  </>
-                )}
-              </button>
-            )}
-          </div>
+          )}
         </div>
 
         {/* Legenda Hazard Box (Positioned Under Filter Controls) */}

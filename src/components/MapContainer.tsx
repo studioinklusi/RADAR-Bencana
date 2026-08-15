@@ -1215,28 +1215,32 @@ export const MapContainer: React.FC<MapContainerProps> = ({
                 <div className="py-2 px-2.5 bg-slate-50 rounded-lg border border-slate-200 text-[11px] text-slate-500 italic text-center">
                   Layer Bahaya Bencana Non-aktif
                 </div>
-              ) : hazardRenderMode === 'class' ? (
-                <div className="space-y-1.5">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded shrink-0" style={{ backgroundColor: HAZARD_LAYERS[selectedHazard].colorPalette.high }}></span>
-                    <span className="text-slate-700 text-[11px]">Risiko Tinggi</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded shrink-0" style={{ backgroundColor: HAZARD_LAYERS[selectedHazard].colorPalette.medium }}></span>
-                    <span className="text-slate-700 text-[11px]">Risiko Sedang</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded shrink-0" style={{ backgroundColor: HAZARD_LAYERS[selectedHazard].colorPalette.low }}></span>
-                    <span className="text-slate-700 text-[11px]">Risiko Rendah</span>
-                  </div>
-                </div>
               ) : (
-                <div className="space-y-1 pt-1">
-                  <div className="h-3 rounded bg-gradient-to-r from-[#10b981] via-[#f59e0b] to-[#f43f5e] border border-slate-200 shadow-inner" />
-                  <div className="flex justify-between text-[9px] font-mono font-bold">
-                    <span className="text-emerald-700">0.0 (Rendah)</span>
-                    <span className="text-amber-700">0.5 (Sedang)</span>
-                    <span className="text-rose-700">1.0 (Tinggi)</span>
+                <div className="space-y-1 pt-1 font-sans">
+                  {/* Top scale values: 0, 0.3, 0.6, 1 */}
+                  <div className="flex justify-between text-[10px] font-mono font-bold text-slate-800 px-0.5">
+                    <span>0</span>
+                    <span className="-ml-1">0.3</span>
+                    <span className="ml-1">0.6</span>
+                    <span>1</span>
+                  </div>
+
+                  {/* Gradient scale bar with vertical dividers */}
+                  <div
+                    className="relative h-6 border-2 border-slate-900 overflow-hidden shadow-xs"
+                    style={{
+                      background: 'linear-gradient(to right, #006400 0%, #7cb342 30%, #ffee58 35%, #ff9800 60%, #ef4444 100%)',
+                    }}
+                  >
+                    <div className="absolute top-0 bottom-0 left-[30%] w-[1.5px] bg-slate-900" />
+                    <div className="absolute top-0 bottom-0 left-[60%] w-[1.5px] bg-slate-900" />
+                  </div>
+
+                  {/* Category boxes: RENDAH | SEDANG | TINGGI */}
+                  <div className="grid grid-cols-[30%_30%_40%] border-2 border-slate-900 border-t-0 text-center font-extrabold text-[10px] tracking-wider text-slate-900 bg-white">
+                    <div className="py-1 border-r-2 border-slate-900">RENDAH</div>
+                    <div className="py-1 border-r-2 border-slate-900">SEDANG</div>
+                    <div className="py-1">TINGGI</div>
                   </div>
                 </div>
               )}

@@ -8,12 +8,12 @@ export const HAZARD_LAYERS: Record<HazardType, HazardLayerConfig> = {
     unit: 'kelas risiko',
     geeAsset: 'projects/gee-disaster-mapping/assets/banjarnegara_flood_risk',
     colorPalette: {
-      low: '#10b981',     // Hijau (Rendah - DN 1)
-      medium: '#f59e0b',  // Kuning (Sedang - DN 2)
-      high: '#f43f5e',    // Merah (Tinggi - DN 3)
-      extreme: '#9f1239', // Dark Crimson
+      low: '#15803d',     // Hijau (Rendah - 0 s.d 0.3)
+      medium: '#f59e0b',  // Kuning (Sedang - 0.3 s.d 0.6)
+      high: '#ef4444',    // Merah (Tinggi - 0.6 s.d 1.0)
+      extreme: '#b91c1c', // Merah Pekat
     },
-    rangeText: 'Rendah – Sedang – Tinggi',
+    rangeText: 'Rendah (0-0.3) – Sedang (0.3-0.6) – Tinggi (0.6-1.0)',
   },
   flashflood: {
     id: 'flashflood',
@@ -22,12 +22,12 @@ export const HAZARD_LAYERS: Record<HazardType, HazardLayerConfig> = {
     unit: 'kelas risiko',
     geeAsset: 'projects/gee-disaster-mapping/assets/banjarnegara_flashflood_risk',
     colorPalette: {
-      low: '#10b981',     // Hijau (Rendah - DN 1)
-      medium: '#f59e0b',  // Kuning (Sedang - DN 2)
-      high: '#f43f5e',    // Merah (Tinggi - DN 3)
-      extreme: '#9f1239', // Dark Crimson
+      low: '#15803d',     // Hijau (Rendah - 0 s.d 0.3)
+      medium: '#f59e0b',  // Kuning (Sedang - 0.3 s.d 0.6)
+      high: '#ef4444',    // Merah (Tinggi - 0.6 s.d 1.0)
+      extreme: '#b91c1c', // Merah Pekat
     },
-    rangeText: 'Rendah – Sedang – Tinggi',
+    rangeText: 'Rendah (0-0.3) – Sedang (0.3-0.6) – Tinggi (0.6-1.0)',
   },
   landslide: {
     id: 'landslide',
@@ -36,12 +36,12 @@ export const HAZARD_LAYERS: Record<HazardType, HazardLayerConfig> = {
     unit: 'kelas risiko',
     geeAsset: 'projects/gee-disaster-mapping/assets/banjarnegara_landslide_susceptibility',
     colorPalette: {
-      low: '#10b981',     // Hijau (Rendah - DN 1)
-      medium: '#f59e0b',  // Kuning (Sedang - DN 2)
-      high: '#f43f5e',    // Merah (Tinggi - DN 3)
-      extreme: '#9f1239', // Dark Crimson
+      low: '#15803d',     // Hijau (Rendah - 0 s.d 0.3)
+      medium: '#f59e0b',  // Kuning (Sedang - 0.3 s.d 0.6)
+      high: '#ef4444',    // Merah (Tinggi - 0.6 s.d 1.0)
+      extreme: '#b91c1c', // Merah Pekat
     },
-    rangeText: 'Rendah – Sedang – Tinggi',
+    rangeText: 'Rendah (0-0.3) – Sedang (0.3-0.6) – Tinggi (0.6-1.0)',
   },
   earthquake: {
     id: 'earthquake',
@@ -50,12 +50,12 @@ export const HAZARD_LAYERS: Record<HazardType, HazardLayerConfig> = {
     unit: 'kelas risiko',
     geeAsset: 'projects/gee-disaster-mapping/assets/banjarnegara_earthquake_risk',
     colorPalette: {
-      low: '#10b981',     // Hijau (Rendah - DN 1)
-      medium: '#f59e0b',  // Kuning (Sedang - DN 2)
-      high: '#f43f5e',    // Merah (Tinggi - DN 3)
-      extreme: '#9f1239', // Dark Crimson
+      low: '#15803d',     // Hijau (Rendah - 0 s.d 0.3)
+      medium: '#f59e0b',  // Kuning (Sedang - 0.3 s.d 0.6)
+      high: '#ef4444',    // Merah (Tinggi - 0.6 s.d 1.0)
+      extreme: '#b91c1c', // Merah Pekat
     },
-    rangeText: 'Rendah – Sedang – Tinggi',
+    rangeText: 'Rendah (0-0.3) – Sedang (0.3-0.6) – Tinggi (0.6-1.0)',
   },
   liquefaction: {
     id: 'liquefaction',
@@ -64,11 +64,11 @@ export const HAZARD_LAYERS: Record<HazardType, HazardLayerConfig> = {
     unit: 'kelas risiko',
     geeAsset: 'projects/gee-disaster-mapping/assets/banjarnegara_liquefaction_risk',
     colorPalette: {
-      low: '#10b981',     // Hijau (Rendah - DN 1)
-      medium: '#f59e0b',  // Kuning (Sedang - DN 2)
-      high: '#f43f5e',    // Merah (Tinggi - DN 3)
-      extreme: '#9f1239', // Dark Crimson
+      low: '#15803d',     // Hijau (Rendah - 0 s.d 0.3)
+      medium: '#f59e0b',  // Kuning (Sedang - 0.3 s.d 0.6)
+      high: '#ef4444',    // Merah (Tinggi - 0.6 s.d 1.0)
+      extreme: '#b91c1c', // Merah Pekat
     },
-    rangeText: 'Rendah – Sedang – Tinggi',
+    rangeText: 'Rendah (0-0.3) – Sedang (0.3-0.6) – Tinggi (0.6-1.0)',
   },
 };

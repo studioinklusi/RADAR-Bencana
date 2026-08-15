@@ -748,40 +748,33 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 </span>
               </div>
 
-              {hazardRenderMode === 'class' ? (
-                <div className="grid grid-cols-3 gap-1">
-                  <div className="text-center">
-                    <div
-                      className="h-3 rounded-l"
-                      style={{ backgroundColor: HAZARD_LAYERS[selectedHazard].colorPalette.low }}
-                    />
-                    <span className="text-[9px] text-slate-500 font-mono mt-1 block">1 - Rendah</span>
-                  </div>
-                  <div className="text-center">
-                    <div
-                      className="h-3"
-                      style={{ backgroundColor: HAZARD_LAYERS[selectedHazard].colorPalette.medium }}
-                    />
-                    <span className="text-[9px] text-slate-500 font-mono mt-1 block">2 - Sedang</span>
-                  </div>
-                  <div className="text-center">
-                    <div
-                      className="h-3 rounded-r"
-                      style={{ backgroundColor: HAZARD_LAYERS[selectedHazard].colorPalette.high }}
-                    />
-                    <span className="text-[9px] text-slate-500 font-mono mt-1 block">3 - Tinggi</span>
-                  </div>
+              <div className="space-y-1 font-sans">
+                {/* Top scale values: 0, 0.3, 0.6, 1 */}
+                <div className="flex justify-between text-[9px] font-mono font-bold text-slate-800 px-0.5">
+                  <span>0</span>
+                  <span className="-ml-1">0.3</span>
+                  <span className="ml-1">0.6</span>
+                  <span>1</span>
                 </div>
-              ) : (
-                <div className="space-y-1">
-                  <div className="h-3.5 rounded bg-gradient-to-r from-[#10b981] via-[#f59e0b] to-[#f43f5e] border border-slate-200 shadow-inner" />
-                  <div className="flex justify-between text-[9px] font-mono">
-                    <span className="text-emerald-700 font-bold">0.0 (Rendah)</span>
-                    <span className="text-amber-700 font-bold">0.5 (Sedang)</span>
-                    <span className="text-rose-700 font-bold">1.0 (Tinggi)</span>
-                  </div>
+
+                {/* Gradient scale bar */}
+                <div
+                  className="relative h-5 border-2 border-slate-900 overflow-hidden shadow-2xs"
+                  style={{
+                    background: 'linear-gradient(to right, #006400 0%, #7cb342 30%, #ffee58 35%, #ff9800 60%, #ef4444 100%)',
+                  }}
+                >
+                  <div className="absolute top-0 bottom-0 left-[30%] w-[1.5px] bg-slate-900" />
+                  <div className="absolute top-0 bottom-0 left-[60%] w-[1.5px] bg-slate-900" />
                 </div>
-              )}
+
+                {/* Category boxes */}
+                <div className="grid grid-cols-[30%_30%_40%] border-2 border-slate-900 border-t-0 text-center font-extrabold text-[9px] tracking-wider text-slate-900 bg-white">
+                  <div className="py-0.5 border-r-2 border-slate-900">RENDAH</div>
+                  <div className="py-0.5 border-r-2 border-slate-900">SEDANG</div>
+                  <div className="py-0.5">TINGGI</div>
+                </div>
+              </div>
             </div>
           </>
         ) : (

@@ -1194,39 +1194,39 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         </div>
 
         {/* Legenda Hazard Box (Positioned Under Filter Controls) */}
-        <div className="bg-white/95 border border-slate-200 rounded-xl shadow-lg p-3 w-64 backdrop-blur-md pointer-events-auto">
-          <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-100">
+        <div className="bg-white/95 border border-slate-200/90 rounded-2xl shadow-xl p-3 w-60 backdrop-blur-md pointer-events-auto transition-all">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">Legenda Risiko</span>
+              <span className="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Legenda Risiko</span>
             </div>
             <button
               onClick={() => setShowLegend(!showLegend)}
-              className="text-slate-400 hover:text-slate-700 text-xs p-0.5 rounded hover:bg-slate-100 transition-colors cursor-pointer"
+              className="text-slate-400 hover:text-slate-700 text-xs p-1 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
               title={showLegend ? "Sembunyikan Legenda" : "Tampilkan Legenda"}
             >
               {showLegend ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
             </button>
           </div>
 
-          {showLegend && (
-            <div className="space-y-2 text-xs">
+          {showLegend ? (
+            <div className="space-y-2.5 pt-2 text-xs">
               <div className="flex items-center justify-between text-[11px] font-bold text-emerald-700 font-mono">
-                <span>{HAZARD_LAYERS[selectedHazard].name}</span>
-                <span className="text-[10px] text-slate-500">
+                <span className="truncate max-w-[150px]">{HAZARD_LAYERS[selectedHazard].name}</span>
+                <span className="text-[9px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 shrink-0">
                   {showHazardLayer ? (hazardRenderMode === 'class' ? 'Tingkat' : 'Indeks') : 'Mati'}
                 </span>
               </div>
 
               {!showHazardLayer ? (
-                <div className="py-2 px-2.5 bg-slate-50 rounded-lg border border-slate-200 text-[11px] text-slate-500 italic text-center">
+                <div className="py-2 px-2.5 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-500 italic text-center">
                   Layer Bahaya Bencana Non-aktif
                 </div>
               ) : (
-                <div className="space-y-2.5 pt-1">
+                <div className="space-y-2">
                   {/* Continuous Gradient Bar with Floating Scale Markers */}
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-[10px] font-mono text-slate-500 font-bold px-0.5">
+                  <div className="space-y-0.5">
+                    <div className="flex justify-between text-[9px] font-mono text-slate-500 font-bold px-0.5">
                       <span>0</span>
                       <span className="text-emerald-700">0.3</span>
                       <span className="text-amber-700">0.6</span>
@@ -1234,45 +1234,37 @@ export const MapContainer: React.FC<MapContainerProps> = ({
                     </div>
 
                     <div
-                      className="relative h-3 rounded-full border border-slate-200/90 shadow-inner overflow-hidden"
+                      className="relative h-2.5 rounded-full border border-slate-200/90 shadow-inner overflow-hidden"
                       style={{
                         background: 'linear-gradient(to right, #15803d 0%, #84cc16 30%, #facc15 45%, #f97316 60%, #dc2626 100%)',
                       }}
                     >
-                      <div className="absolute top-0 bottom-0 left-[30%] w-[1.5px] bg-white/80 shadow-xs" />
-                      <div className="absolute top-0 bottom-0 left-[60%] w-[1.5px] bg-white/80 shadow-xs" />
+                      <div className="absolute top-0 bottom-0 left-[30%] w-[1.5px] bg-white/80" />
+                      <div className="absolute top-0 bottom-0 left-[60%] w-[1.5px] bg-white/80" />
                     </div>
                   </div>
 
                   {/* Seamless Category Pill Badges */}
-                  <div className="grid grid-cols-3 gap-1.5 pt-0.5">
-                    <div className="bg-emerald-50/80 border border-emerald-200/90 rounded-lg py-1 px-1 text-center shadow-2xs">
-                      <div className="text-[10px] font-extrabold text-emerald-800 tracking-tight">RENDAH</div>
-                      <div className="text-[9px] font-mono text-emerald-600 font-medium">0 - 0.3</div>
+                  <div className="grid grid-cols-3 gap-1 pt-0.5">
+                    <div className="bg-emerald-50/80 border border-emerald-200/90 rounded-lg py-1 px-0.5 text-center shadow-2xs">
+                      <div className="text-[9px] font-extrabold text-emerald-800 tracking-tight">RENDAH</div>
+                      <div className="text-[8px] font-mono text-emerald-600 font-medium">0 - 0.3</div>
                     </div>
-                    <div className="bg-amber-50/80 border border-amber-200/90 rounded-lg py-1 px-1 text-center shadow-2xs">
-                      <div className="text-[10px] font-extrabold text-amber-800 tracking-tight">SEDANG</div>
-                      <div className="text-[9px] font-mono text-amber-600 font-medium">0.3 - 0.6</div>
+                    <div className="bg-amber-50/80 border border-amber-200/90 rounded-lg py-1 px-0.5 text-center shadow-2xs">
+                      <div className="text-[9px] font-extrabold text-amber-800 tracking-tight">SEDANG</div>
+                      <div className="text-[8px] font-mono text-amber-600 font-medium">0.3 - 0.6</div>
                     </div>
-                    <div className="bg-rose-50/80 border border-rose-200/90 rounded-lg py-1 px-1 text-center shadow-2xs">
-                      <div className="text-[10px] font-extrabold text-rose-800 tracking-tight">TINGGI</div>
-                      <div className="text-[9px] font-mono text-rose-600 font-medium">0.6 - 1.0</div>
+                    <div className="bg-rose-50/80 border border-rose-200/90 rounded-lg py-1 px-0.5 text-center shadow-2xs">
+                      <div className="text-[9px] font-extrabold text-rose-800 tracking-tight">TINGGI</div>
+                      <div className="text-[8px] font-mono text-rose-600 font-medium">0.6 - 1.0</div>
                     </div>
                   </div>
                 </div>
               )}
-
-              {/* Incident Toggle Status in Legend */}
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono">
-                <button
-                  onClick={onToggleIncidents}
-                  className="flex items-center gap-1.5 text-amber-700 hover:underline font-semibold cursor-pointer"
-                >
-                  <MapPin className="w-3 h-3" />
-                  <span>{showIncidents ? 'Lokasi Bencana: Aktif' : 'Lokasi Bencana: Mati'}</span>
-                </button>
-                <span className="text-emerald-700 font-bold">{selectedYear}</span>
-              </div>
+            </div>
+          ) : (
+            <div className="pt-1 text-[10px] text-slate-500 font-mono italic">
+              Klik ikon mata untuk menampilkan legenda
             </div>
           )}
         </div>
@@ -1291,11 +1283,10 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         </div>
       )}
 
-      {/* Bottom Floating Time Slider & Map Controls Bar */}
-      <div className="absolute bottom-4 left-4 right-4 z-20 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 pointer-events-none">
-        {/* Timeline Slider with Play/Pause Timelapse */}
+      {/* Unified Single Bottom Control Dock Bar */}
+      <div className="absolute bottom-4 left-4 right-4 z-20 flex items-center justify-start pointer-events-none">
         {isTimelineVisible ? (
-          <div className="bg-white/95 border border-slate-200 rounded-2xl p-2.5 shadow-xl flex flex-wrap items-center gap-2 backdrop-blur-md pointer-events-auto max-w-full">
+          <div className="bg-white/95 border border-slate-200/90 rounded-2xl p-2 shadow-xl flex flex-wrap items-center gap-2 backdrop-blur-md pointer-events-auto max-w-full">
             {/* Play / Pause Timelapse Button */}
             <button
               onClick={() => setIsPlayingTimelapse(!isPlayingTimelapse)}
@@ -1325,9 +1316,9 @@ export const MapContainer: React.FC<MapContainerProps> = ({
               <span className="text-xs font-black text-emerald-800">{selectedYear}</span>
             </div>
 
-            {/* Compact & Proportional Slider Container */}
-            <div className="flex items-center gap-2 px-1 shrink-0 w-44 sm:w-56">
-              <span className="text-[10px] font-bold text-slate-500 font-mono shrink-0">2018</span>
+            {/* Compact Slider */}
+            <div className="flex items-center gap-1.5 px-1 shrink-0 w-36 sm:w-44 font-mono">
+              <span className="text-[9px] font-bold text-slate-400 shrink-0">2018</span>
               <div className="flex-1 flex flex-col justify-center">
                 <input
                   type="range"
@@ -1338,8 +1329,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
                   onChange={(e) => setSelectedYear(parseInt(e.target.value))}
                   className="custom-slider w-full cursor-pointer"
                 />
-                {/* Clickable Tick Dots */}
-                <div className="flex justify-between items-center px-1 mt-0.5 text-[8px] font-mono text-slate-400">
+                <div className="flex justify-between items-center px-1 mt-0.5 text-[7px] font-mono text-slate-400">
                   {[2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025].map((yr) => (
                     <button
                       key={yr}
@@ -1354,10 +1344,12 @@ export const MapContainer: React.FC<MapContainerProps> = ({
                   ))}
                 </div>
               </div>
-              <span className="text-[10px] font-bold text-slate-500 font-mono shrink-0">2025</span>
+              <span className="text-[9px] font-bold text-slate-400 shrink-0">2025</span>
             </div>
 
-            {/* Toggle Incident Pins */}
+            <div className="h-4 w-px bg-slate-200 mx-0.5 hidden sm:block" />
+
+            {/* Incident Pins Toggle */}
             <button
               onClick={onToggleIncidents}
               className={`px-2.5 py-1.5 rounded-xl border text-xs flex items-center gap-1.5 font-mono shrink-0 transition-colors cursor-pointer ${
@@ -1371,7 +1363,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
               <span className="text-[10px]">Titik ({selectedYear})</span>
             </button>
 
-            {/* Button: Kejadian Bencana Secara Keseluruhan */}
+            {/* All Incidents Toggle */}
             <button
               onClick={() => {
                 if (onToggleAllIncidentsMode) onToggleAllIncidentsMode();
@@ -1387,7 +1379,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
               <span className="text-[10px]">Semua ({DISASTER_INCIDENTS.length})</span>
             </button>
 
-            {/* Detail Rekap Modal Button */}
+            {/* Rekap Modal Button */}
             {onOpenAllIncidentsModal && (
               <button
                 onClick={onOpenAllIncidentsModal}
@@ -1398,67 +1390,40 @@ export const MapContainer: React.FC<MapContainerProps> = ({
               </button>
             )}
 
-            {/* Hide Timeline Toggle Button */}
+            <div className="h-4 w-px bg-slate-200 mx-0.5 hidden md:block" />
+
+            {/* Integrated Scale Bar */}
+            <div className="hidden lg:flex items-center gap-1.5 font-mono text-[10px] text-slate-500 pl-1">
+              <span>Scale:</span>
+              <div className="w-10 h-1 bg-slate-300 relative border-x border-slate-500">
+                <span className="absolute -top-3 left-0 text-[8px] text-slate-600">0</span>
+                <span className="absolute -top-3 right-0 text-[8px] text-slate-600">50km</span>
+              </div>
+            </div>
+
+            {/* Integrated GPS Lat/Lon */}
+            <div className="hidden sm:flex items-center gap-1.5 text-[10px] font-mono text-slate-600 pl-1">
+              <Compass className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <span>{mouseCoords.lat}, {mouseCoords.lng}</span>
+            </div>
+
+            {/* Hide Timeline Button */}
             <button
               onClick={() => setIsTimelineVisible(false)}
               className="p-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors shrink-0 cursor-pointer ml-auto"
-              title="Sembunyikan Panel Timelapse & Timeline"
+              title="Sembunyikan Panel Kontrol"
             >
               <EyeOff className="w-3.5 h-3.5 text-slate-500" />
             </button>
           </div>
         ) : (
-          /* Unhide Timeline Pill Button */
           <button
             onClick={() => setIsTimelineVisible(true)}
             className="bg-white/95 border border-slate-200 rounded-xl px-3 py-2 shadow-md flex items-center gap-2 text-xs font-mono text-emerald-700 hover:text-emerald-800 hover:bg-slate-50 transition-all backdrop-blur-md pointer-events-auto cursor-pointer"
-            title="Tampilkan Panel Timelapse & Timeline"
+            title="Tampilkan Panel Kontrol Bawah"
           >
             <Play className="w-3.5 h-3.5 fill-current text-emerald-600" />
-            <span className="text-[11px] font-bold">Timelapse &amp; Timeline ({selectedYear})</span>
-            <Eye className="w-3.5 h-3.5 text-slate-400 ml-1" />
-          </button>
-        )}
-
-        {/* Scale & Coordinates Footer Bar */}
-        {isScaleVisible ? (
-          <div className="bg-white/95 border border-slate-200 rounded-xl px-3 py-2 shadow-md flex items-center gap-2.5 text-xs font-mono backdrop-blur-md pointer-events-auto shrink-0">
-            {/* Scale bar indicator */}
-            <div className="flex items-center gap-2 pr-3 border-r border-slate-200">
-              <span className="text-slate-500 text-[10px]">Scale:</span>
-              <div className="w-12 h-1 bg-slate-300 relative border-x border-slate-500">
-                <span className="absolute -top-3 left-0 text-[9px] text-slate-600">0</span>
-                <span className="absolute -top-3 right-0 text-[9px] text-slate-600">50km</span>
-              </div>
-            </div>
-
-            {/* Real-time Lat / Lon */}
-            <div className="flex items-center gap-2 text-[10px]">
-              <Compass className="w-3.5 h-3.5 text-emerald-600" />
-              <span className="text-slate-500">lat:</span>
-              <span className="text-slate-800 font-semibold">{mouseCoords.lat}</span>
-              <span className="text-slate-500">lon:</span>
-              <span className="text-slate-800 font-semibold">{mouseCoords.lng}</span>
-            </div>
-
-            {/* Hide Scale Toggle Button */}
-            <button
-              onClick={() => setIsScaleVisible(false)}
-              className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors ml-1 cursor-pointer"
-              title="Sembunyikan Panel Skala & GPS"
-            >
-              <EyeOff className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        ) : (
-          /* Unhide Scale Pill Button */
-          <button
-            onClick={() => setIsScaleVisible(true)}
-            className="bg-white/95 border border-slate-200 rounded-xl px-3 py-2 shadow-md flex items-center gap-2 text-xs font-mono text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-all backdrop-blur-md pointer-events-auto cursor-pointer"
-            title="Tampilkan Skala & GPS"
-          >
-            <Compass className="w-3.5 h-3.5 text-emerald-600" />
-            <span className="text-[11px] font-semibold">Skala &amp; GPS</span>
+            <span className="text-[11px] font-bold">Kontrol Peta &amp; Timeline ({selectedYear})</span>
             <Eye className="w-3.5 h-3.5 text-slate-400 ml-1" />
           </button>
         )}

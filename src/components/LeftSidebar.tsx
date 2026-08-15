@@ -739,43 +739,6 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
               />
             </div>
 
-            {/* Active Legend Palette Preview */}
-            <div className="bg-white border border-slate-200 rounded-xl p-3 space-y-2 shadow-xs">
-              <div className="flex items-center justify-between text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                <span>Palet {HAZARD_LAYERS[selectedHazard].name}</span>
-                <span className="text-[10px] text-emerald-700 font-mono">
-                  {hazardRenderMode === 'class' ? 'Raster Diskrit' : 'Raster Kontinu'}
-                </span>
-              </div>
-
-              <div className="space-y-1 font-sans">
-                {/* Top scale values: 0, 0.3, 0.6, 1 */}
-                <div className="flex justify-between text-[9px] font-mono font-bold text-slate-800 px-0.5">
-                  <span>0</span>
-                  <span className="-ml-1">0.3</span>
-                  <span className="ml-1">0.6</span>
-                  <span>1</span>
-                </div>
-
-                {/* Gradient scale bar */}
-                <div
-                  className="relative h-5 border-2 border-slate-900 overflow-hidden shadow-2xs"
-                  style={{
-                    background: 'linear-gradient(to right, #006400 0%, #7cb342 30%, #ffee58 35%, #ff9800 60%, #ef4444 100%)',
-                  }}
-                >
-                  <div className="absolute top-0 bottom-0 left-[30%] w-[1.5px] bg-slate-900" />
-                  <div className="absolute top-0 bottom-0 left-[60%] w-[1.5px] bg-slate-900" />
-                </div>
-
-                {/* Category boxes */}
-                <div className="grid grid-cols-[30%_30%_40%] border-2 border-slate-900 border-t-0 text-center font-extrabold text-[9px] tracking-wider text-slate-900 bg-white">
-                  <div className="py-0.5 border-r-2 border-slate-900">RENDAH</div>
-                  <div className="py-0.5 border-r-2 border-slate-900">SEDANG</div>
-                  <div className="py-0.5">TINGGI</div>
-                </div>
-              </div>
-            </div>
           </>
         ) : (
           /* RADAR INVEST TAB (DUNIA USAHA) */

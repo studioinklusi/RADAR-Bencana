@@ -12,6 +12,7 @@ import { LoginPage } from './components/LoginPage';
 import { AdminDashboardPage } from './components/AdminDashboardPage';
 
 import { ADMIN_BOUNDARIES } from './data/mockAdminBoundaries';
+import { DESA_BOUNDARIES } from './data/mockDesaBoundaries';
 import { AdminFeature, HazardType, ZonalStatistics, AIRiskAssessment, FacilityCategory, FacilitySubType, RadarInvestInput, RadarInvestResult, ChatMessage } from './types';
 import { calculateRadarInvest } from './utils/radarInvestCalculator';
 
@@ -341,11 +342,60 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
     setCurrentPath(path);
   };
 
-  // Compute Static Zonal Statistics when District or Hazard Layer Changes
+  // Compute Static Zonal Statistics when District, Village, or Hazard Layer Changes
   useEffect(() => {
     setIsMapLoading(true);
 
-    if (selectedDistrict) {
+    if (selectedVillage && selectedDistrict) {
+      // Village-level stats: proportionally derive from parent kecamatan
+      const p = selectedDistrict.properties;
+      const kecTotal = p.total_area_ha;
+      const kecTinggi = p.luas_risiko_tinggi_ha || Math.round(kecTotal * 0.35);
+      const kecSedang = p.luas_risiko_sedang_ha || Math.round(kecTotal * 0.40);
+      const kecRendah = p.luas_risiko_rendah_ha || Math.max(0, kecTotal - kecTinggi - kecSedang);
+
+      // Find the village feature from DESA_BOUNDARIES
+      const desaFeature = DESA_BOUNDARIES.features.find(
+        (f: any) => f.properties.name.toLowerCase() === selectedVillage.toLowerCase()
+      );
+      const desaArea = desaFeature?.properties?.total_area_ha || Math.round(kecTotal / 10);
+      const desaPop = desaFeature?.properties?.population || Math.round(p.population / 10);
+
+      // Proportional risk split based on kecamatan ratios
+      const ratioTinggi = kecTinggi / kecTotal;
+      const ratioSedang = kecSedang / kecTotal;
+      const ratioRendah = kecRendah / kecTotal;
+
+      const tinggi = Math.round(desaArea * ratioTinggi);
+      const sedang = Math.round(desaArea * ratioSedang);
+      const rendah = Math.max(0, desaArea - tinggi - sedang);
+      const total = desaArea;
+
+      const highPct = total > 0 ? Number(((tinggi / total) * 100).toFixed(1)) : 0;
+      const medPct = total > 0 ? Number(((sedang / total) * 100).toFixed(1)) : 0;
+      const lowPct = total > 0 ? Number(((rendah / total) * 100).toFixed(1)) : 0;
+
+      setStats({
+        districtId: desaFeature?.id || `DESA-${selectedVillage}`,
+        districtName: selectedVillage,
+        provinceName: p.province,
+        totalAreaHa: total,
+        highRiskHa: tinggi,
+        mediumRiskHa: sedang,
+        lowRiskHa: rendah,
+        highRiskPct: highPct,
+        mediumRiskPct: medPct,
+        lowRiskPct: lowPct,
+        affectedPopulation: desaPop,
+        hospitalsExposed: desaFeature?.properties?.hospital_count || 0,
+        schoolsExposed: desaFeature?.properties?.school_count || 0,
+        bridgesExposed: desaFeature?.properties?.bridge_count || 0,
+        riskCategory: tinggi > sedang ? 'High' : 'Moderate',
+        overallScore: total > 0 ? Math.round((tinggi / total) * 100) : 0,
+        isClipped: true,
+        computedAt: new Date().toISOString(),
+      });
+    } else if (selectedDistrict) {
       const p = selectedDistrict.properties;
       const tinggi = p.luas_risiko_tinggi_ha || Math.round(p.total_area_ha * 0.35);
       const sedang = p.luas_risiko_sedang_ha || Math.round(p.total_area_ha * 0.40);
@@ -428,7 +478,7 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
     }
 
     setIsMapLoading(false);
-  }, [selectedDistrict, selectedHazard]);
+  }, [selectedDistrict, selectedVillage, selectedHazard]);
 
   // Request Qwen AI Risk Assessment
   const handleRequestAiAnalysis = async () => {

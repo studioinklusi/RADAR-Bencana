@@ -1183,8 +1183,8 @@ export const MapContainer: React.FC<MapContainerProps> = ({
               title="Kelompokkan Batas Wilayah Peta"
             >
               <option value="Kecamatan & Desa">Zone: Kec &amp; Desa</option>
-              <option value="DAS (Daerah Aliran Sungai)">Zone: DAS (Sungai)</option>
-              <option value="Kelas Risk">Zone: Kelas Risiko</option>
+              <option value="DAS" disabled className="text-slate-400">Zone: DAS (Sungai) - Segera</option>
+              <option value="Kelas Risk" disabled className="text-slate-400">Zone: Kelas Risiko - Segera</option>
             </select>
             <ChevronDown className="w-3 h-3 text-slate-400 absolute right-1.5 pointer-events-none" />
           </div>

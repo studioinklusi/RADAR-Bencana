@@ -346,31 +346,47 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
   useEffect(() => {
     setIsMapLoading(true);
 
-    if (selectedVillage && selectedDistrict) {
-      // Village-level stats: proportionally derive from parent kecamatan
-      const p = selectedDistrict.properties;
-      const kecTotal = p.total_area_ha;
-      const kecTinggi = p.luas_risiko_tinggi_ha || Math.round(kecTotal * 0.35);
-      const kecSedang = p.luas_risiko_sedang_ha || Math.round(kecTotal * 0.40);
-      const kecRendah = p.luas_risiko_rendah_ha || Math.max(0, kecTotal - kecTinggi - kecSedang);
-
-      // Find the village feature from DESA_BOUNDARIES
+    if (selectedVillage) {
+      // Village-level stats: find desa feature and derive stats from parent kecamatan
       const desaFeature = DESA_BOUNDARIES.features.find(
         (f: any) => f.properties.name.toLowerCase() === selectedVillage.toLowerCase()
       );
-      const desaArea = desaFeature?.properties?.total_area_ha || Math.round(kecTotal / 10);
-      const desaPop = desaFeature?.properties?.population || Math.round(p.population / 10);
 
-      // Proportional risk split based on kecamatan ratios
-      const ratioTinggi = kecTinggi / kecTotal;
-      const ratioSedang = kecSedang / kecTotal;
-      const ratioRendah = kecRendah / kecTotal;
+      // Find parent kecamatan: use selectedDistrict if available, otherwise look up from desa's subdistrict
+      let parentKec = selectedDistrict;
+      if (!parentKec && desaFeature?.properties?.subdistrict) {
+        const subName = desaFeature.properties.subdistrict.toLowerCase();
+        parentKec = ADMIN_BOUNDARIES.features.find(
+          (f) => subName.includes(f.properties.name.toLowerCase()) || f.properties.name.toLowerCase().includes(subName)
+        ) || null;
+      }
 
-      const tinggi = Math.round(desaArea * ratioTinggi);
-      const sedang = Math.round(desaArea * ratioSedang);
-      const rendah = Math.max(0, desaArea - tinggi - sedang);
+      const desaArea = desaFeature?.properties?.total_area_ha || 100;
+      const desaPop = desaFeature?.properties?.population || 500;
+
+      let tinggi: number, sedang: number, rendah: number;
+
+      if (parentKec) {
+        const pk = parentKec.properties;
+        const kecTotal = pk.total_area_ha;
+        const kecTinggi = pk.luas_risiko_tinggi_ha || Math.round(kecTotal * 0.35);
+        const kecSedang = pk.luas_risiko_sedang_ha || Math.round(kecTotal * 0.40);
+
+        // Proportional risk split based on parent kecamatan ratios
+        const ratioTinggi = kecTinggi / kecTotal;
+        const ratioSedang = kecSedang / kecTotal;
+
+        tinggi = Math.round(desaArea * ratioTinggi);
+        sedang = Math.round(desaArea * ratioSedang);
+        rendah = Math.max(0, desaArea - tinggi - sedang);
+      } else {
+        // Fallback: default ratios
+        tinggi = Math.round(desaArea * 0.35);
+        sedang = Math.round(desaArea * 0.40);
+        rendah = Math.max(0, desaArea - tinggi - sedang);
+      }
+
       const total = desaArea;
-
       const highPct = total > 0 ? Number(((tinggi / total) * 100).toFixed(1)) : 0;
       const medPct = total > 0 ? Number(((sedang / total) * 100).toFixed(1)) : 0;
       const lowPct = total > 0 ? Number(((rendah / total) * 100).toFixed(1)) : 0;
@@ -378,7 +394,7 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
       setStats({
         districtId: desaFeature?.id || `DESA-${selectedVillage}`,
         districtName: selectedVillage,
-        provinceName: p.province,
+        provinceName: parentKec?.properties?.province || 'Jawa Tengah',
         totalAreaHa: total,
         highRiskHa: tinggi,
         mediumRiskHa: sedang,

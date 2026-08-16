@@ -373,49 +373,46 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
 
             {/* Accordion 3: LAYER BAHAYA BENCANA (GEE / TIF) */}
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
-              <div className="w-full px-3 py-2.5 flex items-center justify-between text-xs font-bold text-slate-800 bg-slate-50/80 border-b border-slate-200">
-                <button
-                  onClick={() => setExpandedSection(expandedSection === 'hazard' ? null : 'hazard')}
-                  className="flex items-center gap-2 uppercase tracking-wider text-[11px] text-slate-700 hover:text-slate-900"
-                >
+              <button
+                onClick={() => setExpandedSection(expandedSection === 'hazard' ? null : 'hazard')}
+                className="w-full px-3 py-2.5 flex items-center justify-between text-xs font-bold text-slate-800 hover:bg-slate-50 transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-2 uppercase tracking-wider text-[11px] text-slate-700">
                   <Flame className="w-3.5 h-3.5 text-amber-600" />
                   <span>LAYER BAHAYA BENCANA</span>
                   <Info className="w-3 h-3 text-slate-400" />
-                </button>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (onToggleHazardLayer) onToggleHazardLayer();
-                    }}
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-mono transition-all flex items-center gap-1 border ${
-                      showHazardLayer
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200 font-semibold'
-                        : 'bg-slate-100 text-slate-500 border-slate-200'
-                    }`}
-                    title={showHazardLayer ? 'Sembunyikan Layer Bahaya Bencana di Peta' : 'Tampilkan Layer Bahaya Bencana di Peta'}
-                  >
-                    <span className={`w-1.5 h-1.5 rounded-full ${showHazardLayer ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`}></span>
-                    <span>{showHazardLayer ? 'Tampil' : 'Sembunyi'}</span>
-                  </button>
-
-                  <button
-                    onClick={() => setExpandedSection(expandedSection === 'hazard' ? null : 'hazard')}
-                    className="p-0.5 hover:bg-slate-200 rounded"
-                  >
-                    {expandedSection === 'hazard' ? (
-                      <ChevronDown className="w-4 h-4 text-slate-400" />
-                    ) : (
-                      <ChevronRight className="w-4 h-4 text-slate-400" />
-                    )}
-                  </button>
                 </div>
-              </div>
+                <div className="flex items-center gap-1.5">
+                  <span className={`w-2 h-2 rounded-full ${showHazardLayer ? 'bg-amber-500 animate-pulse' : 'bg-slate-300'}`}></span>
+                  {expandedSection === 'hazard' ? (
+                    <ChevronDown className="w-4 h-4 text-slate-400" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4 text-slate-400" />
+                  )}
+                </div>
+              </button>
 
               {expandedSection === 'hazard' && (
-                <div className="p-2.5 bg-slate-50/40 space-y-2.5">
+                <div className="p-3 border-t border-slate-100 bg-slate-50/50 space-y-3">
+                  {/* Master Toggle */}
+                  <label className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-amber-300 transition-all shadow-xs">
+                    <span className="text-xs text-slate-800 flex items-center gap-2 font-medium">
+                      <input
+                        type="checkbox"
+                        checked={showHazardLayer}
+                        onChange={onToggleHazardLayer}
+                        className="rounded border-slate-300 text-amber-600 focus:ring-amber-500"
+                      />
+                      <span>Tampilkan Layer Bahaya Bencana</span>
+                    </span>
+                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
+                      showHazardLayer 
+                        ? 'text-amber-700 bg-amber-50 border-amber-200'
+                        : 'text-slate-500 bg-slate-100 border-slate-200'
+                    }`}>
+                      {showHazardLayer ? 'Aktif' : 'Non-Aktif'}
+                    </span>
+                  </label>
                   {/* Sub-layer Selector Tabs: Kelas Bahaya vs Indeks Bahaya */}
                   <div className="space-y-1">
                     <div className="text-[10px] font-mono uppercase text-slate-500 font-bold flex justify-between">

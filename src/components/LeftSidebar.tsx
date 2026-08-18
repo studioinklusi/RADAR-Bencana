@@ -353,7 +353,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                       </div>
 
                       <p className="text-[10.5px] text-slate-500 leading-snug px-0.5">
-                        Memuat data zonasi &amp; ketentuan KKPR resmi Dinas PUPR. Masuk sebagai petugas/admin untuk mengaktifkan poligon di peta.
+                        Memuat data zonasi &amp; ketentuan KKPR resmi Dinas PUPR. Masuk sebagai admin untuk mengaktifkan poligon di peta.
                       </p>
 
                       <button
@@ -361,7 +361,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                         className="w-full py-1.5 px-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold rounded-lg text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
                       >
                         <LogIn className="w-3.5 h-3.5" />
-                        <span>Masuk sebagai Admin / Petugas</span>
+                        <span>Masuk sebagai Admin</span>
                       </button>
                     </div>
                   )}

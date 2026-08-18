@@ -51,7 +51,7 @@ export const PolaRuangAuthModal: React.FC<PolaRuangAuthModalProps> = ({
             </p>
           </div>
           <p className="text-[11px] text-slate-500 leading-relaxed pl-6 border-t border-slate-200/60 pt-2">
-            Untuk mengaktifkan visualisasi poligon batas tata ruang di peta, silakan masuk menggunakan akun petugas atau administrator terverifikasi.
+            Untuk mengaktifkan visualisasi poligon batas tata ruang di peta, silakan masuk menggunakan akun administrator terverifikasi.
           </p>
         </div>
 
@@ -71,7 +71,7 @@ export const PolaRuangAuthModal: React.FC<PolaRuangAuthModalProps> = ({
             className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer"
           >
             <LogIn className="w-3.5 h-3.5" />
-            <span>Masuk Sekarang</span>
+            <span>Masuk sebagai Admin</span>
           </button>
         </div>
       </div>

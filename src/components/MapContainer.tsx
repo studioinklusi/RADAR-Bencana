@@ -735,14 +735,12 @@ export const MapContainer: React.FC<MapContainerProps> = ({
             const isCurrentVillage = selectedVillage && props.NAMA_DESA &&
               props.NAMA_DESA.toLowerCase().replace(/^(desa|kelurahan)\s+/, '') === selectedVillage.toLowerCase().replace(/^(desa|kelurahan)\s+/, '');
 
-            const isContinuous = hazardRenderMode === 'index';
-
             return {
-              fillColor,
-              fillOpacity: isContinuous ? 0 : (isCurrentVillage ? Math.min(0.9, opacity * 0.75 + 0.2) : opacity * 0.55),
-              color: isCurrentVillage ? '#ffffff' : (isContinuous ? 'transparent' : strokeColor),
-              weight: isCurrentVillage ? 1.8 : (isContinuous ? 0 : 0.4),
-              opacity: isCurrentVillage ? 1.0 : (isContinuous ? 0 : 0.6),
+              fillColor: 'transparent',
+              fillOpacity: 0,
+              color: isCurrentVillage ? '#ffffff' : 'transparent',
+              weight: isCurrentVillage ? 2 : 0,
+              opacity: isCurrentVillage ? 1.0 : 0,
             };
           },
           onEachFeature: (feature: any, polyLayer: L.Layer) => {

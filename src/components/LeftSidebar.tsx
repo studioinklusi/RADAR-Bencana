@@ -353,7 +353,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                       </div>
 
                       <p className="text-[10.5px] text-slate-500 leading-snug px-0.5">
-                        Memuat data zonasi &amp; ketentuan KKPR resmi Dinas PUPR. Masuk sebagai admin untuk mengaktifkan poligon di peta.
+                        Memuat data zonasi pola ruang resmi Kabupaten Banjarnegara. Masuk sebagai admin untuk mengaktifkan poligon di peta.
                       </p>
 
                       <button
@@ -410,7 +410,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
 
                   <p className="text-[10px] text-slate-500 leading-relaxed border-t border-slate-200 pt-2">
                     {isAdminLoggedIn
-                      ? 'Klik pada poligon Pola Ruang di peta untuk melihat detail zonasi RTRW & aturan KKPR Dinas PUPR.'
+                      ? 'Klik pada poligon Pola Ruang di peta untuk melihat detail zonasi dan status kawasan.'
                       : 'Informasi zonasi Pola Ruang hanya dapat divisualisasikan di peta setelah login.'}
                   </p>
                 </div>
@@ -793,7 +793,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                   <span>RADAR INVEST (DUNIA USAHA)</span>
                 </div>
                 <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-emerald-100 text-emerald-800 border border-emerald-300 font-semibold">
-                  KKPR &amp; Spatial
+                  Mitigasi &amp; Risiko Tapak
                 </span>
               </div>
               <p className="text-[11px] text-slate-600 leading-snug">

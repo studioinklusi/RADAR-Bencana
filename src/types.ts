@@ -179,7 +179,7 @@ export interface RadarInvestResult {
   subdistrictName: string;
   villageName: string;
   isProtectedZone: boolean;
-  zoneCategory: 'Kawasan Lindung / Hutan Konservasi' | 'Kawasan Budi Daya / Peruntukan Industri' | 'Kawasan Resapan Air / Penyangga' | 'Kawasan Sempadan Sungai / Pantai';
+  zoneCategory: 'Kawasan Lindung / Hutan Konservasi' | 'Kawasan Budi Daya / Peruntukan Industri' | 'Kawasan Resapan Air / Penyangga' | 'Kawasan Sempadan Sungai / Pantai' | 'Kawasan Sempadan Sungai / Lembah Serayu' | 'Kawasan Resapan Air / Lereng Perbukitan' | string;
   feasibilityStatus: 'TIDAK DIREKOMENDASIKAN (ZONA MERAH)' | 'BISA DIBANGUN DENGAN SYARAT KETAT (ZONA KUNING)' | 'DIREKOMENDASIKAN (ZONA HIJAU)';
   feasibilitySummary?: string;
   feasibilityReasons?: string[];
@@ -199,7 +199,10 @@ export interface RadarInvestResult {
     mediumRiskAreaHa: number;
     lowRiskAreaHa: number;
   };
-  kkprStatus: string;
+  siteRiskLevel: 'Rendah (Aman)' | 'Sedang (Waspada)' | 'Tinggi (Rawan Bencana)';
+  safetyScore: number;
+  structuralMitigations: string[];
+  nonStructuralMitigations: string[];
   mitigationNotes: string[];
   technicalMitigation?: string[];
   analyzedAt: string;
@@ -213,7 +216,8 @@ export interface PolaRuangProperties {
   sub_zona_pola_ruang: string;
   kabupaten_kota: string;
   luas_ha: number;
-  ketentuan_kkpr: string;
+  pedoman_zonasi?: string;
+  ketentuan_kkpr?: string;
   status_konservasi: string;
   color?: string;
   pola_ruang_raw?: string;

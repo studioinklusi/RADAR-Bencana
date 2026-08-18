@@ -643,10 +643,10 @@ export const MapContainer: React.FC<MapContainerProps> = ({
             </div>
 
             <div class="bg-slate-50 p-2 rounded-lg border border-slate-200/80 mb-2 space-y-1">
-              <div class="text-[8px] font-mono font-bold uppercase tracking-wider text-amber-700">
-                Ketentuan KKPR (Dinas PUPR)
+              <div class="text-[8px] font-mono font-bold uppercase tracking-wider text-teal-700">
+                Pedoman Zonasi Pola Ruang
               </div>
-              <p class="text-[10px] text-slate-700 leading-snug font-sans">${props.ketentuan_kkpr || 'Mengikuti regulasi KKPR RTRW Kabupaten Banjarnegara.'}</p>
+              <p class="text-[10px] text-slate-700 leading-snug font-sans">${props.pedoman_zonasi || props.ketentuan_kkpr || 'Mengikuti pedoman pola ruang Kabupaten Banjarnegara.'}</p>
             </div>
 
             <div class="flex items-center justify-between pt-1 border-t border-slate-100 text-[9px] font-mono">
@@ -1205,7 +1205,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
     const popupContent = `
       <div class="p-2 text-slate-800 font-sans max-w-xs space-y-1.5 bg-white/95 rounded-xl border border-slate-200 shadow-xl backdrop-blur">
-        <div class="text-[10px] text-emerald-700 font-mono font-bold uppercase">RADAR INVEST TAPAK</div>
+        <div class="text-[10px] text-emerald-700 font-mono font-bold uppercase">EVALUASI RISIKO TAPAK</div>
         <div class="font-bold text-xs text-slate-900">${projectName}</div>
         <div class="text-[10px] text-slate-600 font-mono">${villageName}, ${districtName}</div>
         <div class="text-[10px] text-slate-500 font-mono">X: ${lng}, Y: ${lat} • ${plotAreaHa} Ha</div>

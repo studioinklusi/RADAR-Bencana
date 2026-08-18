@@ -270,7 +270,7 @@ export const DataGuideModal: React.FC<DataGuideModalProps> = ({ isOpen, onClose 
               <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-1">
                 <span className="font-bold text-teal-400 block text-sm">Layer 2: Standalone SHP Pola Ruang &amp; Zonasi RTRW (Terpisah)</span>
                 <p>
-                  Layer khusus penataan Pola Ruang RTRW hasil pemetaan GIS/SHP. Memuat zonasi rinci Kawasan Lindung vs Kawasan Budi Daya beserta aturan Kesesuaian Kegiatan Pemanfaatan Ruang (KKPR).
+                  Layer khusus penataan Pola Ruang RTRW hasil pemetaan GIS/SHP. Memuat zonasi rinci Kawasan Lindung vs Kawasan Budi Daya beserta pedoman teknis pemanfaatan ruang.
                 </p>
               </div>
 
@@ -336,11 +336,11 @@ export const DataGuideModal: React.FC<DataGuideModalProps> = ({ isOpen, onClose 
                       <td className="p-3 font-mono text-slate-400">1250.5</td>
                     </tr>
                     <tr className="hover:bg-slate-800/30">
-                      <td className="p-3 font-mono font-bold text-teal-400">ketentuan_kkpr</td>
+                      <td className="p-3 font-mono font-bold text-teal-400">pedoman_zonasi</td>
                       <td className="p-3 font-mono text-slate-400">Text</td>
                       <td className="p-3 font-bold text-amber-400">Wajib</td>
-                      <td className="p-3">Aturan Kesesuaian Kegiatan Pemanfaatan Ruang Dinas PUPR.</td>
-                      <td className="p-3 font-mono text-slate-400">Dilarang Bangunan Non-Konservasi / KKPR Bersyarat</td>
+                      <td className="p-3">Pedoman teknis pemanfaatan ruang dan arahan peruntukan lahan.</td>
+                      <td className="p-3 font-mono text-slate-400">Kawasan Resapan Air / Konservasi / Budi Daya</td>
                     </tr>
                     <tr className="hover:bg-slate-800/30">
                       <td className="p-3 font-mono font-bold text-teal-400">status_konservasi</td>
@@ -662,11 +662,11 @@ export const DataGuideModal: React.FC<DataGuideModalProps> = ({ isOpen, onClose 
                       </td>
                     </tr>
                     <tr className="hover:bg-slate-800/30">
-                      <td className="p-3 font-mono font-bold text-emerald-400">rekomendasi_kkpr</td>
-                      <td className="p-3 font-mono text-slate-400">String</td>
+                      <td className="p-3 font-mono font-bold text-emerald-400">mitigasi_struktural</td>
+                      <td className="p-3 font-mono text-slate-400">Text List</td>
                       <td className="p-3 font-bold text-amber-400">Wajib</td>
-                      <td className="p-3">Status Kesesuaian Kegiatan Pemanfaatan Ruang Dinas PUPR &amp; BPN.</td>
-                      <td className="p-3 font-mono text-slate-400">KKPR Berpotensi Besar Ditolak PUPR</td>
+                      <td className="p-3">Paket rekomendasi rekayasa teknik fisik &amp; konstruksi sipil (DPT, drainase, dll).</td>
+                      <td className="p-3 font-mono text-slate-400">DPT kantilever, sub-drain lereng, rumput vetiver</td>
                     </tr>
                     <tr className="hover:bg-slate-800/30">
                       <td className="p-3 font-mono font-bold text-emerald-400">catatan_mitigasi_teknis</td>

@@ -38,7 +38,7 @@ export const PolaRuangAuthModal: React.FC<PolaRuangAuthModalProps> = ({
             Akses Layer Pola Ruang (RTRW)
           </h3>
           <p className="text-xs text-slate-500 mt-1 font-mono">
-            Kesesuaian Kegiatan Pemanfaatan Ruang (KKPR)
+            Data Zonasi Rencana Tata Ruang Wilayah
           </p>
         </div>
 

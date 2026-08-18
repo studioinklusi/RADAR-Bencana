@@ -553,10 +553,10 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-800">
                       <Briefcase className="w-4 h-4 text-emerald-600" />
-                      <span>ANALITIK RADAR INVEST</span>
+                      <span>ANALITIK KELAYAKAN TAPAK</span>
                     </div>
                     <span className="text-[9px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded font-mono font-bold">
-                      Dunia Usaha &amp; KKPR
+                      Evaluasi Risiko Tapak
                     </span>
                   </div>
 
@@ -579,11 +579,13 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
                   </div>
                 </div>
 
-                {/* Status Feasibility & KKPR */}
+                {/* Status Evaluasi Keamanan Tapak (Menggantikan KKPR) */}
                 <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3 shadow-xs">
                   <div className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center justify-between">
-                    <span>KESESUAIAN TATA RUANG (KKPR)</span>
-                    <ShieldAlert className="w-4 h-4 text-emerald-600" />
+                    <span>EVALUASI KEAMANAN &amp; RISIKO TAPAK</span>
+                    <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      Skor: {radarInvestResult.safetyScore}/100
+                    </span>
                   </div>
 
                   <div className={`p-3 rounded-xl border flex items-center gap-3 ${
@@ -602,21 +604,25 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
                     )}
                     <div>
                       <div className="text-xs font-extrabold">{radarInvestResult.feasibilityStatus}</div>
-                      <div className="text-[10px] opacity-90 mt-0.5 leading-snug">{radarInvestResult.kkprStatus}</div>
+                      <div className="text-[10px] opacity-90 mt-0.5 leading-snug">
+                        Tingkat Risiko: <strong>{radarInvestResult.siteRiskLevel}</strong> • {radarInvestResult.zoneCategory}
+                      </div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-                      <span className="text-[10px] text-slate-500 block font-mono">STATUS KAWASAN LINDUNG</span>
+                      <span className="text-[10px] text-slate-500 block font-mono">STATUS ZONA LINDUNG</span>
                       <span className={`font-bold flex items-center gap-1.5 mt-0.5 ${radarInvestResult.isProtectedZone ? 'text-rose-700' : 'text-emerald-700'}`}>
                         <span className={`w-2 h-2 rounded-full ${radarInvestResult.isProtectedZone ? 'bg-rose-600' : 'bg-emerald-600'}`}></span>
-                        <span>{radarInvestResult.isProtectedZone ? 'Kawasan Lindung' : 'Kawasan Budi Daya'}</span>
+                        <span>{radarInvestResult.isProtectedZone ? 'Zona Lindung' : 'Zona Budi Daya'}</span>
                       </span>
                     </div>
                     <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-                      <span className="text-[10px] text-slate-500 block font-mono">KATEGORI ZONA</span>
-                      <span className="font-bold text-slate-800">{radarInvestResult.zoneCategory}</span>
+                      <span className="text-[10px] text-slate-500 block font-mono">KATEGORI TUTUPAN</span>
+                      <span className="font-bold text-slate-800 truncate block" title={radarInvestResult.zoneCategory}>
+                        {radarInvestResult.zoneCategory}
+                      </span>
                     </div>
                   </div>
 
@@ -625,7 +631,7 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
                     <div className="pt-2 border-t border-slate-100 space-y-2">
                       <div className="text-[11px] font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
                         <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                        <span>ALASAN STATUS ZONA &amp; ANALISIS PENYEBAB</span>
+                        <span>ANALISIS KONDISI FISIK TAPAK</span>
                       </div>
 
                       {radarInvestResult.feasibilitySummary && (
@@ -661,6 +667,58 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
                       </div>
                     </div>
                   )}
+                </div>
+
+                {/* REKOMENDASI 1: MITIGASI STRUKTURAL (REKAYASA FISIK & SIPIL) */}
+                <div className="bg-white border border-teal-200 rounded-xl p-4 space-y-3 shadow-xs">
+                  <div className="flex items-center justify-between pb-1 border-b border-teal-100">
+                    <h4 className="text-xs font-extrabold text-teal-900 uppercase tracking-wider flex items-center gap-1.5">
+                      <Shield className="w-4 h-4 text-teal-600" />
+                      <span>MITIGASI STRUKTURAL (REKAYASA FISIK)</span>
+                    </h4>
+                    <span className="text-[9px] font-mono text-teal-700 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded font-bold">
+                      Fisik &amp; Sipil
+                    </span>
+                  </div>
+
+                  <p className="text-[10.5px] text-slate-500 leading-snug">
+                    Intervensi rekayasa teknik dan konstruksi sipil untuk memperkuat stabilitas lahan dan mereduksi dampak bahaya langsung.
+                  </p>
+
+                  <ul className="space-y-2">
+                    {radarInvestResult.structuralMitigations.map((item, idx) => (
+                      <li key={idx} className="bg-teal-50/50 p-2.5 rounded-lg border border-teal-200/80 text-[11px] text-slate-800 flex items-start gap-2 leading-relaxed">
+                        <Check className="w-3.5 h-3.5 text-teal-600 shrink-0 mt-0.5" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* REKOMENDASI 2: MITIGASI NON-STRUKTURAL (TATA KELOLA & WARGA) */}
+                <div className="bg-white border border-indigo-200 rounded-xl p-4 space-y-3 shadow-xs">
+                  <div className="flex items-center justify-between pb-1 border-b border-indigo-100">
+                    <h4 className="text-xs font-extrabold text-indigo-900 uppercase tracking-wider flex items-center gap-1.5">
+                      <Users className="w-4 h-4 text-indigo-600" />
+                      <span>MITIGASI NON-STRUKTURAL (TATA KELOLA)</span>
+                    </h4>
+                    <span className="text-[9px] font-mono text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded font-bold">
+                      EWS &amp; SOP
+                    </span>
+                  </div>
+
+                  <p className="text-[10.5px] text-slate-500 leading-snug">
+                    Pendekatan non-fisik melalui tata kelola, Early Warning System (EWS), SOP evakuasi darurat, dan peningkatan kapasitas warga/pekerja.
+                  </p>
+
+                  <ul className="space-y-2">
+                    {radarInvestResult.nonStructuralMitigations.map((item, idx) => (
+                      <li key={idx} className="bg-indigo-50/50 p-2.5 rounded-lg border border-indigo-200/80 text-[11px] text-slate-800 flex items-start gap-2 leading-relaxed">
+                        <Check className="w-3.5 h-3.5 text-indigo-600 shrink-0 mt-0.5" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
                 {/* STATISTIK LUAS (HA) */}

@@ -716,12 +716,14 @@ export const MapContainer: React.FC<MapContainerProps> = ({
             const isCurrentVillage = selectedVillage && props.NAMA_DESA &&
               props.NAMA_DESA.toLowerCase().replace(/^(desa|kelurahan)\s+/, '') === selectedVillage.toLowerCase().replace(/^(desa|kelurahan)\s+/, '');
 
+            const isContinuous = hazardRenderMode === 'index';
+
             return {
               fillColor,
-              fillOpacity: isCurrentVillage ? Math.min(0.9, opacity * 0.75 + 0.2) : opacity * 0.55,
-              color: isCurrentVillage ? '#ffffff' : strokeColor,
-              weight: isCurrentVillage ? 1.8 : 0.4,
-              opacity: isCurrentVillage ? 1.0 : 0.6,
+              fillOpacity: isContinuous ? 0 : (isCurrentVillage ? Math.min(0.9, opacity * 0.75 + 0.2) : opacity * 0.55),
+              color: isCurrentVillage ? '#ffffff' : (isContinuous ? 'transparent' : strokeColor),
+              weight: isCurrentVillage ? 1.8 : (isContinuous ? 0 : 0.4),
+              opacity: isCurrentVillage ? 1.0 : (isContinuous ? 0 : 0.6),
             };
           },
           onEachFeature: (feature: any, polyLayer: L.Layer) => {
@@ -822,7 +824,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         impactSpatialLayerRef.current = null;
       }
     };
-  }, [selectedHazard, showImpactOverlay, opacity, selectedVillage, groupingMode, adminBoundaries, onSelectDistrict, onSelectVillage, isPickingOnMap, onMapClickSelect]);
+  }, [selectedHazard, showImpactOverlay, opacity, selectedVillage, groupingMode, hazardRenderMode, adminBoundaries, onSelectDistrict, onSelectVillage, isPickingOnMap, onMapClickSelect]);
 
   // Render Interactive Disaster Incident Markers (Titik Bencana)
   useEffect(() => {

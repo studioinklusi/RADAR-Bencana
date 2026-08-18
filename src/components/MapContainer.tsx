@@ -311,10 +311,10 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         const isDesaMode = groupingMode === 'Desa';
         return {
           color: isSelected ? '#059669' : isDesaMode ? '#94a3b8' : '#475569',
-          weight: isSelected ? 3 : isDesaMode ? 1 : 1.5,
+          weight: isSelected ? 2.5 : isDesaMode ? 1 : 1.2,
           opacity: isSelected ? 1.0 : isDesaMode ? 0.4 : 0.75,
-          fillColor: isSelected ? '#10b981' : '#ffffff',
-          fillOpacity: isSelected ? 0.12 : 0.02,
+          fillColor: 'transparent',
+          fillOpacity: 0,
           dashArray: isSelected ? '' : '3, 3',
         };
       },
@@ -1455,12 +1455,12 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           {/* Lock / Unlock Map Panning Button */}
           <button
             onClick={() => setIsMapLocked(!isMapLocked)}
-            className={`p-1 rounded-xl transition-all flex items-center gap-1 text-xs px-2 font-semibold cursor-pointer shrink-0 ${
+            className={`p-1 rounded-xl transition-all flex items-center gap-1.5 text-xs px-2.5 font-semibold cursor-pointer shrink-0 ${
               isMapLocked
-                ? 'bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 shadow-xs'
-                : 'text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/80'
+                ? 'bg-rose-50 border border-rose-300 text-rose-700 hover:bg-rose-100 shadow-xs'
+                : 'bg-emerald-50/50 hover:bg-emerald-100/80 border border-emerald-200/80 text-emerald-800'
             }`}
-            title={isMapLocked ? 'Buka Kunci Peta (Izinkan geser dan navigasi peta)' : 'Kunci Peta (Cegah peta tergeser)'}
+            title={isMapLocked ? 'Peta Terkunci (Klik untuk membuka kunci agar peta bisa digeser)' : 'Peta Bebas Digeser (Klik untuk mengunci posisi peta)'}
           >
             {isMapLocked ? (
               <>
@@ -1469,8 +1469,8 @@ export const MapContainer: React.FC<MapContainerProps> = ({
               </>
             ) : (
               <>
-                <Unlock className="w-3.5 h-3.5 text-slate-500" />
-                <span className="hidden sm:inline font-mono text-[11px]">Kunci</span>
+                <Unlock className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="font-mono text-[11px] font-medium text-emerald-800">Bebas</span>
               </>
             )}
           </button>

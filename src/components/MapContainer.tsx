@@ -78,6 +78,9 @@ interface MapContainerProps {
   customUploadedLayers?: any[];
   groupingMode?: string;
   onChangeGroupingMode?: (mode: string) => void;
+  showBuildings?: boolean;
+  onToggleBuildings?: () => void;
+  onBuildingsLoadingChange?: (loading: boolean) => void;
   isFullscreen?: boolean;
   onToggleFullscreen?: () => void;
 }
@@ -98,6 +101,9 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   opacity,
   showAdminBoundaries,
   showPolaRuang = true,
+  showBuildings = false,
+  onToggleBuildings,
+  onBuildingsLoadingChange,
   showIncidents,
   onToggleIncidents,
   selectedIncidentHazards,
@@ -133,6 +139,8 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   const facilitiesLayerRef = useRef<L.LayerGroup | null>(null);
   const investLayerRef = useRef<L.LayerGroup | null>(null);
   const customUploadedLayerGroupRef = useRef<L.LayerGroup | null>(null);
+  const buildingsLayerRef = useRef<L.LayerGroup | null>(null);
+  const loadedBuildingChunksRef = useRef<Set<string>>(new Set());
 
   const [mouseCoords, setMouseCoords] = useState<{ lat: number; lng: number }>({
     lat: -6.81482,
@@ -672,6 +680,145 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
     polaRuangLayerRef.current = layer;
   }, [showPolaRuang, polaRuangGeoJson, isPickingOnMap, onMapClickSelect]);
+
+  // Render 465k Building Footprints with Viewport Bounding Box Chunking
+  useEffect(() => {
+    if (!leafletMap.current) return;
+    const map = leafletMap.current;
+
+    if (buildingsLayerRef.current) {
+      map.removeLayer(buildingsLayerRef.current);
+      buildingsLayerRef.current = null;
+    }
+    loadedBuildingChunksRef.current.clear();
+
+    if (!showBuildings) return;
+
+    const layerGroup = L.layerGroup().addTo(map);
+    buildingsLayerRef.current = layerGroup;
+
+    let isCancelled = false;
+    if (onBuildingsLoadingChange) onBuildingsLoadingChange(true);
+
+    const loadVisibleChunks = async () => {
+      if (isCancelled || !leafletMap.current || !showBuildings) return;
+      const currentBounds = map.getBounds();
+      const currentZoom = map.getZoom();
+
+      const minLat = currentBounds.getSouth();
+      const maxLat = currentBounds.getNorth();
+      const minLng = currentBounds.getWest();
+      const maxLng = currentBounds.getEast();
+
+      const GRID_SIZE = 0.04;
+      const minGx = Math.floor((minLng - 109.30) / GRID_SIZE);
+      const maxGx = Math.floor((maxLng - 109.30) / GRID_SIZE);
+      const minGy = Math.floor((minLat - (-7.65)) / GRID_SIZE);
+      const maxGy = Math.floor((maxLat - (-7.65)) / GRID_SIZE);
+
+      const targetChunks: string[] = [];
+      for (let gx = minGx; gx <= maxGx; gx++) {
+        for (let gy = minGy; gy <= maxGy; gy++) {
+          const cellId = `chunk_${gx}_${gy}`;
+          if (!loadedBuildingChunksRef.current.has(cellId)) {
+            targetChunks.push(cellId);
+          }
+        }
+      }
+
+      if (targetChunks.length === 0) {
+        if (onBuildingsLoadingChange) onBuildingsLoadingChange(false);
+        return;
+      }
+
+      // Limit concurrent chunk fetches
+      for (const cellId of targetChunks.slice(0, 15)) {
+        if (isCancelled) break;
+        loadedBuildingChunksRef.current.add(cellId);
+
+        try {
+          const res = await fetch(`/data/buildings_chunks/${cellId}.json`);
+          if (!res.ok) continue;
+          const chunkData = await res.json();
+          if (isCancelled || !buildingsLayerRef.current) break;
+
+          L.geoJSON(chunkData, {
+            style: (feat: any) => {
+              const risk = feat?.properties?.risk || 'Rendah';
+              const color = risk === 'Tinggi' ? '#ef4444' : risk === 'Sedang' ? '#f59e0b' : '#10b981';
+              return {
+                fillColor: color,
+                fillOpacity: 0.7,
+                color: color,
+                weight: 1,
+                opacity: 0.9,
+              };
+            },
+            onEachFeature: (feat: any, polyLayer: any) => {
+              const props = feat?.properties || {};
+              const risk = props.risk || 'Rendah';
+              const badgeBg = risk === 'Tinggi' ? 'bg-rose-100 text-rose-800 border-rose-300' : risk === 'Sedang' ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-emerald-100 text-emerald-800 border-emerald-300';
+
+              polyLayer.bindTooltip(
+                `<div class="p-1 text-xs font-sans">
+                  <b>Tapak Bangunan</b> • ${props.area_m2 || 0} m²
+                  <div class="text-[10px] font-mono mt-0.5">Risiko: <span class="font-bold">${risk}</span></div>
+                </div>`,
+                { sticky: true }
+              );
+
+              polyLayer.bindPopup(`
+                <div class="p-3 font-sans w-56 text-slate-800 bg-white rounded-xl border border-slate-200 shadow-xl">
+                  <div class="flex items-center justify-between gap-1 mb-2 pb-1 border-b border-slate-100">
+                    <span class="text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${badgeBg}">
+                      ZONA ${risk.toUpperCase()}
+                    </span>
+                    <span class="text-[9px] font-mono text-slate-400">ID: ${(props.id || '').slice(-6)}</span>
+                  </div>
+                  <div class="space-y-1 text-xs">
+                    <div class="flex justify-between">
+                      <span class="text-slate-500 text-[11px]">Luas Tapak:</span>
+                      <strong class="font-mono text-emerald-700">${props.area_m2 || 0} m²</strong>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-slate-500 text-[11px]">Tingkat Risiko:</span>
+                      <strong class="${risk === 'Tinggi' ? 'text-rose-600' : risk === 'Sedang' ? 'text-amber-600' : 'text-emerald-600'}">${risk}</strong>
+                    </div>
+                    ${props.plus_code ? `
+                    <div class="pt-1 border-t border-slate-100 text-[10px] font-mono text-slate-500">
+                      Plus Code: <span class="text-slate-700 font-bold">${props.plus_code}</span>
+                    </div>` : ''}
+                  </div>
+                </div>
+              `);
+            }
+          }).addTo(buildingsLayerRef.current);
+        } catch (e) {
+          // ignore missing empty chunks
+        }
+      }
+
+      if (onBuildingsLoadingChange) onBuildingsLoadingChange(false);
+    };
+
+    loadVisibleChunks();
+
+    const handleMove = () => {
+      loadVisibleChunks();
+    };
+
+    map.on('moveend', handleMove);
+
+    return () => {
+      isCancelled = true;
+      map.off('moveend', handleMove);
+      if (buildingsLayerRef.current) {
+        map.removeLayer(buildingsLayerRef.current);
+        buildingsLayerRef.current = null;
+      }
+      if (onBuildingsLoadingChange) onBuildingsLoadingChange(false);
+    };
+  }, [showBuildings]);
 
   // Render Real 30-meter Disaster Risk Index Raster Overlay (from INDEKS BENCANA 30 GeoTIFFs)
   useEffect(() => {

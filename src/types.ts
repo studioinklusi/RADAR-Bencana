@@ -66,6 +66,10 @@ export interface ZonalStatistics {
   popRendah?: number;
   popSedang?: number;
   popTinggi?: number;
+  totalBuildings?: number;
+  buildingsTinggi?: number;
+  buildingsSedang?: number;
+  buildingsRendah?: number;
   dominantRiskClass?: 'Rendah' | 'Sedang' | 'Tinggi';
   dataSource?: 'dasimetrik' | 'estimasi';
   hospitalsExposed: number;
@@ -75,6 +79,30 @@ export interface ZonalStatistics {
   overallScore: number; // 0 - 100
   isClipped: boolean;
   computedAt: string;
+}
+
+export interface BuildingDistrictStat {
+  district: string;
+  totalBuildings: number;
+  totalAreaM2: number;
+  highRisk: number;
+  medRisk: number;
+  lowRisk: number;
+}
+
+export interface BuildingSummaryStats {
+  totalBuildings: number;
+  totalAreaM2: number;
+  totalAreaHa: number;
+  overallRiskBreakdown: {
+    highRiskBuildings: number;
+    highRiskPct: number;
+    mediumRiskBuildings: number;
+    mediumRiskPct: number;
+    lowRiskBuildings: number;
+    lowRiskPct: number;
+  };
+  districtStats: Record<string, BuildingDistrictStat>;
 }
 
 export interface MapLayerResponse {

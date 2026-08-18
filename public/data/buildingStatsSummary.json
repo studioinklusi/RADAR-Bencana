@@ -1,0 +1,175 @@
+{
+  "totalBuildings": 465806,
+  "totalAreaM2": 40985909.36,
+  "totalAreaHa": 4098.59,
+  "overallRiskBreakdown": {
+    "highRiskBuildings": 344747,
+    "highRiskPct": 74.0,
+    "mediumRiskBuildings": 59746,
+    "mediumRiskPct": 12.8,
+    "lowRiskBuildings": 61313,
+    "lowRiskPct": 13.2
+  },
+  "districtStats": {
+    "Batur": {
+      "district": "Batur",
+      "totalBuildings": 35583,
+      "totalAreaM2": 2704109.834543645,
+      "highRisk": 0,
+      "medRisk": 0,
+      "lowRisk": 35583
+    },
+    "Pejawaran": {
+      "district": "Pejawaran",
+      "totalBuildings": 14717,
+      "totalAreaM2": 1221452.8988669761,
+      "highRisk": 3754,
+      "medRisk": 7216,
+      "lowRisk": 3747
+    },
+    "Wanayasa": {
+      "district": "Wanayasa",
+      "totalBuildings": 28986,
+      "totalAreaM2": 2830649.0191614856,
+      "highRisk": 3188,
+      "medRisk": 25798,
+      "lowRisk": 0
+    },
+    "Kalibening": {
+      "district": "Kalibening",
+      "totalBuildings": 22458,
+      "totalAreaM2": 1902404.4097840786,
+      "highRisk": 0,
+      "medRisk": 12349,
+      "lowRisk": 10109
+    },
+    "Pandanarum": {
+      "district": "Pandanarum",
+      "totalBuildings": 879,
+      "totalAreaM2": 76681.52180242538,
+      "highRisk": 0,
+      "medRisk": 0,
+      "lowRisk": 879
+    },
+    "Karangkobar": {
+      "district": "Karangkobar",
+      "totalBuildings": 12993,
+      "totalAreaM2": 1250011.4233812687,
+      "highRisk": 10591,
+      "medRisk": 2402,
+      "lowRisk": 0
+    },
+    "Pagentan": {
+      "district": "Pagentan",
+      "totalBuildings": 2365,
+      "totalAreaM2": 213029.07053399086,
+      "highRisk": 2365,
+      "medRisk": 0,
+      "lowRisk": 0
+    },
+    "Banjarmangu": {
+      "district": "Banjarmangu",
+      "totalBuildings": 74746,
+      "totalAreaM2": 7337867.986356351,
+      "highRisk": 71645,
+      "medRisk": 2781,
+      "lowRisk": 320
+    },
+    "Punggelan": {
+      "district": "Punggelan",
+      "totalBuildings": 66542,
+      "totalAreaM2": 6078589.465071826,
+      "highRisk": 55507,
+      "medRisk": 360,
+      "lowRisk": 10675
+    },
+    "Madukara": {
+      "district": "Madukara",
+      "totalBuildings": 1966,
+      "totalAreaM2": 202014.10052251816,
+      "highRisk": 1966,
+      "medRisk": 0,
+      "lowRisk": 0
+    },
+    "Banjarnegara": {
+      "district": "Banjarnegara",
+      "totalBuildings": 2296,
+      "totalAreaM2": 208382.88947963715,
+      "highRisk": 2296,
+      "medRisk": 0,
+      "lowRisk": 0
+    },
+    "Sigaluh": {
+      "district": "Sigaluh",
+      "totalBuildings": 7765,
+      "totalAreaM2": 696234.7166571617,
+      "highRisk": 7765,
+      "medRisk": 0,
+      "lowRisk": 0
+    },
+    "Bawang": {
+      "district": "Bawang",
+      "totalBuildings": 14346,
+      "totalAreaM2": 1402521.6592142582,
+      "highRisk": 14346,
+      "medRisk": 0,
+      "lowRisk": 0
+    },
+    "Rakit": {
+      "district": "Rakit",
+      "totalBuildings": 47271,
+      "totalAreaM2": 4121627.6198069635,
+      "highRisk": 47271,
+      "medRisk": 0,
+      "lowRisk": 0
+    },
+    "Purwanegara": {
+      "district": "Purwanegara",
+      "totalBuildings": 27183,
+      "totalAreaM2": 2124186.647375896,
+      "highRisk": 27183,
+      "medRisk": 0,
+      "lowRisk": 0
+    },
+    "Mandiraja": {
+      "district": "Mandiraja",
+      "totalBuildings": 30684,
+      "totalAreaM2": 2584387.877881564,
+      "highRisk": 30684,
+      "medRisk": 0,
+      "lowRisk": 0
+    },
+    "Purwareja Klampok": {
+      "district": "Purwareja Klampok",
+      "totalBuildings": 34167,
+      "totalAreaM2": 2757764.0700035985,
+      "highRisk": 34167,
+      "medRisk": 0,
+      "lowRisk": 0
+    },
+    "Susukan": {
+      "district": "Susukan",
+      "totalBuildings": 9172,
+      "totalAreaM2": 688509.1515202522,
+      "highRisk": 9172,
+      "medRisk": 0,
+      "lowRisk": 0
+    },
+    "Pagedongan": {
+      "district": "Pagedongan",
+      "totalBuildings": 7364,
+      "totalAreaM2": 679871.602227211,
+      "highRisk": 7364,
+      "medRisk": 0,
+      "lowRisk": 0
+    },
+    "Lainnya": {
+      "district": "Lainnya",
+      "totalBuildings": 24323,
+      "totalAreaM2": 1905613.393262507,
+      "highRisk": 15483,
+      "medRisk": 8840,
+      "lowRisk": 0
+    }
+  }
+}

@@ -11,6 +11,7 @@ import { FloatingAiChatButton } from './components/FloatingAiChatButton';
 import { LoginPage } from './components/LoginPage';
 import { AdminDashboardPage } from './components/AdminDashboardPage';
 import { PolaRuangAuthModal } from './components/PolaRuangAuthModal';
+import { BuildingLoadingModal } from './components/BuildingLoadingModal';
 
 import { ADMIN_BOUNDARIES } from './data/mockAdminBoundaries';
 import { DESA_BOUNDARIES } from './data/mockDesaBoundaries';
@@ -48,6 +49,8 @@ export default function App() {
     }
   });
   const [isPolaRuangAuthModalOpen, setIsPolaRuangAuthModalOpen] = useState<boolean>(false);
+  const [showBuildings, setShowBuildings] = useState<boolean>(false); // Default OFF for instant loading
+  const [isBuildingsLoading, setIsBuildingsLoading] = useState<boolean>(false);
   const [showIncidents, setShowIncidents] = useState<boolean>(true);
   const [selectedIncidentHazards, setSelectedIncidentHazards] = useState<HazardType[]>([
     'landslide',
@@ -942,6 +945,9 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
             onToggleFacilityCategory={handleToggleFacilityCategory}
             selectedFacilitySubTypes={selectedFacilitySubTypes}
             onToggleFacilitySubType={handleToggleFacilitySubType}
+            showBuildings={showBuildings}
+            onToggleBuildings={() => setShowBuildings(!showBuildings)}
+            isBuildingsLoading={isBuildingsLoading}
             onRequestAiAnalysis={handleRequestAiAnalysis}
             onExportData={handleExportData}
             isAiLoading={isAiLoading}
@@ -987,6 +993,9 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
           onToggleFacilities={() => setShowFacilities(!showFacilities)}
           selectedFacilityCategories={selectedFacilityCategories}
           selectedFacilitySubTypes={selectedFacilitySubTypes}
+          showBuildings={showBuildings}
+          onToggleBuildings={() => setShowBuildings(!showBuildings)}
+          onBuildingsLoadingChange={setIsBuildingsLoading}
           isMapLoading={isMapLoading}
           onResetView={handleResetView}
           radarInvestResult={radarInvestResult}
@@ -1071,6 +1080,12 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
           setIsPolaRuangAuthModalOpen(false);
           navigateTo('/login');
         }}
+      />
+
+      {/* Building Footprints Loading UX Progress Modal */}
+      <BuildingLoadingModal
+        isOpen={isBuildingsLoading}
+        onClose={() => setIsBuildingsLoading(false)}
       />
     </div>
   );

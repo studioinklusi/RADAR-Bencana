@@ -43,7 +43,8 @@ import {
   Unlock,
   LogIn,
   ShieldCheck,
-  ArrowRight
+  ArrowRight,
+  Home
 } from 'lucide-react';
 import { HazardType, FacilityCategory, FacilitySubType, RadarInvestInput, RadarInvestResult, ChatMessage, AdminFeature, ZonalStatistics } from '../types';
 import { HAZARD_LAYERS } from '../data/hazardLayers';
@@ -73,6 +74,9 @@ interface LeftSidebarProps {
   onToggleFacilityCategory: (category: FacilityCategory) => void;
   selectedFacilitySubTypes: FacilitySubType[];
   onToggleFacilitySubType: (subType: FacilitySubType) => void;
+  showBuildings?: boolean;
+  onToggleBuildings?: () => void;
+  isBuildingsLoading?: boolean;
   onRequestAiAnalysis: () => void;
   onExportData: () => void;
   isAiLoading: boolean;
@@ -119,6 +123,9 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
   onToggleFacilityCategory,
   selectedFacilitySubTypes,
   onToggleFacilitySubType,
+  showBuildings = false,
+  onToggleBuildings,
+  isBuildingsLoading = false,
   onRequestAiAnalysis,
   onExportData,
   isAiLoading,
@@ -136,7 +143,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
   onOpenMaximizedChat,
 }) => {
   const [activeTab, setActiveTab] = useState<'tema' | 'invest'>('tema');
-  const [expandedSection, setExpandedSection] = useState<'wilayah' | 'polaruang' | 'hazard' | 'incidents' | 'facilities' | null>('hazard');
+  const [expandedSection, setExpandedSection] = useState<'wilayah' | 'polaruang' | 'hazard' | 'incidents' | 'facilities' | 'buildings' | null>('hazard');
 
   // Form state for Radar Invest (Default to Banjarnegara Pusat)
   const [investLat, setInvestLat] = useState<number>(-7.3970);
@@ -757,6 +764,69 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
 
                   <p className="text-[10px] text-slate-500 leading-relaxed border-t border-slate-200 pt-2">
                     Dua kategori data spasial fasilitas ini membantu pemetaan evakuasi dan kesiapsiagaan tanggap darurat di wilayah terdampak.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Accordion 6: BANGUNAN (465K FOOTPRINTS) */}
+            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+              <button
+                onClick={() => setExpandedSection(expandedSection === 'buildings' ? null : 'buildings')}
+                className="w-full px-3 py-2.5 flex items-center justify-between text-xs font-bold text-slate-800 hover:bg-slate-50 transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-2 uppercase tracking-wider text-[11px] text-slate-700 min-w-0">
+                  <Home className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span className="whitespace-nowrap">TAPAK BANGUNAN</span>
+                  <Info className="w-3 h-3 text-slate-400 shrink-0" />
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="text-[9px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-1.5 py-0.5 rounded font-bold">
+                    465k Unit
+                  </span>
+                  <span className={`w-2 h-2 rounded-full ${showBuildings ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`}></span>
+                  {expandedSection === 'buildings' ? (
+                    <ChevronDown className="w-4 h-4 text-slate-400" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4 text-slate-400" />
+                  )}
+                </div>
+              </button>
+
+              {expandedSection === 'buildings' && (
+                <div className="p-3 border-t border-slate-100 bg-slate-50/50 space-y-3">
+                  {/* Master Toggle */}
+                  <label className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-emerald-300 transition-all shadow-xs">
+                    <span className="text-xs text-slate-800 flex items-center gap-2 font-medium">
+                      <input
+                        type="checkbox"
+                        checked={showBuildings}
+                        onChange={onToggleBuildings}
+                        className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                      />
+                      <span>Tampilkan 465k Tapak Bangunan</span>
+                    </span>
+                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
+                      showBuildings 
+                        ? 'text-emerald-700 bg-emerald-50 border-emerald-200 font-semibold'
+                        : 'text-slate-500 bg-slate-100 border-slate-200'
+                    }`}>
+                      {showBuildings ? 'Aktif' : 'Non-Aktif'}
+                    </span>
+                  </label>
+
+                  <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-[10.5px] text-slate-600 space-y-1.5">
+                    <div className="flex items-center justify-between text-[10px] font-mono font-bold text-slate-700">
+                      <span>Sumber: Google Open Buildings AI</span>
+                      <span className="text-emerald-700">Banjarnegara</span>
+                    </div>
+                    <p className="text-slate-500 text-[10px] leading-snug">
+                      Memuat 465.806 tapak fisik atap bangunan dengan klasifikasi warna risiko bencana (Merah = Tinggi, Kuning = Sedang, Hijau = Rendah).
+                    </p>
+                  </div>
+
+                  <p className="text-[10px] text-slate-500 leading-relaxed border-t border-slate-200 pt-2">
+                    💡 <strong>Tips:</strong> Perbesar peta (zoom in) ke area pemukiman desa/kota untuk melihat detail poligon atap dan tingkat bahaya per bangunan.
                   </p>
                 </div>
               )}

@@ -36,7 +36,8 @@ import {
   Waves,
   Zap,
   Ban,
-  CheckCircle2
+  CheckCircle2,
+  Home
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { AdminFeature, ZonalStatistics, AIRiskAssessment, HazardType, FacilitySubType, RadarInvestResult } from '../types';
@@ -88,6 +89,17 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
   }, [aiAssessment, isAiLoading]);
 
   const hazardConfig = HAZARD_LAYERS[selectedHazard];
+  const [buildingSummary, setBuildingSummary] = useState<any>(null);
+
+  useEffect(() => {
+    fetch('/data/buildingStatsSummary.json')
+      .then((r) => r.json())
+      .then((d) => setBuildingSummary(d))
+      .catch(() => {});
+  }, []);
+
+  const currentDistrictName = selectedDistrict?.properties?.name?.replace(/^(kecamatan|desa|kabupaten)\s+/i, '') || '';
+  const currentDistrictBuildingStats = buildingSummary?.districtStats?.[currentDistrictName] || null;
 
   // Filter facilities clipped by selected district
   const districtFacilities = MOCK_FACILITIES.filter((fac) => {
@@ -395,6 +407,69 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
                 }`}>
                   {stats?.dominantRiskClass || 'Sedang'}
                 </span>
+              </div>
+            </div>
+
+            {/* ESTIMASI FISIK TAPAK BANGUNAN (465K DATASET) */}
+            <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3 shadow-xs">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                <div>
+                  <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <Home className="w-4 h-4 text-emerald-600" />
+                    <span>PAPARAN FISIK TAPAK BANGUNAN</span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 font-mono mt-0.5">
+                    Google Open Buildings AI • 465k Footprints
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-extrabold text-slate-900 font-mono">
+                    {(currentDistrictBuildingStats?.totalBuildings || buildingSummary?.totalBuildings || 465806).toLocaleString()}
+                  </div>
+                  <div className="text-[9px] text-slate-500 font-mono">Unit Bangunan</div>
+                </div>
+              </div>
+
+              {/* Breakdown per Kelas */}
+              <div className="space-y-1.5 text-xs font-mono">
+                <div className="flex items-center justify-between p-2 rounded-lg bg-rose-50/80 border border-rose-200">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0"></span>
+                    <span className="font-semibold text-rose-900 text-[11px]">Bangunan di Zona Tinggi:</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-bold text-rose-900">
+                      {(currentDistrictBuildingStats?.highRisk ?? buildingSummary?.overallRiskBreakdown?.highRiskBuildings ?? 344747).toLocaleString()}
+                    </span>
+                    <span className="text-rose-700 text-[10px] ml-1">unit</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-2 rounded-lg bg-amber-50/80 border border-amber-200">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0"></span>
+                    <span className="font-semibold text-amber-900 text-[11px]">Bangunan di Zona Sedang:</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-bold text-amber-900">
+                      {(currentDistrictBuildingStats?.medRisk ?? buildingSummary?.overallRiskBreakdown?.mediumRiskBuildings ?? 59746).toLocaleString()}
+                    </span>
+                    <span className="text-amber-700 text-[10px] ml-1">unit</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-2 rounded-lg bg-emerald-50/80 border border-emerald-200">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                    <span className="font-semibold text-emerald-900 text-[11px]">Bangunan di Zona Rendah:</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-bold text-emerald-900">
+                      {(currentDistrictBuildingStats?.lowRisk ?? buildingSummary?.overallRiskBreakdown?.lowRiskBuildings ?? 61313).toLocaleString()}
+                    </span>
+                    <span className="text-emerald-700 text-[10px] ml-1">unit</span>
+                  </div>
+                </div>
               </div>
             </div>
 

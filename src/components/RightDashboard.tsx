@@ -669,14 +669,14 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
                   )}
                 </div>
 
-                {/* REKOMENDASI 1: MITIGASI STRUKTURAL (REKAYASA FISIK & SIPIL) */}
+                {/* REKOMENDASI 1: MITIGASI STRUKTURAL */}
                 <div className="bg-white border border-teal-200 rounded-xl p-4 space-y-3 shadow-xs">
                   <div className="flex items-center justify-between pb-1 border-b border-teal-100">
-                    <h4 className="text-xs font-extrabold text-teal-900 uppercase tracking-wider flex items-center gap-1.5">
-                      <Shield className="w-4 h-4 text-teal-600" />
-                      <span>MITIGASI STRUKTURAL (REKAYASA FISIK)</span>
+                    <h4 className="text-xs font-extrabold text-teal-900 uppercase tracking-wider flex items-center gap-1.5 min-w-0">
+                      <Shield className="w-4 h-4 text-teal-600 shrink-0" />
+                      <span className="truncate">MITIGASI STRUKTURAL</span>
                     </h4>
-                    <span className="text-[9px] font-mono text-teal-700 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded font-bold">
+                    <span className="text-[9px] font-mono text-teal-700 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded font-bold shrink-0">
                       Fisik &amp; Sipil
                     </span>
                   </div>
@@ -695,15 +695,15 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
                   </ul>
                 </div>
 
-                {/* REKOMENDASI 2: MITIGASI NON-STRUKTURAL (TATA KELOLA & WARGA) */}
+                {/* REKOMENDASI 2: MITIGASI NON-STRUKTURAL */}
                 <div className="bg-white border border-indigo-200 rounded-xl p-4 space-y-3 shadow-xs">
                   <div className="flex items-center justify-between pb-1 border-b border-indigo-100">
-                    <h4 className="text-xs font-extrabold text-indigo-900 uppercase tracking-wider flex items-center gap-1.5">
-                      <Users className="w-4 h-4 text-indigo-600" />
-                      <span>MITIGASI NON-STRUKTURAL (TATA KELOLA)</span>
+                    <h4 className="text-xs font-extrabold text-indigo-900 uppercase tracking-wider flex items-center gap-1.5 min-w-0">
+                      <Users className="w-4 h-4 text-indigo-600 shrink-0" />
+                      <span className="truncate">MITIGASI NON-STRUKTURAL</span>
                     </h4>
-                    <span className="text-[9px] font-mono text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded font-bold">
-                      EWS &amp; SOP
+                    <span className="text-[9px] font-mono text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded font-bold shrink-0">
+                      Tata Kelola &amp; EWS
                     </span>
                   </div>
 

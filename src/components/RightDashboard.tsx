@@ -103,28 +103,40 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
   const countBySubType = (subType: FacilitySubType) => 
     districtFacilities.filter((f) => f.subType === subType).length;
 
+  // Check if this region has zero hazard exposure
+  const isZeroRisk = stats && stats.highRiskHa === 0 && stats.mediumRiskHa === 0 && stats.lowRiskHa === 0;
+
   // Prepare chart data matching MapBiomas Sunburst/Donut style (3 hazard classes)
   const chartData = stats
-    ? [
-        {
-          name: 'Risiko Tinggi',
-          value: stats.highRiskHa,
-          pct: stats.highRiskPct,
-          color: hazardConfig.colorPalette.high,
-        },
-        {
-          name: 'Risiko Sedang',
-          value: stats.mediumRiskHa,
-          pct: stats.mediumRiskPct,
-          color: hazardConfig.colorPalette.medium,
-        },
-        {
-          name: 'Risiko Rendah',
-          value: stats.lowRiskHa,
-          pct: stats.lowRiskPct,
-          color: hazardConfig.colorPalette.low,
-        },
-      ]
+    ? isZeroRisk
+      ? [
+          {
+            name: 'Zona Bebas Bahaya (Aman)',
+            value: stats.totalAreaHa || 100,
+            pct: 100,
+            color: '#10b981',
+          },
+        ]
+      : [
+          {
+            name: 'Risiko Tinggi',
+            value: stats.highRiskHa,
+            pct: stats.highRiskPct,
+            color: hazardConfig.colorPalette.high,
+          },
+          {
+            name: 'Risiko Sedang',
+            value: stats.mediumRiskHa,
+            pct: stats.mediumRiskPct,
+            color: hazardConfig.colorPalette.medium,
+          },
+          {
+            name: 'Risiko Rendah',
+            value: stats.lowRiskHa,
+            pct: stats.lowRiskPct,
+            color: hazardConfig.colorPalette.low,
+          },
+        ]
     : [];
 
   const districtName = selectedDistrict
@@ -277,9 +289,21 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                   <span className="text-[10px] text-slate-500 font-mono uppercase font-bold">Status Risiko</span>
                   <span className={`text-sm font-extrabold font-mono ${
-                    stats?.riskCategory === 'Critical' ? 'text-rose-600' : 'text-amber-600'
+                    stats?.riskCategory === 'Critical' || stats?.riskCategory === 'High'
+                      ? 'text-rose-600'
+                      : stats?.riskCategory === 'Moderate'
+                      ? 'text-amber-600'
+                      : 'text-emerald-600'
                   }`}>
-                    {stats?.riskCategory === 'High' ? 'Tinggi' : stats?.riskCategory === 'Moderate' ? 'Sedang' : stats?.riskCategory || 'Tinggi'}
+                    {stats?.riskCategory === 'High'
+                      ? 'Tinggi'
+                      : stats?.riskCategory === 'Moderate'
+                      ? 'Sedang'
+                      : isZeroRisk
+                      ? 'Bebas Risiko'
+                      : stats?.riskCategory === 'Low'
+                      ? 'Rendah'
+                      : stats?.riskCategory || 'Rendah'}
                   </span>
                 </div>
               </div>

@@ -407,7 +407,7 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
       const desaPop = desaFeature?.properties?.population || 500;
       const kecName = parentKec?.properties?.name || desaFeature?.properties?.subdistrict || '';
 
-      // Check for real dasymetric impact data
+      const isRealHazard = hasRealImpactData(selectedHazard);
       const realImpact = getDesaImpact(selectedHazard, selectedVillage, kecName);
 
       let tinggi: number, sedang: number, rendah: number;
@@ -415,22 +415,37 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
       let total: number = desaArea;
       let affectedPop: number = desaPop;
       let dataSource: 'dasimetrik' | 'estimasi' = 'estimasi';
-      let dominantRisk: 'Rendah' | 'Sedang' | 'Tinggi' = 'Sedang';
+      let dominantRisk: 'Rendah' | 'Sedang' | 'Tinggi' = 'Rendah';
 
-      if (realImpact) {
-        // ✅ DATA RIIL dari Analisis Dasimetrik Raster QGIS
-        tinggi = realImpact.luasTinggiHa;
-        sedang = realImpact.luasSedangHa;
-        rendah = realImpact.luasRendahHa;
-        total = realImpact.totalLuasHa > 0 ? realImpact.totalLuasHa : desaArea;
-        popT = realImpact.popTinggi;
-        popS = realImpact.popSedang;
-        popR = realImpact.popRendah;
-        affectedPop = realImpact.totalPop > 0 ? realImpact.totalPop : desaPop;
+      if (isRealHazard) {
+        // ✅ DATA RIIL DASIMETRIK QGIS (Banjir & Longsor)
         dataSource = 'dasimetrik';
-        dominantRisk = realImpact.kelasDominan;
+        if (realImpact) {
+          // Desa ini berada dalam zona bahaya
+          tinggi = realImpact.luasTinggiHa;
+          sedang = realImpact.luasSedangHa;
+          rendah = realImpact.luasRendahHa;
+          total = realImpact.totalLuasHa > 0 ? realImpact.totalLuasHa : desaArea;
+          popT = realImpact.popTinggi;
+          popS = realImpact.popSedang;
+          popR = realImpact.popRendah;
+          affectedPop = realImpact.totalPop > 0 ? realImpact.totalPop : 0;
+          dominantRisk = realImpact.kelasDominan;
+        } else {
+          // Desa ini berada di luar zona bahaya (0 Ha paparan / 0 jiwa terpapar) -> 100% Aman
+          tinggi = 0;
+          sedang = 0;
+          rendah = 0;
+          total = desaArea;
+          popT = 0;
+          popS = 0;
+          popR = 0;
+          affectedPop = 0;
+          dominantRisk = 'Rendah';
+        }
       } else {
-        // ⚠️ FALLBACK ESTIMASI PROPORSIONAL (untuk bencana yang belum ada data spasial)
+        // ⚠️ FALLBACK ESTIMASI PROPORSIONAL (Gempa, Banjir Bandang, Likuifaksi)
+        dataSource = 'estimasi';
         if (parentKec) {
           const pk = parentKec.properties;
           const kecTotal = pk.total_area_ha;
@@ -450,6 +465,7 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
         popT = Math.round(desaPop * 0.35);
         popS = Math.round(desaPop * 0.40);
         popR = Math.max(0, desaPop - popT - popS);
+        affectedPop = desaPop;
         dominantRisk = tinggi > sedang && tinggi > rendah ? 'Tinggi' : sedang > rendah ? 'Sedang' : 'Rendah';
       }
 
@@ -484,28 +500,42 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
       });
     } else if (selectedDistrict) {
       const p = selectedDistrict.properties;
+      const isRealHazard = hasRealImpactData(selectedHazard);
       const kecImpacts = getKecamatanImpact(selectedHazard, p.name);
 
       let tinggi: number, sedang: number, rendah: number, total: number;
       let popT: number = 0, popS: number = 0, popR: number = 0;
       let affectedPop: number = p.population;
       let dataSource: 'dasimetrik' | 'estimasi' = 'estimasi';
-      let dominantRisk: 'Rendah' | 'Sedang' | 'Tinggi' = 'Sedang';
+      let dominantRisk: 'Rendah' | 'Sedang' | 'Tinggi' = 'Rendah';
 
-      if (kecImpacts && kecImpacts.length > 0) {
-        // ✅ DATA RIIL: Agregasi dari seluruh desa di kecamatan ini
-        tinggi = Number(kecImpacts.reduce((acc, d) => acc + d.luasTinggiHa, 0).toFixed(2));
-        sedang = Number(kecImpacts.reduce((acc, d) => acc + d.luasSedangHa, 0).toFixed(2));
-        rendah = Number(kecImpacts.reduce((acc, d) => acc + d.luasRendahHa, 0).toFixed(2));
-        total = Number((tinggi + sedang + rendah).toFixed(2));
-        popT = kecImpacts.reduce((acc, d) => acc + d.popTinggi, 0);
-        popS = kecImpacts.reduce((acc, d) => acc + d.popSedang, 0);
-        popR = kecImpacts.reduce((acc, d) => acc + d.popRendah, 0);
-        affectedPop = popT + popS + popR;
+      if (isRealHazard) {
         dataSource = 'dasimetrik';
-        dominantRisk = tinggi >= sedang && tinggi >= rendah ? 'Tinggi' : sedang >= rendah ? 'Sedang' : 'Rendah';
+        if (kecImpacts && kecImpacts.length > 0) {
+          tinggi = Number(kecImpacts.reduce((acc, d) => acc + d.luasTinggiHa, 0).toFixed(2));
+          sedang = Number(kecImpacts.reduce((acc, d) => acc + d.luasSedangHa, 0).toFixed(2));
+          rendah = Number(kecImpacts.reduce((acc, d) => acc + d.luasRendahHa, 0).toFixed(2));
+          total = Number((tinggi + sedang + rendah).toFixed(2)) || p.total_area_ha;
+          popT = kecImpacts.reduce((acc, d) => acc + d.popTinggi, 0);
+          popS = kecImpacts.reduce((acc, d) => acc + d.popSedang, 0);
+          popR = kecImpacts.reduce((acc, d) => acc + d.popRendah, 0);
+          affectedPop = popT + popS + popR;
+          dominantRisk = tinggi >= sedang && tinggi >= rendah ? 'Tinggi' : sedang >= rendah ? 'Sedang' : 'Rendah';
+        } else {
+          // Seluruh kecamatan bebas dari risiko bencana ini
+          tinggi = 0;
+          sedang = 0;
+          rendah = 0;
+          total = p.total_area_ha;
+          popT = 0;
+          popS = 0;
+          popR = 0;
+          affectedPop = 0;
+          dominantRisk = 'Rendah';
+        }
       } else {
         // ⚠️ FALLBACK ESTIMASI PROPORSIONAL
+        dataSource = 'estimasi';
         tinggi = p.luas_risiko_tinggi_ha || Math.round(p.total_area_ha * 0.35);
         sedang = p.luas_risiko_sedang_ha || Math.round(p.total_area_ha * 0.40);
         rendah = p.luas_risiko_rendah_ha || Math.max(0, p.total_area_ha - tinggi - sedang);
@@ -513,6 +543,7 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
         popT = Math.round(p.population * 0.35);
         popS = Math.round(p.population * 0.40);
         popR = Math.max(0, p.population - popT - popS);
+        affectedPop = p.population;
         dominantRisk = tinggi > sedang ? 'Tinggi' : 'Sedang';
       }
 

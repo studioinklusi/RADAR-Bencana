@@ -729,17 +729,18 @@ export const MapContainer: React.FC<MapContainerProps> = ({
             const isTinggi = kls === 'Tinggi' || kls.toLowerCase() === 'tinggi';
             const isSedang = kls === 'Sedang' || kls.toLowerCase() === 'sedang';
 
-            const fillColor = isTinggi ? '#dc2626' : isSedang ? '#f59e0b' : '#10b981';
-            const strokeColor = isTinggi ? '#991b1b' : isSedang ? '#b45309' : '#047857';
+            const fillColor = isTinggi ? '#ef4444' : isSedang ? '#f59e0b' : '#10b981';
 
             const isCurrentVillage = selectedVillage && props.NAMA_DESA &&
               props.NAMA_DESA.toLowerCase().replace(/^(desa|kelurahan)\s+/, '') === selectedVillage.toLowerCase().replace(/^(desa|kelurahan)\s+/, '');
 
+            const isContinuous = hazardRenderMode === 'index';
+
             return {
-              fillColor: 'transparent',
-              fillOpacity: 0,
+              fillColor,
+              fillOpacity: isContinuous ? 0 : (isCurrentVillage ? Math.min(0.9, opacity * 0.8 + 0.15) : opacity * 0.75),
               color: isCurrentVillage ? '#ffffff' : 'transparent',
-              weight: isCurrentVillage ? 2 : 0,
+              weight: isCurrentVillage ? 2.5 : 0,
               opacity: isCurrentVillage ? 1.0 : 0,
             };
           },

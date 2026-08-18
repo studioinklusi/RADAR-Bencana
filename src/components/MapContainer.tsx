@@ -152,8 +152,24 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   };
   const [isPlayingTimelapse, setIsPlayingTimelapse] = useState<boolean>(false);
   const [isTimelineVisible, setIsTimelineVisible] = useState<boolean>(true);
-  const [isScaleVisible, setIsScaleVisible] = useState<boolean>(true);
   const [isMapLocked, setIsMapLocked] = useState<boolean>(false);
+  const [polaRuangGeoJson, setPolaRuangGeoJson] = useState<any>(null);
+
+  // Fetch Full Pola Ruang RTRW GeoJSON (14 authentic zones of Banjarnegara)
+  useEffect(() => {
+    if (!showPolaRuang || polaRuangGeoJson) return;
+    fetch('/data/polaRuangGeo.json')
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        setPolaRuangGeoJson(data);
+      })
+      .catch((err) => {
+        console.error('Failed to load Pola Ruang GeoJSON:', err);
+      });
+  }, [showPolaRuang, polaRuangGeoJson]);
 
   // Automated Timelapse Player Loop
   useEffect(() => {
@@ -565,30 +581,35 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
     if (!showPolaRuang) return;
 
-    const layer = L.geoJSON(POLA_RUANG_DATA as any, {
+    const dataToRender = polaRuangGeoJson || (POLA_RUANG_DATA?.features?.length > 0 ? POLA_RUANG_DATA : null);
+    if (!dataToRender) return;
+
+    const layer = L.geoJSON(dataToRender as any, {
       style: (feature) => {
         const color = feature?.properties?.color || '#0d9488';
         return {
           color: color,
-          weight: 2,
-          opacity: 0.85,
+          weight: 1.5,
+          opacity: 0.9,
           fillColor: color,
-          fillOpacity: 0.25,
-          dashArray: '4, 4',
+          fillOpacity: 0.28,
         };
       },
       onEachFeature: (feature, polygonLayer) => {
-        const props = feature.properties;
-        const isLindung = props.kategori_utama === 'Kawasan Lindung';
+        const props = feature.properties || {};
+        const isLindung = props.kategori_utama === 'Kawasan Lindung' || props.kategori_utama?.includes('Lindung');
+        const isBadanAir = props.kategori_utama === 'Badan Air';
         const badgeColorClass = isLindung 
           ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
+          : isBadanAir
+          ? 'bg-sky-50 text-sky-800 border-sky-200'
           : 'bg-purple-50 text-purple-800 border-purple-200';
 
         polygonLayer.bindTooltip(
           `
           <div class="p-1 font-sans">
-            <div class="font-bold text-slate-800 text-xs">${props.kode_zona} - ${props.nama_zona}</div>
-            <div class="text-[10px] text-teal-700 font-mono">${props.kategori_utama} • ${props.luas_ha.toLocaleString()} ha</div>
+            <div class="font-bold text-slate-800 text-xs">${props.kode_zona || 'ZONA'} - ${props.nama_zona}</div>
+            <div class="text-[10px] text-teal-700 font-mono">${props.kategori_utama || 'RTRW'} • ${(props.luas_ha || 0).toLocaleString()} ha</div>
           </div>
           `,
           { sticky: true, direction: 'top' }
@@ -599,9 +620,9 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           <div class="p-2.5 font-sans w-72 max-w-[290px] text-slate-800 bg-white/95 rounded-xl border border-slate-200 shadow-xl backdrop-blur">
             <div class="flex items-center justify-between gap-1 mb-2 pb-1.5 border-b border-slate-100">
               <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded uppercase tracking-wider border ${badgeColorClass}">
-                ${props.kode_zona} • ${props.kategori_utama}
+                ${props.kode_zona || 'RTRW'} • ${props.kategori_utama || 'Pola Ruang'}
               </span>
-              <span class="text-[9px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">${props.id_pola_ruang}</span>
+              <span class="text-[9px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">${props.id_pola_ruang || 'PR'}</span>
             </div>
 
             <h4 class="font-bold text-xs text-slate-900 mb-2 leading-snug">${props.nama_zona}</h4>
@@ -609,15 +630,15 @@ export const MapContainer: React.FC<MapContainerProps> = ({
             <div class="bg-slate-50 p-2 rounded-lg border border-slate-200/80 mb-2 space-y-1 text-[10px]">
               <div class="flex justify-between border-b border-slate-200 pb-1">
                 <span class="text-slate-500 font-mono">Kab/Kota:</span>
-                <span class="font-semibold text-slate-800">${props.kabupaten_kota}</span>
+                <span class="font-semibold text-slate-800">${props.kabupaten_kota || 'Kabupaten Banjarnegara'}</span>
               </div>
               <div class="flex justify-between border-b border-slate-200 pb-1">
                 <span class="text-slate-500 font-mono">Luas Area:</span>
-                <span class="font-semibold text-teal-700 font-mono">${props.luas_ha.toLocaleString()} Ha</span>
+                <span class="font-semibold text-teal-700 font-mono">${(props.luas_ha || 0).toLocaleString()} Ha</span>
               </div>
               <div class="flex justify-between pt-0.5">
                 <span class="text-slate-500 font-mono">Sub-Zona:</span>
-                <span class="font-medium text-slate-700 text-right shrink-0 max-w-[150px] truncate">${props.sub_zona_pola_ruang}</span>
+                <span class="font-medium text-slate-700 text-right shrink-0 max-w-[150px] truncate">${props.sub_zona_pola_ruang || props.nama_zona}</span>
               </div>
             </div>
 
@@ -625,11 +646,11 @@ export const MapContainer: React.FC<MapContainerProps> = ({
               <div class="text-[8px] font-mono font-bold uppercase tracking-wider text-amber-700">
                 Ketentuan KKPR (Dinas PUPR)
               </div>
-              <p class="text-[10px] text-slate-700 leading-snug font-sans">${props.ketentuan_kkpr}</p>
+              <p class="text-[10px] text-slate-700 leading-snug font-sans">${props.ketentuan_kkpr || 'Mengikuti regulasi KKPR RTRW Kabupaten Banjarnegara.'}</p>
             </div>
 
             <div class="flex items-center justify-between pt-1 border-t border-slate-100 text-[9px] font-mono">
-              <span class="text-slate-500">Status: <strong class="text-amber-700">${props.status_konservasi}</strong></span>
+              <span class="text-slate-500">Status: <strong class="text-amber-700">${props.status_konservasi || 'Zonasi RTRW'}</strong></span>
             </div>
           </div>
           `,
@@ -650,7 +671,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     }).addTo(map);
 
     polaRuangLayerRef.current = layer;
-  }, [showPolaRuang, isPickingOnMap, onMapClickSelect]);
+  }, [showPolaRuang, polaRuangGeoJson, isPickingOnMap, onMapClickSelect]);
 
   // Render Real 30-meter Disaster Risk Index Raster Overlay (from INDEKS BENCANA 30 GeoTIFFs)
   useEffect(() => {

@@ -209,13 +209,15 @@ export interface PolaRuangProperties {
   id_pola_ruang: string;
   kode_zona: string;
   nama_zona: string;
-  kategori_utama: 'Kawasan Lindung' | 'Kawasan Budi Daya';
+  kategori_utama: 'Kawasan Lindung' | 'Kawasan Budi Daya' | 'Badan Air' | string;
   sub_zona_pola_ruang: string;
   kabupaten_kota: string;
   luas_ha: number;
   ketentuan_kkpr: string;
   status_konservasi: string;
   color?: string;
+  pola_ruang_raw?: string;
+  pl_convert?: string;
 }
 
 export interface PolaRuangFeature {
@@ -230,6 +232,8 @@ export interface PolaRuangFeature {
 
 export interface PolaRuangFeatureCollection {
   type: 'FeatureCollection';
+  name?: string;
+  crs?: any;
   features: PolaRuangFeature[];
 }
 

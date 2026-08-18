@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChatMessageRenderer } from './ChatMessageRenderer';
+import { POLA_RUANG_ZONES } from '../data/mockPolaRuang';
 import { 
   Flame, 
   Waves, 
@@ -318,49 +319,42 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                   {/* Legenda Zonasi RTRW */}
                   <div className="space-y-1.5 pt-1">
                     <div className="text-[10px] text-slate-500 font-mono uppercase tracking-wider flex items-center justify-between">
-                      <span>Legenda Pola Ruang RTRW:</span>
+                      <span>Legenda Pola Ruang RTRW ({POLA_RUANG_ZONES.length} Zonasi):</span>
+                      <span className="text-[9px] text-teal-700 font-bold">116k Ha</span>
                     </div>
 
-                    <div className="space-y-1 text-[11px]">
-                      <div className="flex items-center justify-between p-1.5 rounded-lg bg-white border border-slate-200">
-                        <div className="flex items-center gap-2">
-                          <span className="w-3 h-3 rounded bg-emerald-600 border border-emerald-400 shrink-0"></span>
-                          <span className="text-slate-800 font-medium">Hutan Lindung (HL)</span>
-                        </div>
-                        <span className="text-[9px] font-mono text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">Lindung</span>
-                      </div>
+                    <div className="space-y-1 text-[11px] max-h-60 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-200">
+                      {POLA_RUANG_ZONES.map((zone) => {
+                        const isLindung = zone.kategori_utama === 'Kawasan Lindung' || zone.kategori_utama.includes('Lindung');
+                        const isBadanAir = zone.kategori_utama === 'Badan Air';
+                        const badgeStyle = isLindung
+                          ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
+                          : isBadanAir
+                          ? 'text-sky-700 bg-sky-50 border-sky-200'
+                          : 'text-purple-700 bg-purple-50 border-purple-200';
 
-                      <div className="flex items-center justify-between p-1.5 rounded-lg bg-white border border-slate-200">
-                        <div className="flex items-center gap-2">
-                          <span className="w-3 h-3 rounded bg-teal-600 border border-teal-400 shrink-0"></span>
-                          <span className="text-slate-800 font-medium">Sempadan / KBAU</span>
-                        </div>
-                        <span className="text-[9px] font-mono text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded border border-teal-200">Sesar Aktif</span>
-                      </div>
-
-                      <div className="flex items-center justify-between p-1.5 rounded-lg bg-white border border-slate-200">
-                        <div className="flex items-center gap-2">
-                          <span className="w-3 h-3 rounded bg-purple-600 border border-purple-400 shrink-0"></span>
-                          <span className="text-slate-800 font-medium">Industri (KPI)</span>
-                        </div>
-                        <span className="text-[9px] font-mono text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-200">Budi Daya</span>
-                      </div>
-
-                      <div className="flex items-center justify-between p-1.5 rounded-lg bg-white border border-slate-200">
-                        <div className="flex items-center gap-2">
-                          <span className="w-3 h-3 rounded bg-amber-500 border border-amber-300 shrink-0"></span>
-                          <span className="text-slate-800 font-medium">Pemukiman (PP-1)</span>
-                        </div>
-                        <span className="text-[9px] font-mono text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">Budi Daya</span>
-                      </div>
-
-                      <div className="flex items-center justify-between p-1.5 rounded-lg bg-white border border-slate-200">
-                        <div className="flex items-center gap-2">
-                          <span className="w-3 h-3 rounded bg-lime-600 border border-lime-400 shrink-0"></span>
-                          <span className="text-slate-800 font-medium">Pertanian (LP2B)</span>
-                        </div>
-                        <span className="text-[9px] font-mono text-lime-700 bg-lime-50 px-1.5 py-0.5 rounded border border-lime-200">Budi Daya</span>
-                      </div>
+                        return (
+                          <div key={zone.kode_zona} className="flex items-center justify-between p-1.5 rounded-lg bg-white border border-slate-200 hover:border-teal-300 transition-colors">
+                            <div className="flex items-center gap-1.5 min-w-0 pr-1">
+                              <span
+                                className="w-3 h-3 rounded-xs shrink-0 border border-black/10 shadow-2xs"
+                                style={{ backgroundColor: zone.color }}
+                              />
+                              <div className="truncate">
+                                <span className="text-slate-800 font-semibold text-[10.5px] block truncate" title={zone.nama_zona}>
+                                  {zone.nama_zona}
+                                </span>
+                                <span className="text-[9px] text-slate-400 font-mono block">
+                                  {zone.kode_zona} • {zone.luas_ha.toLocaleString()} Ha
+                                </span>
+                              </div>
+                            </div>
+                            <span className={`text-[8.5px] font-mono px-1.5 py-0.5 rounded border shrink-0 ${badgeStyle}`}>
+                              {zone.kategori_utama === 'Kawasan Lindung' ? 'Lindung' : zone.kategori_utama === 'Badan Air' ? 'Air' : 'Budi Daya'}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
 

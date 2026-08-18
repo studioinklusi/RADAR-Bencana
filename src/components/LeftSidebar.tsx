@@ -136,7 +136,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
   onOpenMaximizedChat,
 }) => {
   const [activeTab, setActiveTab] = useState<'tema' | 'invest'>('tema');
-  const [expandedSection, setExpandedSection] = useState<'wilayah' | 'polaruang' | 'hazard' | 'incidents' | 'facilities' | null>('polaruang');
+  const [expandedSection, setExpandedSection] = useState<'wilayah' | 'polaruang' | 'hazard' | 'incidents' | 'facilities' | null>('hazard');
 
   // Form state for Radar Invest (Default to Banjarnegara Pusat)
   const [investLat, setInvestLat] = useState<number>(-7.3970);
@@ -288,9 +288,10 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 onClick={() => setExpandedSection(expandedSection === 'polaruang' ? null : 'polaruang')}
                 className="w-full px-3 py-2.5 flex items-center justify-between text-xs font-bold text-slate-800 hover:bg-slate-50 transition-colors cursor-pointer"
               >
-                <div className="flex items-center gap-2 uppercase tracking-wider text-[11px] text-slate-700">
+                <div className="flex items-center gap-2 uppercase tracking-wider text-[11px] text-slate-700 min-w-0">
                   <Compass className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  <span>Pola Ruang (RTRW)</span>
+                  <span className="whitespace-nowrap">POLA RUANG (RTRW)</span>
+                  <Info className="w-3 h-3 text-slate-400 shrink-0" />
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0">
                   {isAdminLoggedIn ? (

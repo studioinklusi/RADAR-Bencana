@@ -221,29 +221,68 @@ export default function App() {
           ? `Kecamatan ${selectedDistrict.properties.name}`
           : 'Kabupaten Banjarnegara';
 
-        const hazardNameMap: Record<HazardType, string> = {
-          flood: 'Banjir',
-          flashflood: 'Banjir Bandang',
-          landslide: 'Tanah Longsor',
-          earthquake: 'Gempa Bumi',
-          liquefaction: 'Likuifaksi'
-        };
-        const hazardLabel = hazardNameMap[selectedHazard] || selectedHazard;
+        const q = (text || '').toLowerCase().trim();
 
-        const totalHa = stats?.totalAreaHa || 115712;
-        const highHa = stats?.highRiskHa || Math.round(totalHa * 0.317);
-        const medHa = stats?.mediumRiskHa || Math.round(totalHa * 0.367);
-        const lowHa = stats?.lowRiskHa || Math.max(0, totalHa - highHa - medHa);
+        // 1. Off-topic check
+        const offTopicKeywords = [
+          'resep', 'masak', 'goreng', 'nasi goreng', 'kue', 'makanan', 'minuman', 'kuliner',
+          'game', 'film', 'lagu', 'chord', 'lirik', 'anime', 'manga', 'gosip', 'artis',
+          'pacar', 'jodoh', 'cinta', 'zodiak', 'ramalan', 'skincare', 'makeup',
+          'python', 'javascript', 'html', 'coding', 'react', 'tutorial', 'belajar matematika'
+        ];
+        const isOffTopic = offTopicKeywords.some(keyword => q.includes(keyword));
 
-        const highPct = stats?.highRiskPct || Number(((highHa / totalHa) * 100).toFixed(1));
-        const medPct = stats?.mediumRiskPct || Number(((medHa / totalHa) * 100).toFixed(1));
-        const lowPct = stats?.lowRiskPct || Number(((lowHa / totalHa) * 100).toFixed(1));
+        if (isOffTopic) {
+          aiText = `### ℹ️ Informasi Domain Layanan RADAR AI
 
-        const hospitals = stats?.hospitalsExposed || 2;
-        const schools = stats?.schoolsExposed || 14;
-        const bridges = stats?.bridgesExposed || 6;
+Mohon maaf, sebagai **Asisten AI RADAR Bencana Kabupaten Banjarnegara**, saya dikhususkan untuk menjawab pertanyaan seputar:
+- 🛡️ **Potensi & Risiko Bencana**: Tanah longsor, banjir, gempa bumi, likuifaksi, dan banjir bandang.
+- 🗺️ **Analisis Spasial & Citra Satelit**: Data GEE 30m, fasilitas publik terdampak, dan kemiringan lereng.
+- 🌲 **Tata Ruang & Pola Kawasan**: Pola ruang RTRW, kawasan lindung, sempadan sungai DAS Serayu, dan tutupan lahan Banjarnegara.
+- 🚨 **Kesiapsiagaan & Kontak Darurat**: Rekomendasi mitigasi, posko siaga desa, dan kontak BPBD.
 
-        aiText = `### 🛡️ Laporan Analisis Potensi Bencana Spasial — ${distName}
+---
+*💡 Silakan ajukan pertanyaan terkait kebencanaan atau wilayah spasial Kabupaten Banjarnegara.*`;
+        } else if (q.includes('hutan') || q.includes('hutan lindung') || q.includes('pola ruang') || q.includes('rtrw') || q.includes('tata guna') || q.includes('tutupan lahan')) {
+          aiText = `### 🌲 Informasi Kawasan Hutan & Tata Ruang — ${distName}
+
+Berdasarkan data spasial Pola Ruang RTRW dan analisis tutupan lahan Kabupaten Banjarnegara:
+
+#### 📌 Profil Kawasan Hutan Lindung & Konservasi
+- **Kawasan Hutan Lindung di Banjarnegara** sebagian besar tersebar di zona perbukitan utara (pegunungan dataran tinggi Dieng, Kecamatan Batur, Wanayasa, Pejawaran, Kalibening) serta lereng pegunungan selatan (Pagedongan).
+- **Fungsi Utama**: Berfungsi krusial sebagai daerah resapan air (*water catchment area*), penyangga tata air DAS Kali Serayu, serta pencegah erosi dan stabilitas lereng dari bahaya tanah longsor.
+- **Karakteristik**: Luas tutupan hutan dan kawasan lindung Banjarnegara mencakup lebih dari **15.000+ hektar** yang terbagi dalam kawasan hutan lindung, hutan produksi terbatas milik Perum Perhutani KPH Banyumas Timur / Kedu Selatan, serta kawasan cagar alam/taman wisata alam Dieng.
+
+---
+
+#### 💡 Rekomendasi Pengelolaan Spasial:
+1. **Pengendalian Alih Fungsi Lahan**: Pertahankan tutupan vegetasi hutan di hulu dan batasi ekspansi pertanian semusim berkemiringan terjal (seperti kentang) tanpa terasering.
+2. **Kombinasi Agroforestri**: Penanaman tanaman berakar dalam seperti vetiver, bambu, dan kopi di batas kawasan hutan lindung.
+3. **Pemeriksaan Layer**: Anda dapat mengaktifkan layer **Pola Ruang / Tata Guna Lahan** di menu peta RADAR Bencana untuk melihat sebaran poligon kawasan lindung secara visual.`;
+        } else {
+          const hazardNameMap: Record<HazardType, string> = {
+            flood: 'Banjir',
+            flashflood: 'Banjir Bandang',
+            landslide: 'Tanah Longsor',
+            earthquake: 'Gempa Bumi',
+            liquefaction: 'Likuifaksi'
+          };
+          const hazardLabel = hazardNameMap[selectedHazard] || selectedHazard;
+
+          const totalHa = stats?.totalAreaHa || 115712;
+          const highHa = stats?.highRiskHa || Math.round(totalHa * 0.317);
+          const medHa = stats?.mediumRiskHa || Math.round(totalHa * 0.367);
+          const lowHa = stats?.lowRiskHa || Math.max(0, totalHa - highHa - medHa);
+
+          const highPct = stats?.highRiskPct || Number(((highHa / totalHa) * 100).toFixed(1));
+          const medPct = stats?.mediumRiskPct || Number(((medHa / totalHa) * 100).toFixed(1));
+          const lowPct = stats?.lowRiskPct || Number(((lowHa / totalHa) * 100).toFixed(1));
+
+          const hospitals = stats?.hospitalsExposed || 2;
+          const schools = stats?.schoolsExposed || 14;
+          const bridges = stats?.bridgesExposed || 6;
+
+          aiText = `### 🛡️ Laporan Analisis Potensi Bencana Spasial — ${distName}
 
 Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUpperCase()}** berdasarkan data raster 30-meter Google Earth Engine (GEE) & pemetaan spasial BPBD Kabupaten Banjarnegara.
 
@@ -284,6 +323,7 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
 | **Kesiapsiagaan** | Aktivasi Posko Siaga Bencana Desa & Jalur Evakuasi | Tim Kencana Desa ${distName} |
 | **Struktur Fisik** | Pembuatan drainase lereng & penanaman akar wangi (vetiver) | BPBD & Dinas PU Banjarnegara |
 | **Kontak Darurat** | **Posko Mako BPBD Banjarnegara**: (0286) 592881 / WA: **0812-2630-111** | Call Center 119 ext.8 |`;
+        }
       }
 
       const aiMsg: ChatMessage = {

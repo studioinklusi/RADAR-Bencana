@@ -42,7 +42,8 @@ import {
   Lock,
   Unlock,
   LogIn,
-  ShieldCheck
+  ShieldCheck,
+  ArrowRight
 } from 'lucide-react';
 import { HazardType, FacilityCategory, FacilitySubType, RadarInvestInput, RadarInvestResult, ChatMessage, AdminFeature, ZonalStatistics } from '../types';
 import { HAZARD_LAYERS } from '../data/hazardLayers';
@@ -288,22 +289,17 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 className="w-full px-3 py-2.5 flex items-center justify-between text-xs font-bold text-slate-800 hover:bg-slate-50 transition-colors cursor-pointer"
               >
                 <div className="flex items-center gap-2 uppercase tracking-wider text-[11px] text-slate-700">
-                  <Compass className="w-3.5 h-3.5 text-teal-600" />
-                  <span>POLA RUANG (RTRW)</span>
-                  {isAdminLoggedIn ? (
-                    <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                  ) : (
-                    <Lock className="w-3 h-3 text-amber-500" />
-                  )}
+                  <Compass className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+                  <span>Pola Ruang (RTRW)</span>
                 </div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 shrink-0">
                   {isAdminLoggedIn ? (
-                    <span className="text-[9px] font-mono font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
-                      Admin
+                    <span className="text-[9px] font-mono font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-1.5 py-0.5 rounded flex items-center gap-1">
+                      <ShieldCheck className="w-2.5 h-2.5 text-emerald-600" /> Admin
                     </span>
                   ) : (
-                    <span className="text-[9px] font-mono font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 flex items-center gap-1">
-                      <Lock className="w-2.5 h-2.5" /> Terkunci
+                    <span className="text-[9px] font-mono font-semibold text-amber-700 bg-amber-50 border border-amber-200/80 px-1.5 py-0.5 rounded flex items-center gap-1">
+                      <Lock className="w-2.5 h-2.5 text-amber-600" /> Terkunci
                     </span>
                   )}
                   <span className={`w-2 h-2 rounded-full ${showPolaRuang && isAdminLoggedIn ? 'bg-teal-500 animate-pulse' : 'bg-slate-300'}`}></span>
@@ -317,7 +313,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
 
               {expandedSection === 'polaruang' && (
                 <div className="p-3 border-t border-slate-100 bg-slate-50/50 space-y-3">
-                  {/* Master Toggle or Locked Warning */}
+                  {/* Master Toggle or Locked Action Card */}
                   {isAdminLoggedIn ? (
                     <label className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-teal-300 transition-all shadow-xs">
                       <span className="text-xs text-slate-800 flex items-center gap-2 font-medium">
@@ -327,48 +323,57 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                           onChange={onTogglePolaRuang}
                           className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
                         />
-                        <span>Tampilkan Layer Pola Ruang</span>
+                        <span>Tampilkan Poligon RTRW di Peta</span>
                       </span>
                       <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
                         showPolaRuang 
-                          ? 'text-teal-700 bg-teal-50 border-teal-200'
+                          ? 'text-teal-700 bg-teal-50 border-teal-200 font-semibold'
                           : 'text-slate-500 bg-slate-100 border-slate-200'
                       }`}>
                         {showPolaRuang ? 'Aktif' : 'Non-Aktif'}
                       </span>
                     </label>
                   ) : (
-                    <div className="p-3 bg-gradient-to-br from-amber-50/90 to-orange-50/60 rounded-xl border border-amber-200/90 text-xs space-y-2 shadow-xs">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5 text-amber-900 font-bold text-xs">
-                          <Lock className="w-3.5 h-3.5 text-amber-600" />
-                          <span>Zonasi RTRW Terproteksi</span>
+                    <div className="bg-white border border-amber-200/90 rounded-xl p-3 space-y-2.5 shadow-xs">
+                      <div 
+                        onClick={onRequireLogin}
+                        className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 hover:border-teal-400 hover:bg-teal-50/50 transition-all cursor-pointer group"
+                        title="Klik untuk membuka autentikasi"
+                      >
+                        <div className="flex items-center gap-2 text-xs text-slate-700 font-medium">
+                          <div className="w-5 h-5 rounded-md bg-amber-100/80 flex items-center justify-center text-amber-700 shrink-0">
+                            <Lock className="w-3 h-3" />
+                          </div>
+                          <span className="font-semibold text-slate-800">Visualisasi Layer RTRW</span>
                         </div>
-                        <span className="text-[9px] font-mono font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-300">
-                          Data Terbatas
+                        <span className="text-[9.5px] font-mono text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 font-semibold flex items-center gap-1 group-hover:bg-teal-600 group-hover:text-white group-hover:border-teal-600 transition-colors">
+                          <span>Buka Kunci</span>
+                          <ArrowRight className="w-2.5 h-2.5" />
                         </span>
                       </div>
-                      <p className="text-[11px] text-amber-800 leading-snug">
-                        Layer Pola Ruang memuat zonasi RTRW &amp; ketentuan KKPR sensitif. Masuk sebagai administrator untuk mengaktifkannya di peta.
+
+                      <p className="text-[10.5px] text-slate-500 leading-snug px-0.5">
+                        Memuat data zonasi &amp; ketentuan KKPR resmi Dinas PUPR. Masuk sebagai petugas/admin untuk mengaktifkan poligon di peta.
                       </p>
+
                       <button
                         onClick={onRequireLogin}
-                        className="w-full py-1.5 px-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-lg text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                        className="w-full py-1.5 px-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold rounded-lg text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
                       >
                         <LogIn className="w-3.5 h-3.5" />
-                        <span>Login untuk Buka Akses</span>
+                        <span>Masuk sebagai Admin / Petugas</span>
                       </button>
                     </div>
                   )}
 
                   {/* Legenda Zonasi RTRW */}
-                  <div className="space-y-1.5 pt-1">
+                  <div className="space-y-1.5 pt-0.5">
                     <div className="text-[10px] text-slate-500 font-mono uppercase tracking-wider flex items-center justify-between">
-                      <span>Legenda Pola Ruang RTRW ({POLA_RUANG_ZONES.length} Zonasi):</span>
-                      <span className="text-[9px] text-teal-700 font-bold">116k Ha</span>
+                      <span>Katalog 14 Zonasi RTRW:</span>
+                      <span className="text-[9px] text-slate-500 font-medium">Total 116k Ha</span>
                     </div>
 
-                    <div className="space-y-1 text-[11px] max-h-60 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-200">
+                    <div className="space-y-1 text-[11px] max-h-56 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-200">
                       {POLA_RUANG_ZONES.map((zone) => {
                         const isLindung = zone.kategori_utama === 'Kawasan Lindung' || zone.kategori_utama.includes('Lindung');
                         const isBadanAir = zone.kategori_utama === 'Badan Air';
@@ -379,14 +384,14 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                           : 'text-purple-700 bg-purple-50 border-purple-200';
 
                         return (
-                          <div key={zone.kode_zona} className="flex items-center justify-between p-1.5 rounded-lg bg-white border border-slate-200 hover:border-teal-300 transition-colors">
+                          <div key={zone.kode_zona} className="flex items-center justify-between p-1.5 rounded-lg bg-white border border-slate-200 hover:border-slate-300 transition-colors">
                             <div className="flex items-center gap-1.5 min-w-0 pr-1">
                               <span
-                                className="w-3 h-3 rounded-xs shrink-0 border border-black/10 shadow-2xs"
+                                className="w-2.5 h-2.5 rounded-xs shrink-0 border border-black/15 shadow-2xs"
                                 style={{ backgroundColor: zone.color }}
                               />
                               <div className="truncate">
-                                <span className="text-slate-800 font-semibold text-[10.5px] block truncate" title={zone.nama_zona}>
+                                <span className="text-slate-800 font-medium text-[10.5px] block truncate" title={zone.nama_zona}>
                                   {zone.nama_zona}
                                 </span>
                                 <span className="text-[9px] text-slate-400 font-mono block">
@@ -405,8 +410,8 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
 
                   <p className="text-[10px] text-slate-500 leading-relaxed border-t border-slate-200 pt-2">
                     {isAdminLoggedIn
-                      ? 'Klik pada zonasi Pola Ruang di peta untuk melihat detail batas RTRW, aturan KKPR Dinas PUPR, dan status konservasi.'
-                      : 'Informasi zonasi Pola Ruang hanya dapat ditampilkan di atas peta setelah pengguna terautentikasi.'}
+                      ? 'Klik pada poligon Pola Ruang di peta untuk melihat detail zonasi RTRW & aturan KKPR Dinas PUPR.'
+                      : 'Informasi zonasi Pola Ruang hanya dapat divisualisasikan di peta setelah login.'}
                   </p>
                 </div>
               )}

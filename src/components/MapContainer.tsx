@@ -68,7 +68,8 @@ interface MapContainerProps {
   onToggleAllIncidentsMode?: () => void;
   onOpenAllIncidentsModal?: () => void;
   focusedCoords?: [number, number] | null;
-  customUploadedLayers?: any[];
+  showImpactOverlay?: boolean;
+  onToggleImpactOverlay?: () => void;
   isFullscreen?: boolean;
   onToggleFullscreen?: () => void;
 }
@@ -82,6 +83,8 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   selectedHazard,
   showHazardLayer = true,
   onToggleHazardLayer,
+  showImpactOverlay = true,
+  onToggleImpactOverlay,
   hazardRenderMode = 'class',
   onChangeHazardRenderMode,
   opacity,
@@ -115,6 +118,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   const desaLayerRef = useRef<L.GeoJSON | null>(null);
   const polaRuangLayerRef = useRef<L.GeoJSON | null>(null);
   const rasterCanvasOverlayRef = useRef<L.ImageOverlay | null>(null);
+  const impactSpatialLayerRef = useRef<L.GeoJSON | null>(null);
   const incidentsLayerRef = useRef<L.LayerGroup | null>(null);
   const facilitiesLayerRef = useRef<L.LayerGroup | null>(null);
   const investLayerRef = useRef<L.LayerGroup | null>(null);
@@ -597,6 +601,142 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
     rasterCanvasOverlayRef.current = overlay;
   }, [selectedHazard, opacity, showHazardLayer, hazardRenderMode]);
+
+  // Render Real Spatial Impact Hazard Polygons (from QGIS Dasymetric GeoJSON)
+  useEffect(() => {
+    if (!leafletMap.current) return;
+    const map = leafletMap.current;
+
+    if (impactSpatialLayerRef.current) {
+      map.removeLayer(impactSpatialLayerRef.current);
+      impactSpatialLayerRef.current = null;
+    }
+
+    if (!showImpactOverlay) return;
+
+    const geoUrl = 
+      selectedHazard === 'flood'
+        ? '/data/floodImpactGeo.json'
+        : selectedHazard === 'landslide'
+        ? '/data/landslideImpactGeo.json'
+        : null;
+
+    if (!geoUrl) return;
+
+    let isMounted = true;
+
+    fetch(geoUrl)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+        return res.json();
+      })
+      .then((geoData) => {
+        if (!isMounted || !leafletMap.current) return;
+
+        const layer = L.geoJSON(geoData, {
+          style: (feature: any) => {
+            const props = feature?.properties || {};
+            const kls = props.KLS_BENC || 'Rendah';
+            const isTinggi = kls === 'Tinggi' || kls.toLowerCase() === 'tinggi';
+            const isSedang = kls === 'Sedang' || kls.toLowerCase() === 'sedang';
+
+            const fillColor = isTinggi ? '#dc2626' : isSedang ? '#f59e0b' : '#10b981';
+            const strokeColor = isTinggi ? '#991b1b' : isSedang ? '#b45309' : '#047857';
+
+            const isCurrentVillage = selectedVillage && props.NAMA_DESA &&
+              props.NAMA_DESA.toLowerCase().replace(/^(desa|kelurahan)\s+/, '') === selectedVillage.toLowerCase().replace(/^(desa|kelurahan)\s+/, '');
+
+            return {
+              fillColor,
+              fillOpacity: isCurrentVillage ? Math.min(0.9, opacity * 0.75 + 0.2) : opacity * 0.55,
+              color: isCurrentVillage ? '#ffffff' : strokeColor,
+              weight: isCurrentVillage ? 1.8 : 0.4,
+              opacity: isCurrentVillage ? 1.0 : 0.6,
+            };
+          },
+          onEachFeature: (feature: any, polyLayer: L.Layer) => {
+            const props = feature?.properties || {};
+            const kls = props.KLS_BENC || 'Rendah';
+            const isTinggi = kls === 'Tinggi' || kls.toLowerCase() === 'tinggi';
+            const isSedang = kls === 'Sedang' || kls.toLowerCase() === 'sedang';
+            const badgeBg = isTinggi ? 'bg-rose-100 text-rose-800 border-rose-300' : isSedang ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-emerald-100 text-emerald-800 border-emerald-300';
+            const badgeDot = isTinggi ? 'bg-rose-500' : isSedang ? 'bg-amber-500' : 'bg-emerald-500';
+
+            polyLayer.bindTooltip(
+              `
+              <div class="p-1 font-sans text-xs">
+                <div class="font-bold text-slate-900">${props.NAMA_DESA || 'Desa'} <span class="text-[10px] text-slate-500 font-mono">(${props.NAMA_KEC || 'Kecamatan'})</span></div>
+                <div class="flex items-center gap-1 mt-0.5 text-[10px] font-mono">
+                  <span class="inline-block w-2 h-2 rounded-full ${badgeDot}"></span>
+                  <span class="font-bold">Kelas ${kls}</span> • <span>${Number(props.LUAS_HA || 0).toFixed(2)} Ha</span>
+                </div>
+                <div class="text-[10px] text-emerald-700 font-mono mt-0.5">
+                  Populasi Terpapar: <b>${(props.JML_JIWA || 0).toLocaleString()} jiwa</b>
+                </div>
+              </div>
+              `,
+              { sticky: true }
+            );
+
+            polyLayer.bindPopup(
+              `
+              <div class="p-2.5 font-sans w-64 max-w-[270px] text-slate-800 bg-white/95 rounded-xl border border-slate-200 shadow-xl backdrop-blur">
+                <div class="flex items-center justify-between gap-1 mb-2 pb-1 border-b border-slate-100">
+                  <span class="px-2 py-0.5 text-[9px] font-mono font-bold rounded uppercase tracking-wider border ${badgeBg}">
+                    ${kls.toUpperCase()} • ZONA BAHAYA
+                  </span>
+                  <span class="text-[9px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">${selectedHazard.toUpperCase()}</span>
+                </div>
+
+                <h4 class="font-bold text-xs text-slate-900 mb-1 leading-snug">Desa ${props.NAMA_DESA || '-'}</h4>
+                <p class="text-[10px] text-slate-500 font-mono mb-2">Kecamatan ${props.NAMA_KEC || '-'} • Banjarnegara</p>
+
+                <div class="bg-slate-50 p-2 rounded-lg border border-slate-200/80 mb-2 space-y-1 text-[10px] font-mono">
+                  <div class="flex justify-between">
+                    <span class="text-slate-500">Luas Zona Ini:</span>
+                    <span class="font-bold text-slate-900">${Number(props.LUAS_HA || 0).toFixed(2)} Ha</span>
+                  </div>
+                  <div class="flex justify-between border-t border-slate-200 pt-1">
+                    <span class="text-slate-500">Penduduk Terpapar:</span>
+                    <span class="font-bold text-emerald-800">${(props.JML_JIWA || 0).toLocaleString()} Jiwa</span>
+                  </div>
+                </div>
+
+                <div class="text-[9px] text-slate-500 leading-tight italic">
+                  Data spasial hasil pemodelan dasimetrik Open Buildings v3 & raster risiko QGIS.
+                </div>
+              </div>
+              `,
+              { className: 'custom-leaflet-popup' }
+            );
+
+            polyLayer.on('click', (e: any) => {
+              if (isPickingOnMap && onMapClickSelect) {
+                onMapClickSelect(e.latlng.lat, e.latlng.lng);
+                return;
+              }
+              L.DomEvent.stopPropagation(e);
+              if (onSelectVillage && props.NAMA_DESA) {
+                onSelectVillage(props.NAMA_DESA);
+              }
+            });
+          },
+        }).addTo(map);
+
+        impactSpatialLayerRef.current = layer;
+      })
+      .catch((err) => {
+        console.warn('Could not load spatial impact GeoJSON:', err);
+      });
+
+    return () => {
+      isMounted = false;
+      if (impactSpatialLayerRef.current && leafletMap.current) {
+        leafletMap.current.removeLayer(impactSpatialLayerRef.current);
+        impactSpatialLayerRef.current = null;
+      }
+    };
+  }, [selectedHazard, showImpactOverlay, opacity, selectedVillage, onSelectVillage, isPickingOnMap, onMapClickSelect]);
 
   // Render Interactive Disaster Incident Markers (Titik Bencana)
   useEffect(() => {
@@ -1293,6 +1433,27 @@ export const MapContainer: React.FC<MapContainerProps> = ({
                       <div className="text-[8px] font-mono text-rose-600 font-medium">0.6 - 1.0</div>
                     </div>
                   </div>
+
+                  {/* Spatial Impact Classes Layer Indicator / Toggle */}
+                  {(selectedHazard === 'flood' || selectedHazard === 'landslide') && (
+                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 text-[10px] text-slate-700 font-mono">
+                        <span className={`w-2 h-2 rounded-full ${showImpactOverlay ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`}></span>
+                        <span className="font-semibold">Zona Poligon QGIS:</span>
+                      </div>
+                      <button
+                        onClick={onToggleImpactOverlay}
+                        className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded transition-all cursor-pointer ${
+                          showImpactOverlay
+                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-200'
+                            : 'bg-slate-100 text-slate-500 border border-slate-200 hover:bg-slate-200'
+                        }`}
+                        title={showImpactOverlay ? 'Klik untuk mematikan overlay poligon zona bahaya' : 'Klik untuk menyalakan overlay poligon zona bahaya'}
+                      >
+                        {showImpactOverlay ? 'AKTIF' : 'NONAKTIF'}
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

@@ -15,6 +15,7 @@ import { ADMIN_BOUNDARIES } from './data/mockAdminBoundaries';
 import { DESA_BOUNDARIES } from './data/mockDesaBoundaries';
 import { AdminFeature, HazardType, ZonalStatistics, AIRiskAssessment, FacilityCategory, FacilitySubType, RadarInvestInput, RadarInvestResult, ChatMessage } from './types';
 import { calculateRadarInvest } from './utils/radarInvestCalculator';
+import { getDesaImpact, getKecamatanImpact, getKabupatenImpact, hasRealImpactData } from './data/impactData';
 
 
 const ALL_FACILITY_SUBTYPES: FacilitySubType[] = [
@@ -34,6 +35,7 @@ export default function App() {
   const [selectedHazard, setSelectedHazard] = useState<HazardType>('landslide');
   const [opacity, setOpacity] = useState<number>(0.85);
   const [showHazardLayer, setShowHazardLayer] = useState<boolean>(true);
+  const [showImpactOverlay, setShowImpactOverlay] = useState<boolean>(true);
   const [hazardRenderMode, setHazardRenderMode] = useState<'class' | 'index'>('class');
   const [showAdminBoundaries, setShowAdminBoundaries] = useState<boolean>(true);
   const [showPolaRuang, setShowPolaRuang] = useState<boolean>(true);
@@ -382,17 +384,17 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
     setCurrentPath(path);
   };
 
-  // Compute Static Zonal Statistics when District, Village, or Hazard Layer Changes
+  // Compute Zonal Statistics when District, Village, or Hazard Layer Changes
   useEffect(() => {
     setIsMapLoading(true);
 
     if (selectedVillage) {
-      // Village-level stats: find desa feature and derive stats from parent kecamatan
+      // Village-level stats: find desa feature
       const desaFeature = DESA_BOUNDARIES.features.find(
         (f: any) => f.properties.name.toLowerCase() === selectedVillage.toLowerCase()
       );
 
-      // Find parent kecamatan: use selectedDistrict if available, otherwise look up from desa's subdistrict
+      // Find parent kecamatan
       let parentKec = selectedDistrict;
       if (!parentKec && desaFeature?.properties?.subdistrict) {
         const subName = desaFeature.properties.subdistrict.toLowerCase();
@@ -403,30 +405,54 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
 
       const desaArea = desaFeature?.properties?.total_area_ha || 100;
       const desaPop = desaFeature?.properties?.population || 500;
+      const kecName = parentKec?.properties?.name || desaFeature?.properties?.subdistrict || '';
+
+      // Check for real dasymetric impact data
+      const realImpact = getDesaImpact(selectedHazard, selectedVillage, kecName);
 
       let tinggi: number, sedang: number, rendah: number;
+      let popT: number = 0, popS: number = 0, popR: number = 0;
+      let total: number = desaArea;
+      let affectedPop: number = desaPop;
+      let dataSource: 'dasimetrik' | 'estimasi' = 'estimasi';
+      let dominantRisk: 'Rendah' | 'Sedang' | 'Tinggi' = 'Sedang';
 
-      if (parentKec) {
-        const pk = parentKec.properties;
-        const kecTotal = pk.total_area_ha;
-        const kecTinggi = pk.luas_risiko_tinggi_ha || Math.round(kecTotal * 0.35);
-        const kecSedang = pk.luas_risiko_sedang_ha || Math.round(kecTotal * 0.40);
-
-        // Proportional risk split based on parent kecamatan ratios
-        const ratioTinggi = kecTinggi / kecTotal;
-        const ratioSedang = kecSedang / kecTotal;
-
-        tinggi = Math.round(desaArea * ratioTinggi);
-        sedang = Math.round(desaArea * ratioSedang);
-        rendah = Math.max(0, desaArea - tinggi - sedang);
+      if (realImpact) {
+        // ✅ DATA RIIL dari Analisis Dasimetrik Raster QGIS
+        tinggi = realImpact.luasTinggiHa;
+        sedang = realImpact.luasSedangHa;
+        rendah = realImpact.luasRendahHa;
+        total = realImpact.totalLuasHa > 0 ? realImpact.totalLuasHa : desaArea;
+        popT = realImpact.popTinggi;
+        popS = realImpact.popSedang;
+        popR = realImpact.popRendah;
+        affectedPop = realImpact.totalPop > 0 ? realImpact.totalPop : desaPop;
+        dataSource = 'dasimetrik';
+        dominantRisk = realImpact.kelasDominan;
       } else {
-        // Fallback: default ratios
-        tinggi = Math.round(desaArea * 0.35);
-        sedang = Math.round(desaArea * 0.40);
-        rendah = Math.max(0, desaArea - tinggi - sedang);
+        // ⚠️ FALLBACK ESTIMASI PROPORSIONAL (untuk bencana yang belum ada data spasial)
+        if (parentKec) {
+          const pk = parentKec.properties;
+          const kecTotal = pk.total_area_ha;
+          const kecTinggi = pk.luas_risiko_tinggi_ha || Math.round(kecTotal * 0.35);
+          const kecSedang = pk.luas_risiko_sedang_ha || Math.round(kecTotal * 0.40);
+          const ratioTinggi = kecTinggi / kecTotal;
+          const ratioSedang = kecSedang / kecTotal;
+
+          tinggi = Math.round(desaArea * ratioTinggi);
+          sedang = Math.round(desaArea * ratioSedang);
+          rendah = Math.max(0, desaArea - tinggi - sedang);
+        } else {
+          tinggi = Math.round(desaArea * 0.35);
+          sedang = Math.round(desaArea * 0.40);
+          rendah = Math.max(0, desaArea - tinggi - sedang);
+        }
+        popT = Math.round(desaPop * 0.35);
+        popS = Math.round(desaPop * 0.40);
+        popR = Math.max(0, desaPop - popT - popS);
+        dominantRisk = tinggi > sedang && tinggi > rendah ? 'Tinggi' : sedang > rendah ? 'Sedang' : 'Rendah';
       }
 
-      const total = desaArea;
       const highPct = total > 0 ? Number(((tinggi / total) * 100).toFixed(1)) : 0;
       const medPct = total > 0 ? Number(((sedang / total) * 100).toFixed(1)) : 0;
       const lowPct = total > 0 ? Number(((rendah / total) * 100).toFixed(1)) : 0;
@@ -442,25 +468,57 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
         highRiskPct: highPct,
         mediumRiskPct: medPct,
         lowRiskPct: lowPct,
-        affectedPopulation: desaPop,
+        affectedPopulation: affectedPop,
+        popRendah: popR,
+        popSedang: popS,
+        popTinggi: popT,
+        dominantRiskClass: dominantRisk,
+        dataSource,
         hospitalsExposed: desaFeature?.properties?.hospital_count || 0,
         schoolsExposed: desaFeature?.properties?.school_count || 0,
         bridgesExposed: desaFeature?.properties?.bridge_count || 0,
-        riskCategory: tinggi > sedang ? 'High' : 'Moderate',
+        riskCategory: dominantRisk === 'Tinggi' ? 'High' : dominantRisk === 'Sedang' ? 'Moderate' : 'Low',
         overallScore: total > 0 ? Math.round((tinggi / total) * 100) : 0,
         isClipped: true,
         computedAt: new Date().toISOString(),
       });
     } else if (selectedDistrict) {
       const p = selectedDistrict.properties;
-      const tinggi = p.luas_risiko_tinggi_ha || Math.round(p.total_area_ha * 0.35);
-      const sedang = p.luas_risiko_sedang_ha || Math.round(p.total_area_ha * 0.40);
-      const rendah = p.luas_risiko_rendah_ha || Math.max(0, p.total_area_ha - tinggi - sedang);
-      const total = p.total_area_ha;
+      const kecImpacts = getKecamatanImpact(selectedHazard, p.name);
 
-      const highPct = Number(((tinggi / total) * 100).toFixed(1));
-      const medPct = Number(((sedang / total) * 100).toFixed(1));
-      const lowPct = Number(((rendah / total) * 100).toFixed(1));
+      let tinggi: number, sedang: number, rendah: number, total: number;
+      let popT: number = 0, popS: number = 0, popR: number = 0;
+      let affectedPop: number = p.population;
+      let dataSource: 'dasimetrik' | 'estimasi' = 'estimasi';
+      let dominantRisk: 'Rendah' | 'Sedang' | 'Tinggi' = 'Sedang';
+
+      if (kecImpacts && kecImpacts.length > 0) {
+        // ✅ DATA RIIL: Agregasi dari seluruh desa di kecamatan ini
+        tinggi = Number(kecImpacts.reduce((acc, d) => acc + d.luasTinggiHa, 0).toFixed(2));
+        sedang = Number(kecImpacts.reduce((acc, d) => acc + d.luasSedangHa, 0).toFixed(2));
+        rendah = Number(kecImpacts.reduce((acc, d) => acc + d.luasRendahHa, 0).toFixed(2));
+        total = Number((tinggi + sedang + rendah).toFixed(2));
+        popT = kecImpacts.reduce((acc, d) => acc + d.popTinggi, 0);
+        popS = kecImpacts.reduce((acc, d) => acc + d.popSedang, 0);
+        popR = kecImpacts.reduce((acc, d) => acc + d.popRendah, 0);
+        affectedPop = popT + popS + popR;
+        dataSource = 'dasimetrik';
+        dominantRisk = tinggi >= sedang && tinggi >= rendah ? 'Tinggi' : sedang >= rendah ? 'Sedang' : 'Rendah';
+      } else {
+        // ⚠️ FALLBACK ESTIMASI PROPORSIONAL
+        tinggi = p.luas_risiko_tinggi_ha || Math.round(p.total_area_ha * 0.35);
+        sedang = p.luas_risiko_sedang_ha || Math.round(p.total_area_ha * 0.40);
+        rendah = p.luas_risiko_rendah_ha || Math.max(0, p.total_area_ha - tinggi - sedang);
+        total = p.total_area_ha;
+        popT = Math.round(p.population * 0.35);
+        popS = Math.round(p.population * 0.40);
+        popR = Math.max(0, p.population - popT - popS);
+        dominantRisk = tinggi > sedang ? 'Tinggi' : 'Sedang';
+      }
+
+      const highPct = total > 0 ? Number(((tinggi / total) * 100).toFixed(1)) : 0;
+      const medPct = total > 0 ? Number(((sedang / total) * 100).toFixed(1)) : 0;
+      const lowPct = total > 0 ? Number(((rendah / total) * 100).toFixed(1)) : 0;
 
       setStats({
         districtId: selectedDistrict.id,
@@ -473,43 +531,77 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
         highRiskPct: highPct,
         mediumRiskPct: medPct,
         lowRiskPct: lowPct,
-        affectedPopulation: p.population,
+        affectedPopulation: affectedPop,
+        popRendah: popR,
+        popSedang: popS,
+        popTinggi: popT,
+        dominantRiskClass: dominantRisk,
+        dataSource,
         hospitalsExposed: p.hospital_count,
         schoolsExposed: p.school_count,
         bridgesExposed: p.bridge_count,
-        riskCategory: tinggi > sedang ? 'High' : 'Moderate',
-        overallScore: Math.round((tinggi / total) * 100),
+        riskCategory: dominantRisk === 'Tinggi' ? 'High' : dominantRisk === 'Sedang' ? 'Moderate' : 'Low',
+        overallScore: total > 0 ? Math.round((tinggi / total) * 100) : 0,
         isClipped: true,
         computedAt: new Date().toISOString(),
       });
     } else {
+      // Seluruh Kabupaten Banjarnegara
+      const kabImpact = getKabupatenImpact(selectedHazard);
+
       let sumTinggi = 0;
       let sumSedang = 0;
       let sumRendah = 0;
       let sumTotal = 0;
       let sumPop = 0;
+      let popT = 0, popS = 0, popR = 0;
       let sumHospitals = 0;
       let sumSchools = 0;
       let sumBridges = 0;
+      let dataSource: 'dasimetrik' | 'estimasi' = 'estimasi';
+      let dominantRisk: 'Rendah' | 'Sedang' | 'Tinggi' = 'Sedang';
 
       ADMIN_BOUNDARIES.features.forEach((f) => {
         const p = f.properties;
-        const t = p.luas_risiko_tinggi_ha || Math.round(p.total_area_ha * 0.35);
-        const s = p.luas_risiko_sedang_ha || Math.round(p.total_area_ha * 0.40);
-        const r = p.luas_risiko_rendah_ha || Math.max(0, p.total_area_ha - t - s);
-        sumTinggi += t;
-        sumSedang += s;
-        sumRendah += r;
-        sumTotal += p.total_area_ha;
-        sumPop += p.population;
         sumHospitals += p.hospital_count;
         sumSchools += p.school_count;
         sumBridges += p.bridge_count;
       });
 
-      const highPct = Number(((sumTinggi / sumTotal) * 100).toFixed(1));
-      const medPct = Number(((sumSedang / sumTotal) * 100).toFixed(1));
-      const lowPct = Number(((sumRendah / sumTotal) * 100).toFixed(1));
+      if (kabImpact && kabImpact.totalLuasHa > 0) {
+        // ✅ DATA RIIL: Total dari seluruh desa di Banjarnegara
+        sumTinggi = kabImpact.luasTinggiHa;
+        sumSedang = kabImpact.luasSedangHa;
+        sumRendah = kabImpact.luasRendahHa;
+        sumTotal = kabImpact.totalLuasHa;
+        sumPop = kabImpact.totalPop;
+        popT = kabImpact.popTinggi;
+        popS = kabImpact.popSedang;
+        popR = kabImpact.popRendah;
+        dataSource = 'dasimetrik';
+        dominantRisk = sumTinggi >= sumSedang && sumTinggi >= sumRendah ? 'Tinggi' : sumSedang >= sumRendah ? 'Sedang' : 'Rendah';
+      } else {
+        // ⚠️ FALLBACK ESTIMASI
+        ADMIN_BOUNDARIES.features.forEach((f) => {
+          const p = f.properties;
+          const t = p.luas_risiko_tinggi_ha || Math.round(p.total_area_ha * 0.35);
+          const s = p.luas_risiko_sedang_ha || Math.round(p.total_area_ha * 0.40);
+          const r = p.luas_risiko_rendah_ha || Math.max(0, p.total_area_ha - t - s);
+          sumTinggi += t;
+          sumSedang += s;
+          sumRendah += r;
+          sumTotal += p.total_area_ha;
+          sumPop += p.population;
+        });
+        popT = Math.round(sumPop * 0.35);
+        popS = Math.round(sumPop * 0.40);
+        popR = Math.max(0, sumPop - popT - popS);
+        dominantRisk = sumTinggi > sumSedang ? 'Tinggi' : 'Sedang';
+      }
+
+      const highPct = sumTotal > 0 ? Number(((sumTinggi / sumTotal) * 100).toFixed(1)) : 0;
+      const medPct = sumTotal > 0 ? Number(((sumSedang / sumTotal) * 100).toFixed(1)) : 0;
+      const lowPct = sumTotal > 0 ? Number(((sumRendah / sumTotal) * 100).toFixed(1)) : 0;
 
       setStats({
         districtId: 'REGIONAL_BANJARNEGARA',
@@ -523,11 +615,16 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
         mediumRiskPct: medPct,
         lowRiskPct: lowPct,
         affectedPopulation: sumPop,
+        popRendah: popR,
+        popSedang: popS,
+        popTinggi: popT,
+        dominantRiskClass: dominantRisk,
+        dataSource,
         hospitalsExposed: sumHospitals,
         schoolsExposed: sumSchools,
         bridgesExposed: sumBridges,
-        riskCategory: 'High',
-        overallScore: Math.round((sumTinggi / sumTotal) * 100),
+        riskCategory: dominantRisk === 'Tinggi' ? 'High' : dominantRisk === 'Sedang' ? 'Moderate' : 'Low',
+        overallScore: sumTotal > 0 ? Math.round((sumTinggi / sumTotal) * 100) : 0,
         isClipped: false,
         computedAt: new Date().toISOString(),
       });
@@ -781,6 +878,8 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
           selectedHazard={selectedHazard}
           showHazardLayer={showHazardLayer}
           onToggleHazardLayer={() => setShowHazardLayer(!showHazardLayer)}
+          showImpactOverlay={showImpactOverlay}
+          onToggleImpactOverlay={() => setShowImpactOverlay(!showImpactOverlay)}
           hazardRenderMode={hazardRenderMode}
           onChangeHazardRenderMode={setHazardRenderMode}
           opacity={opacity}

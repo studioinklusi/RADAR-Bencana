@@ -63,6 +63,11 @@ export interface ZonalStatistics {
   mediumRiskPct: number;
   lowRiskPct: number;
   affectedPopulation: number;
+  popRendah?: number;
+  popSedang?: number;
+  popTinggi?: number;
+  dominantRiskClass?: 'Rendah' | 'Sedang' | 'Tinggi';
+  dataSource?: 'dasimetrik' | 'estimasi';
   hospitalsExposed: number;
   schoolsExposed: number;
   bridgesExposed: number;

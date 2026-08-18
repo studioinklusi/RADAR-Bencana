@@ -171,13 +171,20 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
             : `Kab. Banjarnegara • Tingkat risiko bencana • 2024`}
         </p>
 
-        {/* Action Badge Button */}
-        <div className="mt-3 flex items-center justify-between">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full text-xs font-semibold text-emerald-800">
-            <Eye className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Divisualisasikan pada peta</span>
-          </div>
-          <span className="text-[10px] text-slate-500 font-mono">Data satelit</span>
+        {/* Action Badge Button & Data Source Indicator */}
+        <div className="mt-3 flex items-center justify-between gap-1 flex-wrap">
+          {stats?.dataSource === 'dasimetrik' ? (
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 border border-emerald-300 rounded-full text-[11px] font-semibold text-emerald-800" title="Dihitung berdasarkan integrasi footprint bangunan Open Buildings v3 & kepadatan penduduk QGIS">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <span>Data Riil (Dasimetrik QGIS)</span>
+            </div>
+          ) : (
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 border border-amber-300 rounded-full text-[11px] font-semibold text-amber-800" title="Estimasi proporsional berdasarkan rasio wilayah">
+              <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+              <span>Estimasi Proporsional</span>
+            </div>
+          )}
+          <span className="text-[10px] text-slate-500 font-mono">Piksel 30m</span>
         </div>
       </div>
 
@@ -291,6 +298,79 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Potensi Penduduk Terpapar per Kelas Bahaya (Dasimetrik) */}
+            <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3 shadow-xs">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                <div>
+                  <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <Users className="w-4 h-4 text-emerald-600" />
+                    <span>POTENSI PENDUDUK TERPAPAR</span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 font-mono mt-0.5">
+                    {stats?.dataSource === 'dasimetrik'
+                      ? 'Distribusi Dasimetrik Bangunan (30×30m)'
+                      : 'Estimasi Rasio Penduduk'}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-extrabold text-slate-900 font-mono">
+                    {(stats?.affectedPopulation || 0).toLocaleString()}
+                  </div>
+                  <div className="text-[9px] text-slate-500 font-mono">Jiwa Total</div>
+                </div>
+              </div>
+
+              {/* Breakdown per Kelas */}
+              <div className="space-y-1.5 text-xs font-mono">
+                <div className="flex items-center justify-between p-2 rounded-lg bg-rose-50/80 border border-rose-200">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0"></span>
+                    <span className="font-semibold text-rose-900 text-[11px]">Risiko Tinggi:</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-bold text-rose-900">{(stats?.popTinggi || 0).toLocaleString()}</span>
+                    <span className="text-rose-700 text-[10px] ml-1">jiwa</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-2 rounded-lg bg-amber-50/80 border border-amber-200">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0"></span>
+                    <span className="font-semibold text-amber-900 text-[11px]">Risiko Sedang:</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-bold text-amber-900">{(stats?.popSedang || 0).toLocaleString()}</span>
+                    <span className="text-amber-700 text-[10px] ml-1">jiwa</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-2 rounded-lg bg-emerald-50/80 border border-emerald-200">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                    <span className="font-semibold text-emerald-900 text-[11px]">Risiko Rendah:</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-bold text-emerald-900">{(stats?.popRendah || 0).toLocaleString()}</span>
+                    <span className="text-emerald-700 text-[10px] ml-1">jiwa</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dominant Risk Footer */}
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono">
+                <span className="text-slate-500">Kelas Dominan Bahaya:</span>
+                <span className={`px-2 py-0.5 rounded font-bold text-[10px] ${
+                  stats?.dominantRiskClass === 'Tinggi'
+                    ? 'bg-rose-100 text-rose-800 border border-rose-300'
+                    : stats?.dominantRiskClass === 'Sedang'
+                    ? 'bg-amber-100 text-amber-800 border border-amber-300'
+                    : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                }`}>
+                  {stats?.dominantRiskClass || 'Sedang'}
+                </span>
               </div>
             </div>
 

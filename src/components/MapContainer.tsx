@@ -664,17 +664,14 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
     if (!showHazardLayer) return;
 
-    // Only render image overlay in continuous index mode
-    if (hazardRenderMode !== 'index') return;
-
     // Real 30-meter GeoTIFF bounds for Banjarnegara (EPSG:3395 WGS84)
     const bounds: L.LatLngBoundsExpression = [
       [-7.540781817456455, 109.36131288641874],
       [-7.162227603288682, 109.9178192049308]
     ];
 
-    const overlayUrl = `/hazard_rasters/${selectedHazard}_index.png`;
-    const overlayClass = 'smooth-raster-overlay-index';
+    const overlayUrl = `/hazard_rasters/${selectedHazard}_${hazardRenderMode}.png`;
+    const overlayClass = hazardRenderMode === 'index' ? 'smooth-raster-overlay-index' : 'smooth-raster-overlay-class';
 
     const overlay = L.imageOverlay(overlayUrl, bounds, {
       opacity: opacity,
@@ -685,7 +682,11 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     const applySmoothing = (el: HTMLElement) => {
       el.style.imageRendering = 'smooth';
       (el.style as any).msInterpolationMode = 'bicubic';
-      el.style.filter = 'blur(0.4px) contrast(1.08) saturate(1.15)';
+      if (hazardRenderMode === 'index') {
+        el.style.filter = 'blur(0.4px) contrast(1.08) saturate(1.15)';
+      } else {
+        el.style.filter = 'contrast(1.05) saturate(1.1)';
+      }
     };
 
     overlay.on('load', () => {
@@ -730,21 +731,12 @@ export const MapContainer: React.FC<MapContainerProps> = ({
       const layer = L.geoJSON(geoData, {
         style: (feature: any) => {
           const props = feature?.properties || {};
-          const kls = props.KLS_BENC || 'Rendah';
-          const isTinggi = kls === 'Tinggi' || kls.toLowerCase() === 'tinggi';
-          const isSedang = kls === 'Sedang' || kls.toLowerCase() === 'sedang';
-
-          const fillColor = isTinggi ? '#dc2626' : isSedang ? '#f59e0b' : '#10b981';
-
           const isCurrentVillage = selectedVillage && props.NAMA_DESA &&
             props.NAMA_DESA.toLowerCase().replace(/^(desa|kelurahan)\s+/, '') === selectedVillage.toLowerCase().replace(/^(desa|kelurahan)\s+/, '');
 
-          const isContinuous = hazardRenderMode === 'index';
-
           return {
-            fillColor,
-            fillOpacity: isContinuous ? 0 : 0.85,
-            stroke: Boolean(isCurrentVillage),
+            fillColor: 'transparent',
+            fillOpacity: 0,
             color: isCurrentVillage ? '#ffffff' : 'transparent',
             weight: isCurrentVillage ? 2.5 : 0,
             opacity: isCurrentVillage ? 1.0 : 0,

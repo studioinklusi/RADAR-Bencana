@@ -39,6 +39,13 @@
   z-index: 10;
 }
 
+/* Map locked state: change grab cursor to default cursor */
+.map-locked .leaflet-grab,
+.map-locked .leaflet-container,
+.map-locked .leaflet-touch .leaflet-grab {
+  cursor: default !important;
+}
+
 /* Smooth Bilinear & Bicubic Interpolation for Hazard Rasters */
 .smooth-raster-overlay,
 .smooth-raster-overlay-index,

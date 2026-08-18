@@ -27,7 +27,9 @@ import {
   Filter,
   Building2,
   Flame,
-  ListFilter
+  ListFilter,
+  Lock,
+  Unlock
 } from 'lucide-react';
 import { AdminFeatureCollection, AdminFeature, AdminProperties, HazardType, DisasterIncident, FacilityCategory, FacilitySubType, RadarInvestResult } from '../types';
 import { HAZARD_LAYERS } from '../data/hazardLayers';
@@ -148,6 +150,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   const [isPlayingTimelapse, setIsPlayingTimelapse] = useState<boolean>(false);
   const [isTimelineVisible, setIsTimelineVisible] = useState<boolean>(true);
   const [isScaleVisible, setIsScaleVisible] = useState<boolean>(true);
+  const [isMapLocked, setIsMapLocked] = useState<boolean>(false);
 
   // Automated Timelapse Player Loop
   useEffect(() => {
@@ -161,6 +164,22 @@ export const MapContainer: React.FC<MapContainerProps> = ({
       if (timer) clearInterval(timer);
     };
   }, [isPlayingTimelapse]);
+
+  // Handle Map Panning Lock / Unlock
+  useEffect(() => {
+    if (!leafletMap.current) return;
+    const map = leafletMap.current;
+
+    if (isMapLocked) {
+      map.dragging.disable();
+      map.touchZoom.disable();
+      if ((map as any).tap) (map as any).tap.disable();
+    } else {
+      map.dragging.enable();
+      map.touchZoom.enable();
+      if ((map as any).tap) (map as any).tap.enable();
+    }
+  }, [isMapLocked]);
 
   // Initialize Leaflet Map
   useEffect(() => {
@@ -1359,7 +1378,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   return (
     <div className="relative flex-1 h-[calc(100vh-3.5rem)] bg-slate-100 overflow-hidden">
       {/* Map Element */}
-      <div ref={mapRef} className="w-full h-full z-0" />
+      <div ref={mapRef} className={`w-full h-full z-0 ${isMapLocked ? 'map-locked' : ''}`} />
 
       {/* Floating Active Banner when Point Picker is Active */}
       {isPickingOnMap && (
@@ -1429,6 +1448,31 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           >
             <RotateCcw className="w-3.5 h-3.5 text-amber-600" />
             <span className="hidden sm:inline font-mono text-[11px]">Reset</span>
+          </button>
+
+          <div className="h-4 w-px bg-slate-200 shrink-0" />
+
+          {/* Lock / Unlock Map Panning Button */}
+          <button
+            onClick={() => setIsMapLocked(!isMapLocked)}
+            className={`p-1 rounded-xl transition-all flex items-center gap-1 text-xs px-2 font-semibold cursor-pointer shrink-0 ${
+              isMapLocked
+                ? 'bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 shadow-xs'
+                : 'text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/80'
+            }`}
+            title={isMapLocked ? 'Buka Kunci Peta (Izinkan geser dan navigasi peta)' : 'Kunci Peta (Cegah peta tergeser)'}
+          >
+            {isMapLocked ? (
+              <>
+                <Lock className="w-3.5 h-3.5 text-rose-600 animate-pulse" />
+                <span className="font-mono text-[11px] font-bold text-rose-700">Terkunci</span>
+              </>
+            ) : (
+              <>
+                <Unlock className="w-3.5 h-3.5 text-slate-500" />
+                <span className="hidden sm:inline font-mono text-[11px]">Kunci</span>
+              </>
+            )}
           </button>
 
           {/* Fullscreen Button */}

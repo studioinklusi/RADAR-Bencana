@@ -290,7 +290,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
               >
                 <div className="flex items-center gap-2 uppercase tracking-wider text-[11px] text-slate-700 min-w-0">
                   <Compass className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  <span className="whitespace-nowrap">POLA RUANG (RTRW)</span>
+                  <span className="whitespace-nowrap">POLA RUANG</span>
                   <Info className="w-3 h-3 text-slate-400 shrink-0" />
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0">
@@ -425,7 +425,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
               >
                 <div className="flex items-center gap-2 uppercase tracking-wider text-[11px] text-slate-700">
                   <Flame className="w-3.5 h-3.5 text-amber-600" />
-                  <span>LAYER BAHAYA BENCANA</span>
+                  <span>BAHAYA BENCANA</span>
                   <Info className="w-3 h-3 text-slate-400" />
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -540,7 +540,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
               >
                 <div className="flex items-center gap-2 uppercase tracking-wider text-[11px] text-slate-700">
                   <MapPin className="w-3.5 h-3.5 text-amber-600" />
-                  <span>TITIK KEJADIAN BENCANA</span>
+                  <span>TITIK BENCANA</span>
                   <Info className="w-3 h-3 text-slate-400" />
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -619,7 +619,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
               >
                 <div className="flex items-center gap-2 uppercase tracking-wider text-[11px] text-slate-700">
                   <Building2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>LAYER FASILITAS</span>
+                  <span>FASILITAS</span>
                   <Info className="w-3 h-3 text-slate-400" />
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -767,7 +767,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
               <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
                 <span className="flex items-center gap-1.5">
                   <Sliders className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Transparansi Layer Map</span>
+                  <span>Transparansi Peta</span>
                 </span>
                 <span className="font-mono text-emerald-700 font-bold">{Math.round(opacity * 100)}%</span>
               </div>

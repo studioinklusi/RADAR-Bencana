@@ -459,8 +459,8 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           color: isSelected ? '#059669' : '#475569',
           weight: isSelected ? 2.5 : 1,
           opacity: isSelected ? 1.0 : 0.65,
-          fillColor: isSelected ? '#10b981' : '#f8fafc',
-          fillOpacity: isSelected ? 0.25 : 0.05,
+          fillColor: 'transparent',
+          fillOpacity: 0,
           dashArray: '2, 2',
         };
       },
@@ -746,7 +746,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
             return {
               fillColor,
-              fillOpacity: isContinuous ? 0 : (isCurrentVillage ? Math.min(0.9, opacity * 0.8 + 0.15) : opacity * 0.75),
+              fillOpacity: isContinuous ? 0 : Math.max(0.88, opacity),
               color: isCurrentVillage ? '#ffffff' : 'transparent',
               weight: isCurrentVillage ? 2.5 : 0,
               opacity: isCurrentVillage ? 1.0 : 0,

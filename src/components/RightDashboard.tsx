@@ -141,7 +141,7 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
 
   const districtName = selectedDistrict
     ? selectedDistrict.properties.name
-    : 'Banjarnegara (Seluruh Kabupaten)';
+    : 'Banjarnegara';
   const totalArea = stats ? stats.totalAreaHa.toLocaleString() : '12,980,500';
 
   return (

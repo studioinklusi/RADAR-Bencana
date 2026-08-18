@@ -771,8 +771,24 @@ export const MapContainer: React.FC<MapContainerProps> = ({
                 return;
               }
               L.DomEvent.stopPropagation(e);
-              if (onSelectVillage && props.NAMA_DESA) {
-                onSelectVillage(props.NAMA_DESA);
+              if (groupingMode === 'Kecamatan') {
+                if (props.NAMA_KEC) {
+                  const kecClean = props.NAMA_KEC.toLowerCase().replace(/^(kecamatan|kec)\s+/, '').trim();
+                  const matchedKec = adminBoundaries.features.find((d: any) => {
+                    const dNameClean = d.properties.name.toLowerCase().replace(/^(kecamatan|kec)\s+/, '').trim();
+                    return dNameClean.includes(kecClean) || kecClean.includes(dNameClean);
+                  });
+                  if (matchedKec) {
+                    onSelectDistrict(matchedKec);
+                  }
+                }
+                if (onSelectVillage) {
+                  onSelectVillage(null);
+                }
+              } else {
+                if (onSelectVillage && props.NAMA_DESA) {
+                  onSelectVillage(props.NAMA_DESA);
+                }
               }
             });
           },
@@ -791,7 +807,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         impactSpatialLayerRef.current = null;
       }
     };
-  }, [selectedHazard, showImpactOverlay, opacity, selectedVillage, onSelectVillage, isPickingOnMap, onMapClickSelect]);
+  }, [selectedHazard, showImpactOverlay, opacity, selectedVillage, groupingMode, adminBoundaries, onSelectDistrict, onSelectVillage, isPickingOnMap, onMapClickSelect]);
 
   // Render Interactive Disaster Incident Markers (Titik Bencana)
   useEffect(() => {

@@ -59,6 +59,13 @@ export default function App() {
     }
   };
 
+  // Permanent guard: In 'Kecamatan' mode, selectedVillage must strictly be null
+  useEffect(() => {
+    if (groupingMode === 'Kecamatan' && selectedVillage !== null) {
+      setSelectedVillage(null);
+    }
+  }, [groupingMode, selectedVillage]);
+
   const [showFacilities, setShowFacilities] = useState<boolean>(true);
   const [selectedFacilityCategories, setSelectedFacilityCategories] = useState<FacilityCategory[]>([
     'kritis',

@@ -1387,9 +1387,9 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   }, [customUploadedLayers]);
 
   return (
-    <div className="relative flex-1 h-[calc(100vh-3.5rem)] bg-slate-100 overflow-hidden">
+    <div className={`relative flex-1 h-[calc(100vh-3.5rem)] bg-slate-100 overflow-hidden ${isMapLocked ? 'map-locked' : ''}`}>
       {/* Map Element */}
-      <div ref={mapRef} className={`w-full h-full z-0 ${isMapLocked ? 'map-locked' : ''}`} />
+      <div ref={mapRef} className="w-full h-full z-0" />
 
       {/* Floating Active Banner when Point Picker is Active */}
       {isPickingOnMap && (

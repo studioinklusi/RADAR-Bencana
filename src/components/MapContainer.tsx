@@ -165,7 +165,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     };
   }, [isPlayingTimelapse]);
 
-  // Handle Map Panning Lock / Unlock
+  // Handle Map Panning Lock / Unlock (strictly controls map movement only)
   useEffect(() => {
     if (!leafletMap.current) return;
     const map = leafletMap.current;
@@ -173,10 +173,18 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     if (isMapLocked) {
       map.dragging.disable();
       map.touchZoom.disable();
+      map.doubleClickZoom.disable();
+      map.scrollWheelZoom.disable();
+      map.boxZoom.disable();
+      map.keyboard.disable();
       if ((map as any).tap) (map as any).tap.disable();
     } else {
       map.dragging.enable();
       map.touchZoom.enable();
+      map.doubleClickZoom.enable();
+      map.scrollWheelZoom.enable();
+      map.boxZoom.enable();
+      map.keyboard.enable();
       if ((map as any).tap) (map as any).tap.enable();
     }
   }, [isMapLocked]);

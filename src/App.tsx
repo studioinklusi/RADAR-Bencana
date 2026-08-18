@@ -31,7 +31,7 @@ const ALL_FACILITY_SUBTYPES: FacilitySubType[] = [
 export default function App() {
   const [selectedDistrict, setSelectedDistrict] = useState<AdminFeature | null>(null);
   const [selectedVillage, setSelectedVillage] = useState<string | null>(null);
-  const [selectedHazard, setSelectedHazard] = useState<HazardType>('flood');
+  const [selectedHazard, setSelectedHazard] = useState<HazardType>('landslide');
   const [opacity, setOpacity] = useState<number>(0.85);
   const [showHazardLayer, setShowHazardLayer] = useState<boolean>(true);
   const [hazardRenderMode, setHazardRenderMode] = useState<'class' | 'index'>('class');

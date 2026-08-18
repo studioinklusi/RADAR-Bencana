@@ -34,7 +34,7 @@ function saveLayersIndex(layers: any[]) {
 // Qwen AI Risk & Vulnerability Assessment
 app.post('/api/generate-ai-report', async (req: Request, res: Response) => {
   try {
-    const { districtName, provinceName = 'Jawa Tengah', stats, hazardType = 'flood' } = req.body;
+    const { districtName, provinceName = 'Jawa Tengah', stats, hazardType = 'landslide' } = req.body;
 
     const qwenApiKey = process.env.QWEN_API_KEY;
 

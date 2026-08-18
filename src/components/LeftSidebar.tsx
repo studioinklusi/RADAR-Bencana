@@ -346,10 +346,9 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                           </div>
                           <span className="font-semibold text-slate-800">Visualisasi Layer RTRW</span>
                         </div>
-                        <span className="text-[9.5px] font-mono text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 font-semibold flex items-center gap-1 group-hover:bg-teal-600 group-hover:text-white group-hover:border-teal-600 transition-colors">
-                          <span>Buka Kunci</span>
-                          <ArrowRight className="w-2.5 h-2.5" />
-                        </span>
+                        <div className="p-1 rounded-md text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 transition-colors shrink-0">
+                          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                        </div>
                       </div>
 
                       <p className="text-[10.5px] text-slate-500 leading-snug px-0.5">

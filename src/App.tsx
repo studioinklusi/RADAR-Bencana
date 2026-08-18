@@ -10,6 +10,7 @@ import { MaximizedChatModal } from './components/MaximizedChatModal';
 import { FloatingAiChatButton } from './components/FloatingAiChatButton';
 import { LoginPage } from './components/LoginPage';
 import { AdminDashboardPage } from './components/AdminDashboardPage';
+import { PolaRuangAuthModal } from './components/PolaRuangAuthModal';
 
 import { ADMIN_BOUNDARIES } from './data/mockAdminBoundaries';
 import { DESA_BOUNDARIES } from './data/mockDesaBoundaries';
@@ -38,7 +39,15 @@ export default function App() {
   const [showImpactOverlay, setShowImpactOverlay] = useState<boolean>(true);
   const [hazardRenderMode, setHazardRenderMode] = useState<'class' | 'index'>('class');
   const [showAdminBoundaries, setShowAdminBoundaries] = useState<boolean>(true);
-  const [showPolaRuang, setShowPolaRuang] = useState<boolean>(true);
+  const [showPolaRuang, setShowPolaRuang] = useState<boolean>(false);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('radar_admin_auth') === 'true';
+    } catch {
+      return false;
+    }
+  });
+  const [isPolaRuangAuthModalOpen, setIsPolaRuangAuthModalOpen] = useState<boolean>(false);
   const [showIncidents, setShowIncidents] = useState<boolean>(true);
   const [selectedIncidentHazards, setSelectedIncidentHazards] = useState<HazardType[]>([
     'landslide',
@@ -825,11 +834,41 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
     setSelectedDistrict(customFeature);
   };
 
+  // Admin Authentication handlers
+  const handleLoginSuccess = (redirectPath: string = '/admin-dashboard') => {
+    try {
+      localStorage.setItem('radar_admin_auth', 'true');
+    } catch (e) {
+      console.error(e);
+    }
+    setIsAdminLoggedIn(true);
+    navigateTo(redirectPath);
+  };
+
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem('radar_admin_auth');
+    } catch (e) {
+      console.error(e);
+    }
+    setIsAdminLoggedIn(false);
+    setShowPolaRuang(false);
+    navigateTo('/');
+  };
+
+  const handleTogglePolaRuang = () => {
+    if (!isAdminLoggedIn) {
+      setIsPolaRuangAuthModalOpen(true);
+      return;
+    }
+    setShowPolaRuang((prev) => !prev);
+  };
+
   // Route 1: Login Page (/login)
   if (currentPath === '/login') {
     return (
       <LoginPage
-        onLoginSuccess={() => navigateTo('/admin-dashboard')}
+        onLoginSuccess={() => handleLoginSuccess('/admin-dashboard')}
         onBackToMap={() => navigateTo('/')}
       />
     );
@@ -841,6 +880,7 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
       <AdminDashboardPage
         onBackToMap={() => navigateTo('/')}
         onDataUploaded={fetchUploadedLayers}
+        onLogout={handleLogout}
       />
     );
   }
@@ -861,6 +901,9 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
           onSelectVillage={setSelectedVillage}
           onOpenGeometryModal={() => setIsGeometryModalOpen(true)}
           onNavigateToLogin={() => navigateTo('/login')}
+          onNavigateToAdminDashboard={() => navigateTo('/admin-dashboard')}
+          onLogout={handleLogout}
+          isAdminLoggedIn={isAdminLoggedIn}
           onResetView={handleResetView}
           lang={lang}
           onToggleLang={() => setLang(lang === 'ID' ? 'EN' : 'ID')}
@@ -885,8 +928,10 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
             onChangeOpacity={setOpacity}
             showAdminBoundaries={showAdminBoundaries}
             onToggleAdminBoundaries={() => setShowAdminBoundaries(!showAdminBoundaries)}
-            showPolaRuang={showPolaRuang}
-            onTogglePolaRuang={() => setShowPolaRuang(!showPolaRuang)}
+            showPolaRuang={showPolaRuang && isAdminLoggedIn}
+            onTogglePolaRuang={handleTogglePolaRuang}
+            isAdminLoggedIn={isAdminLoggedIn}
+            onRequireLogin={() => setIsPolaRuangAuthModalOpen(true)}
             showIncidents={showIncidents}
             onToggleIncidents={() => setShowIncidents(!showIncidents)}
             selectedIncidentHazards={selectedIncidentHazards}
@@ -934,7 +979,7 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
           onChangeHazardRenderMode={setHazardRenderMode}
           opacity={opacity}
           showAdminBoundaries={showAdminBoundaries}
-          showPolaRuang={showPolaRuang}
+          showPolaRuang={showPolaRuang && isAdminLoggedIn}
           showIncidents={showIncidents}
           onToggleIncidents={() => setShowIncidents(!showIncidents)}
           selectedIncidentHazards={selectedIncidentHazards}
@@ -1016,6 +1061,16 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
         isChatSending={isChatSending}
         selectedDistrict={selectedDistrict}
         selectedHazard={selectedHazard}
+      />
+
+      {/* Pola Ruang Restricted Access Notice Modal */}
+      <PolaRuangAuthModal
+        isOpen={isPolaRuangAuthModalOpen}
+        onClose={() => setIsPolaRuangAuthModalOpen(false)}
+        onNavigateToLogin={() => {
+          setIsPolaRuangAuthModalOpen(false);
+          navigateTo('/login');
+        }}
       />
     </div>
   );

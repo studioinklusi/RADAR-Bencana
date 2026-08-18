@@ -9,7 +9,9 @@ import {
   RotateCcw,
   MoreVertical,
   ShieldCheck,
-  LogIn
+  LogIn,
+  LogOut,
+  LayoutDashboard
 } from 'lucide-react';
 import { AdminFeature } from '../types';
 import { DESA_BOUNDARIES } from '../data/mockDesaBoundaries';
@@ -22,6 +24,9 @@ interface HeaderProps {
   onSelectVillage?: (village: string | null) => void;
   onOpenGeometryModal: () => void;
   onNavigateToLogin: () => void;
+  onNavigateToAdminDashboard?: () => void;
+  onLogout?: () => void;
+  isAdminLoggedIn?: boolean;
   onResetView: () => void;
   lang: 'ID' | 'EN';
   onToggleLang: () => void;
@@ -36,6 +41,9 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectVillage,
   onOpenGeometryModal,
   onNavigateToLogin,
+  onNavigateToAdminDashboard,
+  onLogout,
+  isAdminLoggedIn = false,
   onResetView,
   lang,
   onToggleLang,
@@ -241,38 +249,83 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         )}
 
+        {/* Admin Shortcut Button when Logged In */}
+        {isAdminLoggedIn && onNavigateToAdminDashboard && (
+          <button
+            onClick={onNavigateToAdminDashboard}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg text-xs font-bold shadow-xs transition-all cursor-pointer"
+            title="Buka Dashboard Pengelolaan Data GIS"
+          >
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Dashboard Admin</span>
+          </button>
+        )}
+
         {/* Language switch */}
         <button
           onClick={onToggleLang}
-          className="p-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg border border-slate-200 text-xs font-mono flex items-center gap-1 transition-colors"
+          className="p-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg border border-slate-200 text-xs font-mono flex items-center gap-1 transition-colors cursor-pointer"
           title="Ganti Bahasa"
         >
           <Globe className="w-3.5 h-3.5 text-slate-500" />
           <span className="font-semibold">{lang}</span>
         </button>
 
-        {/* More menu dropdown (⋯) — contains Admin Login */}
+        {/* More menu dropdown (⋯) — contains Admin Dashboard / Login / Logout */}
         <div className="relative" ref={moreMenuRef}>
           <button
             onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
-            className="p-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-200 transition-colors"
+            className="p-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-200 transition-colors cursor-pointer"
             title="Menu lainnya"
           >
             <MoreVertical className="w-4 h-4" />
           </button>
 
           {isMoreMenuOpen && (
-            <div className="absolute right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50 min-w-[180px] animate-in fade-in slide-in-from-top-1 duration-150">
-              <button
-                onClick={() => {
-                  onNavigateToLogin();
-                  setIsMoreMenuOpen(false);
-                }}
-                className="w-full px-3.5 py-2.5 text-left text-xs text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 flex items-center gap-2.5 transition-colors"
-              >
-                <LogIn className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="font-medium">Login Admin</span>
-              </button>
+            <div className="absolute right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50 min-w-[200px] animate-in fade-in slide-in-from-top-1 duration-150">
+              {isAdminLoggedIn ? (
+                <>
+                  <div className="px-3.5 py-2 bg-emerald-50/80 border-b border-emerald-100 text-[11px] font-mono text-emerald-900 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>Status: <b>Admin Aktif</b></span>
+                  </div>
+                  {onNavigateToAdminDashboard && (
+                    <button
+                      onClick={() => {
+                        onNavigateToAdminDashboard();
+                        setIsMoreMenuOpen(false);
+                      }}
+                      className="w-full px-3.5 py-2.5 text-left text-xs text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 flex items-center gap-2.5 transition-colors cursor-pointer border-b border-slate-100"
+                    >
+                      <LayoutDashboard className="w-3.5 h-3.5 text-emerald-600" />
+                      <span className="font-medium">Dashboard Admin</span>
+                    </button>
+                  )}
+                  {onLogout && (
+                    <button
+                      onClick={() => {
+                        onLogout();
+                        setIsMoreMenuOpen(false);
+                      }}
+                      className="w-full px-3.5 py-2.5 text-left text-xs text-rose-700 hover:bg-rose-50 flex items-center gap-2.5 transition-colors cursor-pointer"
+                    >
+                      <LogOut className="w-3.5 h-3.5 text-rose-600" />
+                      <span className="font-medium">Keluar (Logout)</span>
+                    </button>
+                  )}
+                </>
+              ) : (
+                <button
+                  onClick={() => {
+                    onNavigateToLogin();
+                    setIsMoreMenuOpen(false);
+                  }}
+                  className="w-full px-3.5 py-2.5 text-left text-xs text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 flex items-center gap-2.5 transition-colors cursor-pointer"
+                >
+                  <LogIn className="w-3.5 h-3.5 text-emerald-600" />
+                  <span className="font-medium">Login Admin</span>
+                </button>
+              )}
             </div>
           )}
         </div>

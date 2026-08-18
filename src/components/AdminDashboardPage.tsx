@@ -18,7 +18,8 @@ import {
   AlertTriangle,
   Activity,
   Map,
-  Compass
+  Compass,
+  LogOut
 } from 'lucide-react';
 
 export type CategoryType = 'admin_boundary' | 'pola_ruang' | 'kelas_bahaya' | 'indeks_bahaya' | 'incidents' | 'facilities';
@@ -40,6 +41,7 @@ interface UploadedLayer {
 interface AdminDashboardPageProps {
   onBackToMap: () => void;
   onDataUploaded?: () => void;
+  onLogout?: () => void;
 }
 
 const CATEGORY_LABELS: Record<CategoryType, { name: string; icon: any; color: string; desc: string }> = {
@@ -51,7 +53,7 @@ const CATEGORY_LABELS: Record<CategoryType, { name: string; icon: any; color: st
   facilities: { name: 'Fasilitas (Kritis & Umum)', icon: Building2, color: 'text-blue-800 border-blue-300 bg-blue-50', desc: 'Fasilitas Kritis (RSUD, Posko BPBD, Pemadam, Polisi) & Fasilitas Umum (Sekolah, Masjid, Pasar, GOR)' },
 };
 
-export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onBackToMap, onDataUploaded }) => {
+export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onBackToMap, onDataUploaded, onLogout }) => {
   const [activeUploadTab, setActiveUploadTab] = useState<'file' | 'manual'>('file');
   const [targetCategory, setTargetCategory] = useState<CategoryType>('admin_boundary');
 
@@ -461,10 +463,20 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onBackTo
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <span className="text-[11px] font-mono text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full font-bold">
             Status: Super Admin Aktif
           </span>
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="flex items-center gap-1.5 px-3 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+              title="Keluar dari akun admin"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Keluar</span>
+            </button>
+          )}
         </div>
       </header>
 

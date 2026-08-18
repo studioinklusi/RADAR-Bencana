@@ -38,7 +38,11 @@ import {
   User,
   Maximize2,
   Minimize2,
-  X
+  X,
+  Lock,
+  Unlock,
+  LogIn,
+  ShieldCheck
 } from 'lucide-react';
 import { HazardType, FacilityCategory, FacilitySubType, RadarInvestInput, RadarInvestResult, ChatMessage, AdminFeature, ZonalStatistics } from '../types';
 import { HAZARD_LAYERS } from '../data/hazardLayers';
@@ -56,6 +60,8 @@ interface LeftSidebarProps {
   onToggleAdminBoundaries: () => void;
   showPolaRuang: boolean;
   onTogglePolaRuang: () => void;
+  isAdminLoggedIn?: boolean;
+  onRequireLogin?: () => void;
   showIncidents: boolean;
   onToggleIncidents: () => void;
   selectedIncidentHazards: HazardType[];
@@ -100,6 +106,8 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
   onToggleAdminBoundaries,
   showPolaRuang,
   onTogglePolaRuang,
+  isAdminLoggedIn = false,
+  onRequireLogin,
   showIncidents,
   onToggleIncidents,
   selectedIncidentHazards,
@@ -277,15 +285,28 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
               <button
                 onClick={() => setExpandedSection(expandedSection === 'polaruang' ? null : 'polaruang')}
-                className="w-full px-3 py-2.5 flex items-center justify-between text-xs font-bold text-slate-800 hover:bg-slate-50 transition-colors"
+                className="w-full px-3 py-2.5 flex items-center justify-between text-xs font-bold text-slate-800 hover:bg-slate-50 transition-colors cursor-pointer"
               >
                 <div className="flex items-center gap-2 uppercase tracking-wider text-[11px] text-slate-700">
                   <Compass className="w-3.5 h-3.5 text-teal-600" />
                   <span>POLA RUANG (RTRW)</span>
-                  <Info className="w-3 h-3 text-slate-400" />
+                  {isAdminLoggedIn ? (
+                    <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                  ) : (
+                    <Lock className="w-3 h-3 text-amber-500" />
+                  )}
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className={`w-2 h-2 rounded-full ${showPolaRuang ? 'bg-teal-500 animate-pulse' : 'bg-slate-300'}`}></span>
+                  {isAdminLoggedIn ? (
+                    <span className="text-[9px] font-mono font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                      Admin
+                    </span>
+                  ) : (
+                    <span className="text-[9px] font-mono font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 flex items-center gap-1">
+                      <Lock className="w-2.5 h-2.5" /> Terkunci
+                    </span>
+                  )}
+                  <span className={`w-2 h-2 rounded-full ${showPolaRuang && isAdminLoggedIn ? 'bg-teal-500 animate-pulse' : 'bg-slate-300'}`}></span>
                   {expandedSection === 'polaruang' ? (
                     <ChevronDown className="w-4 h-4 text-slate-400" />
                   ) : (
@@ -296,25 +317,49 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
 
               {expandedSection === 'polaruang' && (
                 <div className="p-3 border-t border-slate-100 bg-slate-50/50 space-y-3">
-                  {/* Master Toggle */}
-                  <label className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-teal-300 transition-all shadow-xs">
-                    <span className="text-xs text-slate-800 flex items-center gap-2 font-medium">
-                      <input
-                        type="checkbox"
-                        checked={showPolaRuang}
-                        onChange={onTogglePolaRuang}
-                        className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
-                      />
-                      <span>Tampilkan Layer Pola Ruang</span>
-                    </span>
-                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
-                      showPolaRuang 
-                        ? 'text-teal-700 bg-teal-50 border-teal-200'
-                        : 'text-slate-500 bg-slate-100 border-slate-200'
-                    }`}>
-                      {showPolaRuang ? 'Aktif' : 'Non-Aktif'}
-                    </span>
-                  </label>
+                  {/* Master Toggle or Locked Warning */}
+                  {isAdminLoggedIn ? (
+                    <label className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-teal-300 transition-all shadow-xs">
+                      <span className="text-xs text-slate-800 flex items-center gap-2 font-medium">
+                        <input
+                          type="checkbox"
+                          checked={showPolaRuang}
+                          onChange={onTogglePolaRuang}
+                          className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
+                        />
+                        <span>Tampilkan Layer Pola Ruang</span>
+                      </span>
+                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
+                        showPolaRuang 
+                          ? 'text-teal-700 bg-teal-50 border-teal-200'
+                          : 'text-slate-500 bg-slate-100 border-slate-200'
+                      }`}>
+                        {showPolaRuang ? 'Aktif' : 'Non-Aktif'}
+                      </span>
+                    </label>
+                  ) : (
+                    <div className="p-3 bg-gradient-to-br from-amber-50/90 to-orange-50/60 rounded-xl border border-amber-200/90 text-xs space-y-2 shadow-xs">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 text-amber-900 font-bold text-xs">
+                          <Lock className="w-3.5 h-3.5 text-amber-600" />
+                          <span>Zonasi RTRW Terproteksi</span>
+                        </div>
+                        <span className="text-[9px] font-mono font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-300">
+                          Data Terbatas
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-amber-800 leading-snug">
+                        Layer Pola Ruang memuat zonasi RTRW &amp; ketentuan KKPR sensitif. Masuk sebagai administrator untuk mengaktifkannya di peta.
+                      </p>
+                      <button
+                        onClick={onRequireLogin}
+                        className="w-full py-1.5 px-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-lg text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                      >
+                        <LogIn className="w-3.5 h-3.5" />
+                        <span>Login untuk Buka Akses</span>
+                      </button>
+                    </div>
+                  )}
 
                   {/* Legenda Zonasi RTRW */}
                   <div className="space-y-1.5 pt-1">
@@ -359,7 +404,9 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                   </div>
 
                   <p className="text-[10px] text-slate-500 leading-relaxed border-t border-slate-200 pt-2">
-                    Arahkan kursor atau klik pada zonasi Pola Ruang di peta untuk melihat detail batas RTRW, aturan KKPR Dinas PUPR, dan status konservasi.
+                    {isAdminLoggedIn
+                      ? 'Klik pada zonasi Pola Ruang di peta untuk melihat detail batas RTRW, aturan KKPR Dinas PUPR, dan status konservasi.'
+                      : 'Informasi zonasi Pola Ruang hanya dapat ditampilkan di atas peta setelah pengguna terautentikasi.'}
                   </p>
                 </div>
               )}

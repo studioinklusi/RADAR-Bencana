@@ -437,40 +437,36 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onBackTo
     <div className="h-screen w-screen overflow-y-auto bg-slate-50 text-slate-800 flex flex-col font-sans scroll-smooth">
       {/* Top Admin Bar Navigation */}
       <header className="bg-white/95 border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-sm backdrop-blur-md">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={onBackToMap}
-            className="flex items-center gap-2 px-3.5 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 rounded-xl text-xs font-semibold transition-all group cursor-pointer"
-          >
-            <ArrowLeft className="w-4 h-4 text-emerald-600 group-hover:-translate-x-1 transition-transform" />
-            <span>Kembali ke Peta Utama</span>
-          </button>
-
-          <div className="h-5 w-[1px] bg-slate-200" />
-
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700">
-              <ShieldCheck className="w-5 h-5 text-emerald-600" />
-            </div>
-            <div>
-              <h1 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                Dashboard Super Admin - Radar Bencana
-              </h1>
-              <p className="text-[11px] text-slate-500 font-mono">
-                Pembaruan &amp; Manajemen Data GIS: SHP Administrasi, Pola Ruang, Kelas/Indeks Bahaya, Titik Bencana, Fasilitas
-              </p>
-            </div>
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700">
+            <ShieldCheck className="w-5 h-5 text-emerald-600" />
+          </div>
+          <div>
+            <h1 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              Dashboard Super Admin - Radar Bencana
+            </h1>
+            <p className="text-[11px] text-slate-500 font-mono">
+              Pembaruan &amp; Manajemen Data GIS: SHP Administrasi, Pola Ruang, Kelas/Indeks Bahaya, Titik Bencana, Fasilitas
+            </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2.5">
-          <span className="text-[11px] font-mono text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full font-bold">
+          <button
+            onClick={onBackToMap}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 rounded-xl text-xs font-semibold transition-all group cursor-pointer shadow-xs"
+          >
+            <ArrowLeft className="w-4 h-4 text-emerald-600 group-hover:-translate-x-0.5 transition-transform" />
+            <span>Kembali ke Peta Utama</span>
+          </button>
+
+          <span className="text-[11px] font-mono text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl font-bold">
             Status: Super Admin Aktif
           </span>
           {onLogout && (
             <button
               onClick={onLogout}
-              className="flex items-center gap-1.5 px-3 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
               title="Keluar dari akun admin"
             >
               <LogOut className="w-3.5 h-3.5" />

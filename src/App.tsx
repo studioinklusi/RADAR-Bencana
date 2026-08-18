@@ -50,6 +50,15 @@ export default function App() {
     setSelectedIncidentHazards([hazard]);
   };
 
+  const [groupingMode, setGroupingMode] = useState<string>('Kecamatan');
+
+  const handleGroupingModeChange = (mode: string) => {
+    setGroupingMode(mode);
+    if (mode === 'Kecamatan') {
+      setSelectedVillage(null);
+    }
+  };
+
   const [showFacilities, setShowFacilities] = useState<boolean>(true);
   const [selectedFacilityCategories, setSelectedFacilityCategories] = useState<FacilityCategory[]>([
     'kritis',
@@ -848,6 +857,7 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
           onResetView={handleResetView}
           lang={lang}
           onToggleLang={() => setLang(lang === 'ID' ? 'EN' : 'ID')}
+          groupingMode={groupingMode}
         />
       )}
 
@@ -936,6 +946,8 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
           onOpenAllIncidentsModal={() => setIsAllIncidentsModalOpen(true)}
           focusedCoords={focusedCoords}
           customUploadedLayers={uploadedLayers}
+          groupingMode={groupingMode}
+          onChangeGroupingMode={handleGroupingModeChange}
           isFullscreen={isMapFullscreen}
           onToggleFullscreen={handleToggleMapFullscreen}
         />

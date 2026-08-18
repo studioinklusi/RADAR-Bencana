@@ -71,6 +71,8 @@ interface MapContainerProps {
   showImpactOverlay?: boolean;
   onToggleImpactOverlay?: () => void;
   customUploadedLayers?: any[];
+  groupingMode?: string;
+  onChangeGroupingMode?: (mode: string) => void;
   isFullscreen?: boolean;
   onToggleFullscreen?: () => void;
 }
@@ -110,6 +112,8 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   onOpenAllIncidentsModal,
   focusedCoords = null,
   customUploadedLayers = [],
+  groupingMode: controlledGroupingMode,
+  onChangeGroupingMode,
   isFullscreen = false,
   onToggleFullscreen,
 }) => {
@@ -132,7 +136,15 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   const [selectedYear, setSelectedYear] = useState<number>(2024);
   const [basemapStyle, setBasemapStyle] = useState<'google_hybrid' | 'google_satellite' | 'osm' | 'positron' | 'esri_satellite'>('positron');
   const [showLegend, setShowLegend] = useState<boolean>(true);
-  const [groupingMode, setGroupingMode] = useState<string>('Kecamatan');
+  const [internalGroupingMode, setInternalGroupingMode] = useState<string>('Kecamatan');
+  const groupingMode = controlledGroupingMode || internalGroupingMode;
+  const setGroupingMode = (mode: string) => {
+    if (onChangeGroupingMode) {
+      onChangeGroupingMode(mode);
+    } else {
+      setInternalGroupingMode(mode);
+    }
+  };
   const [isPlayingTimelapse, setIsPlayingTimelapse] = useState<boolean>(false);
   const [isTimelineVisible, setIsTimelineVisible] = useState<boolean>(true);
   const [isScaleVisible, setIsScaleVisible] = useState<boolean>(true);
@@ -371,6 +383,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           }
           L.DomEvent.stopPropagation(e);
           onSelectDistrict(feature as AdminFeature);
+          if (onSelectVillage) onSelectVillage(null);
 
           // Zoom to polygon bounds
           if (polygonLayer instanceof L.Polygon) {
@@ -381,7 +394,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     }).addTo(map);
 
     geojsonLayerRef.current = layer;
-  }, [adminBoundaries, selectedDistrict, showAdminBoundaries, groupingMode, onSelectDistrict, isPickingOnMap, onMapClickSelect]);
+  }, [adminBoundaries, selectedDistrict, showAdminBoundaries, groupingMode, onSelectDistrict, onSelectVillage, isPickingOnMap, onMapClickSelect]);
 
   // Render Desa Vector Layer (276 Desa in Banjarnegara)
   useEffect(() => {
@@ -395,12 +408,11 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
     if (!showAdminBoundaries) return;
 
-    // Check if Desa layer should be rendered
+    // Check if Desa layer should be rendered (strictly disabled in 'Kecamatan' mode)
     const isDesaMode = groupingMode === 'Desa';
     const isCombinedMode = groupingMode === 'Kecamatan & Desa';
-    const isDrillDownKecamatan = groupingMode === 'Kecamatan' && Boolean(selectedDistrict);
 
-    if (!isDesaMode && !isCombinedMode && !isDrillDownKecamatan) {
+    if (!isDesaMode && !isCombinedMode) {
       return;
     }
 

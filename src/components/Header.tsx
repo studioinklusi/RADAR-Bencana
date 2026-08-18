@@ -25,6 +25,7 @@ interface HeaderProps {
   onResetView: () => void;
   lang: 'ID' | 'EN';
   onToggleLang: () => void;
+  groupingMode?: string;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -38,6 +39,7 @@ export const Header: React.FC<HeaderProps> = ({
   onResetView,
   lang,
   onToggleLang,
+  groupingMode = 'Kecamatan',
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -92,13 +94,17 @@ export const Header: React.FC<HeaderProps> = ({
             Kab. Banjarnegara
           </span>
           <span className="text-slate-400">/</span>
-          <span className={`transition-colors ${selectedDistrict ? 'hover:text-emerald-700 cursor-pointer text-slate-700 font-medium' : 'text-slate-600'}`} onClick={selectedDistrict ? () => onSelectDistrict(selectedDistrict) : undefined}>
+          <span className={`transition-colors ${selectedDistrict ? (groupingMode === 'Kecamatan' ? 'text-emerald-700 font-bold' : 'hover:text-emerald-700 cursor-pointer text-slate-700 font-medium') : 'text-slate-600'}`} onClick={selectedDistrict ? () => onSelectDistrict(selectedDistrict) : undefined}>
             {selectedDistrict ? selectedDistrict.properties.name : 'Semua Kecamatan'}
           </span>
-          <span className="text-slate-400">/</span>
-          <span className="text-emerald-700 font-semibold">
-            {selectedVillage ? selectedVillage : (selectedDistrict ? 'Semua Desa' : 'Seluruh Desa')}
-          </span>
+          {groupingMode !== 'Kecamatan' && (
+            <>
+              <span className="text-slate-400">/</span>
+              <span className="text-emerald-700 font-semibold">
+                {selectedVillage ? selectedVillage : (selectedDistrict ? 'Semua Desa' : 'Seluruh Desa')}
+              </span>
+            </>
+          )}
         </div>
       </div>
 
@@ -109,7 +115,7 @@ export const Header: React.FC<HeaderProps> = ({
             <Search className="w-4 h-4 absolute left-3 text-slate-400 pointer-events-none" />
             <input
               type="text"
-              placeholder={lang === 'ID' ? 'Pilih satu atau lebih wilayah...' : 'Select region or district...'}
+              placeholder={lang === 'ID' ? (groupingMode === 'Kecamatan' ? 'Cari kecamatan di Banjarnegara...' : 'Pilih satu atau lebih wilayah/desa...') : 'Select region or district...'}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -134,9 +140,9 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Search Dropdown */}
           {isSearchOpen && searchQuery && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-xl overflow-hidden z-50 max-h-72 overflow-y-auto">
-              {filteredDistricts.length === 0 && filteredVillages.length === 0 ? (
+              {(groupingMode === 'Kecamatan' ? filteredDistricts.length === 0 : (filteredDistricts.length === 0 && filteredVillages.length === 0)) ? (
                 <div className="p-3 text-xs text-slate-500 text-center font-mono">
-                  Tidak ada kecamatan/desa ditemukan
+                  {groupingMode === 'Kecamatan' ? 'Tidak ada kecamatan ditemukan' : 'Tidak ada kecamatan/desa ditemukan'}
                 </div>
               ) : (
                 <>
@@ -154,7 +160,7 @@ export const Header: React.FC<HeaderProps> = ({
                         setSearchQuery('');
                         setIsSearchOpen(false);
                       }}
-                      className="w-full px-3 py-2 text-left text-xs text-slate-700 hover:bg-emerald-50/70 hover:text-emerald-800 flex items-center justify-between border-b border-slate-100 last:border-0 transition-colors"
+                      className="w-full px-3 py-2 text-left text-xs text-slate-700 hover:bg-emerald-50/70 hover:text-emerald-800 flex items-center justify-between border-b border-slate-100 last:border-0 transition-colors cursor-pointer"
                     >
                       <div className="flex items-center gap-2">
                         <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
@@ -169,12 +175,12 @@ export const Header: React.FC<HeaderProps> = ({
                     </button>
                   ))}
 
-                  {filteredVillages.length > 0 && (
+                  {groupingMode !== 'Kecamatan' && filteredVillages.length > 0 && (
                     <div className="p-1.5 bg-slate-50 text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono border-y border-slate-100">
                       Desa / Kelurahan ({filteredVillages.length})
                     </div>
                   )}
-                  {filteredVillages.map((village: any) => (
+                  {groupingMode !== 'Kecamatan' && filteredVillages.map((village: any) => (
                     <button
                       key={village.id}
                       onClick={() => {
@@ -192,7 +198,7 @@ export const Header: React.FC<HeaderProps> = ({
                         setSearchQuery('');
                         setIsSearchOpen(false);
                       }}
-                      className="w-full px-3 py-2 text-left text-xs text-slate-700 hover:bg-emerald-50/70 hover:text-emerald-800 flex items-center justify-between border-b border-slate-100 last:border-0 transition-colors"
+                      className="w-full px-3 py-2 text-left text-xs text-slate-700 hover:bg-emerald-50/70 hover:text-emerald-800 flex items-center justify-between border-b border-slate-100 last:border-0 transition-colors cursor-pointer"
                     >
                       <div className="flex items-center gap-2">
                         <MapPin className="w-3.5 h-3.5 text-teal-600 shrink-0" />

@@ -1,3 +1,5 @@
+import { VILLAGE_BUILDING_STATS, VillageBuildingStat } from '../src/data/villageBuildingStatsData';
+
 export default async function handler(req: any, res: any) {
   // CORS Headers
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -25,35 +27,37 @@ export default async function handler(req: any, res: any) {
     } = activeContext;
 
     const lastUserMsg = messages.length > 0 ? messages[messages.length - 1].text : '';
+    const villageStat = findVillageBuildingStat(lastUserMsg);
 
     if (!qwenApiKey) {
-      const reply = generateRichDisasterMarkdownReport(lastUserMsg, districtName, hazardType, stats);
+      const reply = generateRichDisasterMarkdownReport(lastUserMsg, districtName, hazardType, stats, villageStat);
       return res.status(200).json({ success: true, text: reply, provider: 'Knowledge Engine Local (Markdown Table Supported)' });
     }
 
-    const systemPrompt = `Anda adalah "Asisten Tanya AI RADAR Bencana", pakar SIG, Analis Penanggulangan Bencana, dan Tata Ruang Spasial Kabupaten Banjarnegara, Jawa Tengah.
+    const systemPrompt = `Anda adalah "Asisten Tanya AI RADAR Bencana", pakar SIG, Analis Penanggulangan Bencana, Tapak Bangunan Spasial, dan Tata Ruang Kabupaten Banjarnegara, Jawa Tengah.
 
 ATURAN UTAMA & DOMAIN GUARDRAILS:
 1. RUANG LINGKUP WILAYAH (100% EKSKLUSIF KABUPATEN BANJARNEGARA, JAWA TENGAH):
    - Seluruh 18 Kecamatan (Wanayasa, Kalibening, Pandanarum, Karangkobar, Batur, Pejawaran, Pagentan, Madukara, Banjarmangu, Sigaluh, Banjarnegara, Pagedongan, Bawang, Purwanegara, Mandiraja, Purwareja Klampok, Susukan, Rakit) dan 276 Desa di dalamnya ADALAH WILAYAH KABUPATEN BANJARNEGARA.
-   - Jika pengguna menanyakan nama wilayah seperti "Wanayasa", yang dimaksud SELALU Kecamatan Wanayasa di Kabupaten Banjarnegara, Jawa Tengah.
+   - Jika pengguna menanyakan nama wilayah seperti "Wanadri" atau "Wanayasa", yang dimaksud SELALU wilayah di Kabupaten Banjarnegara, Jawa Tengah.
 
-2. KLASIFIKASI PERTANYAAN & PEDOMAN MENJAWAB:
-   a. KATEGORI BENCANA & MITIGASI (Tanah Longsor, Banjir, Gempa, Jalur Evakuasi, EWS, dll):
+2. BASIS DATA TAPAK BANGUNAN RESMI (GOOGLE OPEN BUILDINGS AI - 465.806 POLIGON):
+   - Total Bangunan Fisik Seluruh Banjarnegara: 465.806 unit (40.985.909 m² / 4.098,59 Ha luas atap fisik).
+   - Sebaran Bahaya Bencana: 344.747 unit di Zona Risiko Tinggi (74.0%), 59.746 unit di Zona Sedang (12.8%), 61.313 unit di Zona Rendah (13.2%).
+   ${villageStat ? `- Data Khusus Wilayah yang Ditanyakan: Desa ${villageStat.desa}, Kecamatan ${villageStat.kecamatan} memiliki TOTAL ${villageStat.totalBuildings.toLocaleString('id-ID')} unit bangunan tapak (luas total atap ${villageStat.totalAreaM2.toLocaleString('id-ID')} m²), populasi ${villageStat.totalPopulasi.toLocaleString('id-ID')} jiwa, luas wilayah ${villageStat.totalLuasHa} Ha.` : ''}
+
+3. KLASIFIKASI PERTANYAAN & PEDOMAN MENJAWAB:
+   a. PERTANYAAN JUMLAH BANGUNAN / RUMAH / PEMUKIMAN:
+      - Jawab langsung dengan angka presisi dari basis data tapak bangunan Google Open Buildings AI di atas.
+      - Berikan rincian luas tapak ($m^2$), estimasi paparan risiko bencana, dan rekomendasi struktural fisik bangunan.
+   
+   b. KATEGORI BENCANA & MITIGASI (Tanah Longsor, Banjir, Gempa, dll):
       - Berikan analisis risiko spasial yang mendalam dan solutif.
       - Gunakan format markdown terstruktur dengan tabel: Distribusi Risiko Spasial, Paparan Fasilitas Kritis, dan Matriks Rekomendasi Aksi BPBD.
       - Cantumkan Kontak Darurat Mako BPBD Banjarnegara: (0286) 592881 / WhatsApp 0812-2630-111.
    
-   b. KATEGORI GEOSPASIAL & TATA RUANG NON-BENCANA (Hutan Lindung, Pola Ruang RTRW, Luas Wilayah, Kawasan Konservasi, DAS Serayu, dll):
-      - Jawab secara langsung, kontekstual, dan informatif mengenai kondisi geografi Kabupaten Banjarnegara.
-      - JANGAN MEMAKSAKAN format tabel risiko bencana jika pengguna hanya bertanya data umum/spasial.
-      - Hubungkan relevansi fungsi kawasan (seperti hutan lindung di lereng utara Dieng/Pegunungan Serayu sebagai daerah resapan air kunci untuk pencegahan longsor/banjir).
-      - Jika data numerik spesifik tidak ada dalam konteks, sampaikan estimasi umum/kondisi eksisting dan sarankan mengecek layer Pola Ruang atau data resmi BPS/Bappeda Banjarnegara.
-
-   c. KATEGORI DI LUAR DOMAIN / OFF-TOPIC (Resep masakan, hiburan, musik, coding umum, percakapan santai non-kebencanaan, dll):
+   c. KATEGORI DI LUAR DOMAIN / OFF-TOPIC:
       - TOLAK DENGAN SOPAN dan ramah.
-      - Jelaskan bahwa Anda adalah asisten khusus kebencanaan dan geospasial Kabupaten Banjarnegara.
-      - Berikan contoh pertanyaan yang relevan seputar analisis bencana dan tata ruang Banjarnegara.
 
 DATA KONTEKS SPASIAL AKTIF DI PETA SAAT INI:
 - Wilayah Terpilih: ${districtName}, ${provinceName}
@@ -81,7 +85,7 @@ DATA KONTEKS SPASIAL AKTIF DI PETA SAAT INI:
     });
 
     const data: any = await apiResponse.json();
-    const replyText = data.choices?.[0]?.message?.content || generateRichDisasterMarkdownReport(lastUserMsg, districtName, hazardType, stats);
+    const replyText = data.choices?.[0]?.message?.content || generateRichDisasterMarkdownReport(lastUserMsg, districtName, hazardType, stats, villageStat);
 
     return res.status(200).json({ success: true, text: replyText });
   } catch (err: any) {
@@ -90,7 +94,29 @@ DATA KONTEKS SPASIAL AKTIF DI PETA SAAT INI:
   }
 }
 
-function generateRichDisasterMarkdownReport(query: string, districtName: string, hazardType: string, stats: any): string {
+function findVillageBuildingStat(query: string): VillageBuildingStat | null {
+  const q = (query || '').toLowerCase().trim();
+  if (!q) return null;
+
+  for (const [key, val] of Object.entries(VILLAGE_BUILDING_STATS)) {
+    const desaName = val.desa.toLowerCase();
+    const kecName = val.kecamatan.toLowerCase();
+    if (q.includes(desaName) && (q.includes(kecName) || desaName.length >= 4)) {
+      return val;
+    }
+  }
+
+  for (const [key, val] of Object.entries(VILLAGE_BUILDING_STATS)) {
+    const desaName = val.desa.toLowerCase();
+    if (q.includes(desaName) && desaName.length >= 3) {
+      return val;
+    }
+  }
+
+  return null;
+}
+
+function generateRichDisasterMarkdownReport(query: string, districtName: string, hazardType: string, stats: any, villageStat: VillageBuildingStat | null): string {
   const q = (query || '').toLowerCase().trim();
 
   // 1. Check for off-topic queries
@@ -107,6 +133,7 @@ function generateRichDisasterMarkdownReport(query: string, districtName: string,
 
 Mohon maaf, sebagai **Asisten AI RADAR Bencana Kabupaten Banjarnegara**, saya dikhususkan untuk menjawab pertanyaan seputar:
 - 🛡️ **Potensi & Risiko Bencana**: Tanah longsor, banjir, gempa bumi, likuifaksi, dan banjir bandang.
+- 🏠 **Data Tapak Bangunan (465k Footprints)**: Jumlah bangunan, rumah, luas tapak fisik per desa/kecamatan.
 - 🗺️ **Analisis Spasial & Citra Satelit**: Data GEE 30m, fasilitas publik terdampak, dan kemiringan lereng.
 - 🌲 **Tata Ruang & Pola Kawasan**: Pola ruang RTRW, kawasan lindung, sempadan sungai DAS Serayu, dan tutupan lahan Banjarnegara.
 - 🚨 **Kesiapsiagaan & Kontak Darurat**: Rekomendasi mitigasi, posko siaga desa, dan kontak BPBD.
@@ -115,7 +142,58 @@ Mohon maaf, sebagai **Asisten AI RADAR Bencana Kabupaten Banjarnegara**, saya di
 *💡 Silakan ajukan pertanyaan terkait kebencanaan atau wilayah spasial Kabupaten Banjarnegara.*`;
   }
 
-  // 2. Check for spatial / regional non-disaster queries (e.g. Forest, Land Use, RTRW)
+  // 2. Check for building / village building specific queries
+  const isBuildingQuery = q.includes('bangunan') || q.includes('rumah') || q.includes('gedung') || q.includes('footprint') || q.includes('atap') || villageStat !== null;
+  if (isBuildingQuery) {
+    if (villageStat) {
+      return `### 🏠 Data Spasial Tapak Bangunan — Desa ${villageStat.desa}, Kecamatan ${villageStat.kecamatan}
+
+Berdasarkan dataset **Google Open Buildings AI (465.806 Poligon Bangunan Kabupaten Banjarnegara)** dan pemetaan spasial BPBD:
+
+---
+
+#### 📊 1. Rincian Fisik Bangunan Desa ${villageStat.desa}
+
+| Parameter Spasial | Nilai Terdata | Keterangan |
+| :--- | :--- | :--- |
+| **Total Tapak Bangunan** | **${villageStat.totalBuildings.toLocaleString('id-ID')} Unit** | Poligon fisik atap bangunan teridentifikasi AI |
+| **Total Luas Atap Fisik** | **${villageStat.totalAreaM2.toLocaleString('id-ID')} m²** | $\\approx$ ${(villageStat.totalAreaM2 / 10000).toFixed(2)} Hektar luasan tapak |
+| **Populasi Penduduk** | **${villageStat.totalPopulasi.toLocaleString('id-ID')} Jiwa** | Estimasi paparan penduduk desa |
+| **Luas Wilayah Desa** | **${villageStat.totalLuasHa.toLocaleString('id-ID')} Ha** | Cakupan batas administrasi desa |
+| **Tingkat Kerentanan Lokasi** | **${villageStat.highRiskBuildings > 0 ? 'Zona Risiko Tinggi' : 'Zona Sedang'}** | ${villageStat.highRiskBuildings > 0 ? `${villageStat.highRiskBuildings} unit di zona rentan bencana` : 'Kondisi relatif stabil'} |
+
+---
+
+#### 🏗️ 2. Rekomendasi Mitigasi Bangunan Fisik
+1. **Perkuatan Pondasi & Dinding**: Pada lereng miring di sekitar Desa ${villageStat.desa}, wajib menggunakan sistem dinding penahan tanah (DPT) dan drainase resapan kedap air.
+2. **Jalur Evakuasi Rumah Warga**: Pastikan akses antar-gang pemukiman memiliki rambu titik kumpul (*assembly point*) yang bebas dari ancaman retakan tanah.
+3. **Visualisasi Peta**: Anda dapat mencentang layer **\`[✓] Tapak Bangunan (465k Unit)\`** di sidebar kiri untuk melihat langsung poligon atap rumah di Desa ${villageStat.desa} pada peta!`;
+    }
+
+    // General Banjarnegara building query
+    return `### 🏠 Data Spasial Tapak Bangunan — Kabupaten Banjarnegara
+
+Berdasarkan dataset **Google Open Buildings AI (465.806 Poligon Bangunan Kabupaten Banjarnegara)**:
+
+---
+
+#### 📊 1. Ringkasan Total Bangunan Kabupaten Banjarnegara
+
+| Kategori Risiko | Jumlah Bangunan | Persentase (%) | Luas Tapak ($m^2$) |
+| :--- | :--- | :--- | :--- |
+| 🔴 **Zona Risiko Tinggi** | **344.747 Unit** | **74.0%** | $\\approx$ 30,32 Juta m² |
+| 🟡 **Zona Risiko Sedang** | **59.746 Unit** | **12.8%** | $\\approx$ 5,25 Juta m² |
+| 🟢 **Zona Risiko Rendah** | **61.313 Unit** | **13.2%** | $\\approx$ 5,41 Juta m² |
+| **TOTAL KABUPATEN** | **465.806 Unit** | **100.0%** | **40.985.909 m² (4.098 Ha)** |
+
+---
+
+#### 💡 Panduan Cepat:
+- Anda dapat menanyakan nama desa secara spesifik (contoh: *"Berapa jumlah bangunan di Desa Wanadri?"* atau *"Jumlah rumah di Desa Batur"*).
+- Aktifkan layer **\`[✓] Tapak Bangunan (465k Unit)\`** di menu sidebar kiri untuk melihat sebaran atap rumah secara visual di peta.`;
+  }
+
+  // 3. Check for spatial / regional non-disaster queries (e.g. Forest, Land Use, RTRW)
   const isForestOrLandUse = q.includes('hutan') || q.includes('hutan lindung') || q.includes('pola ruang') || q.includes('rtrw') || q.includes('tata guna') || q.includes('tutupan lahan');
   if (isForestOrLandUse) {
     return `### 🌲 Informasi Kawasan Hutan & Tata Ruang — ${districtName}
@@ -135,7 +213,7 @@ Berdasarkan data spasial Pola Ruang RTRW dan analisis tutupan lahan Kabupaten Ba
 3. **Pemeriksaan Layer**: Anda dapat mengaktifkan layer **Pola Ruang / Tata Guna Lahan** di menu peta RADAR Bencana untuk melihat sebaran poligon kawasan lindung secara visual.`;
   }
 
-  // 3. Default Disaster Report
+  // 4. Default Disaster Report
   const hazardNameMap: Record<string, string> = {
     landslide: 'Tanah Longsor',
     flood: 'Banjir',

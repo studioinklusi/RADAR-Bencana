@@ -41,12 +41,14 @@ export default function App() {
   const [showPolaRuang, setShowPolaRuang] = useState<boolean>(true);
   const [showIncidents, setShowIncidents] = useState<boolean>(true);
   const [selectedIncidentHazards, setSelectedIncidentHazards] = useState<HazardType[]>([
-    'flood',
-    'flashflood',
     'landslide',
-    'earthquake',
-    'liquefaction',
   ]);
+
+  const handleSelectHazard = (hazard: HazardType) => {
+    setSelectedHazard(hazard);
+    // Automatically synchronize incident points on the map with the active hazard type
+    setSelectedIncidentHazards([hazard]);
+  };
 
   const [showFacilities, setShowFacilities] = useState<boolean>(true);
   const [selectedFacilityCategories, setSelectedFacilityCategories] = useState<FacilityCategory[]>([
@@ -857,7 +859,7 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
             selectedDistrict={selectedDistrict}
             stats={stats}
             selectedHazard={selectedHazard}
-            onSelectHazard={setSelectedHazard}
+            onSelectHazard={handleSelectHazard}
             showHazardLayer={showHazardLayer}
             onToggleHazardLayer={() => setShowHazardLayer(!showHazardLayer)}
             hazardRenderMode={hazardRenderMode}

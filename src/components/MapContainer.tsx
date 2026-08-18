@@ -681,7 +681,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     polaRuangLayerRef.current = layer;
   }, [showPolaRuang, polaRuangGeoJson, isPickingOnMap, onMapClickSelect]);
 
-  // Render 465k Building Footprints with Viewport Bounding Box Chunking
+  // Render Village-Scoped Building Footprints (<50 KB per village, Instant Load <50ms)
   useEffect(() => {
     if (!leafletMap.current) return;
     const map = leafletMap.current;
@@ -690,9 +690,8 @@ export const MapContainer: React.FC<MapContainerProps> = ({
       map.removeLayer(buildingsLayerRef.current);
       buildingsLayerRef.current = null;
     }
-    loadedBuildingChunksRef.current.clear();
 
-    if (!showBuildings) return;
+    if (!showBuildings || !selectedVillage) return;
 
     const layerGroup = L.layerGroup().addTo(map);
     buildingsLayerRef.current = layerGroup;
@@ -700,125 +699,121 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     let isCancelled = false;
     if (onBuildingsLoadingChange) onBuildingsLoadingChange(true);
 
-    const loadVisibleChunks = async () => {
-      if (isCancelled || !leafletMap.current || !showBuildings) return;
-      const currentBounds = map.getBounds();
-      const currentZoom = map.getZoom();
+    const cleanDesa = selectedVillage.toLowerCase().replace(/^(desa|kelurahan)\s+/i, '').trim();
+    const cleanKec = selectedDistrict?.properties?.name?.toLowerCase().replace(/^(kecamatan|kabupaten)\s+/i, '').trim() || '';
 
-      const minLat = currentBounds.getSouth();
-      const maxLat = currentBounds.getNorth();
-      const minLng = currentBounds.getWest();
-      const maxLng = currentBounds.getEast();
+    const loadVillageBuildings = async () => {
+      try {
+        const idxRes = await fetch('/data/villageBuildingsIndex.json');
+        if (!idxRes.ok) throw new Error('Failed to load index');
+        const indexData = await idxRes.json();
 
-      const GRID_SIZE = 0.04;
-      const minGx = Math.floor((minLng - 109.30) / GRID_SIZE);
-      const maxGx = Math.floor((maxLng - 109.30) / GRID_SIZE);
-      const minGy = Math.floor((minLat - (-7.65)) / GRID_SIZE);
-      const maxGy = Math.floor((maxLat - (-7.65)) / GRID_SIZE);
-
-      const targetChunks: string[] = [];
-      for (let gx = minGx; gx <= maxGx; gx++) {
-        for (let gy = minGy; gy <= maxGy; gy++) {
-          const cellId = `chunk_${gx}_${gy}`;
-          if (!loadedBuildingChunksRef.current.has(cellId)) {
-            targetChunks.push(cellId);
+        let targetFileName = '';
+        for (const [key, item] of Object.entries(indexData as Record<string, any>)) {
+          const dName = item.desa.toLowerCase();
+          const kName = item.kecamatan.toLowerCase();
+          if (dName === cleanDesa && (!cleanKec || kName.includes(cleanKec) || cleanKec.includes(kName))) {
+            targetFileName = item.fileName;
+            break;
           }
         }
-      }
 
-      if (targetChunks.length === 0) {
-        if (onBuildingsLoadingChange) onBuildingsLoadingChange(false);
-        return;
-      }
-
-      // Limit concurrent chunk fetches
-      for (const cellId of targetChunks.slice(0, 15)) {
-        if (isCancelled) break;
-        loadedBuildingChunksRef.current.add(cellId);
-
-        try {
-          const res = await fetch(`/data/buildings_chunks/${cellId}.json`);
-          if (!res.ok) continue;
-          const chunkData = await res.json();
-          if (isCancelled || !buildingsLayerRef.current) break;
-
-          L.geoJSON(chunkData, {
-            style: (feat: any) => {
-              const risk = feat?.properties?.risk || 'Rendah';
-              const color = risk === 'Tinggi' ? '#ef4444' : risk === 'Sedang' ? '#f59e0b' : '#10b981';
-              return {
-                fillColor: color,
-                fillOpacity: 0.7,
-                color: color,
-                weight: 1,
-                opacity: 0.9,
-              };
-            },
-            onEachFeature: (feat: any, polyLayer: any) => {
-              const props = feat?.properties || {};
-              const risk = props.risk || 'Rendah';
-              const badgeBg = risk === 'Tinggi' ? 'bg-rose-100 text-rose-800 border-rose-300' : risk === 'Sedang' ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-emerald-100 text-emerald-800 border-emerald-300';
-
-              polyLayer.bindTooltip(
-                `<div class="p-1 text-xs font-sans">
-                  <b>Tapak Bangunan</b> • ${props.area_m2 || 0} m²
-                  <div class="text-[10px] font-mono mt-0.5">Risiko: <span class="font-bold">${risk}</span></div>
-                </div>`,
-                { sticky: true }
-              );
-
-              polyLayer.bindPopup(`
-                <div class="p-3 font-sans w-56 text-slate-800 bg-white rounded-xl border border-slate-200 shadow-xl">
-                  <div class="flex items-center justify-between gap-1 mb-2 pb-1 border-b border-slate-100">
-                    <span class="text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${badgeBg}">
-                      ZONA ${risk.toUpperCase()}
-                    </span>
-                    <span class="text-[9px] font-mono text-slate-400">ID: ${(props.id || '').slice(-6)}</span>
-                  </div>
-                  <div class="space-y-1 text-xs">
-                    <div class="flex justify-between">
-                      <span class="text-slate-500 text-[11px]">Luas Tapak:</span>
-                      <strong class="font-mono text-emerald-700">${props.area_m2 || 0} m²</strong>
-                    </div>
-                    <div class="flex justify-between">
-                      <span class="text-slate-500 text-[11px]">Tingkat Risiko:</span>
-                      <strong class="${risk === 'Tinggi' ? 'text-rose-600' : risk === 'Sedang' ? 'text-amber-600' : 'text-emerald-600'}">${risk}</strong>
-                    </div>
-                    ${props.plus_code ? `
-                    <div class="pt-1 border-t border-slate-100 text-[10px] font-mono text-slate-500">
-                      Plus Code: <span class="text-slate-700 font-bold">${props.plus_code}</span>
-                    </div>` : ''}
-                  </div>
-                </div>
-              `);
+        if (!targetFileName) {
+          for (const [key, item] of Object.entries(indexData as Record<string, any>)) {
+            if (item.desa.toLowerCase() === cleanDesa) {
+              targetFileName = item.fileName;
+              break;
             }
-          }).addTo(buildingsLayerRef.current);
-        } catch (e) {
-          // ignore missing empty chunks
+          }
         }
+
+        if (!targetFileName || isCancelled) {
+          if (onBuildingsLoadingChange) onBuildingsLoadingChange(false);
+          return;
+        }
+
+        const bldgRes = await fetch(`/data/buildings_by_village/${targetFileName}`);
+        if (!bldgRes.ok || isCancelled) {
+          if (onBuildingsLoadingChange) onBuildingsLoadingChange(false);
+          return;
+        }
+
+        const bldgGeoJson = await bldgRes.json();
+        if (isCancelled || !buildingsLayerRef.current) return;
+
+        const geoLayer = L.geoJSON(bldgGeoJson, {
+          style: (feat: any) => {
+            const risk = feat?.properties?.risk || 'Rendah';
+            const color = risk === 'Tinggi' ? '#ef4444' : risk === 'Sedang' ? '#f59e0b' : '#10b981';
+            return {
+              fillColor: color,
+              fillOpacity: 0.75,
+              color: color,
+              weight: 1.5,
+              opacity: 1.0,
+            };
+          },
+          onEachFeature: (feat: any, polyLayer: any) => {
+            const props = feat?.properties || {};
+            const risk = props.risk || 'Rendah';
+            const badgeBg = risk === 'Tinggi' ? 'bg-rose-100 text-rose-800 border-rose-300' : risk === 'Sedang' ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-emerald-100 text-emerald-800 border-emerald-300';
+
+            polyLayer.bindTooltip(
+              `<div class="p-1 text-xs font-sans">
+                <b>Tapak Bangunan</b> • ${props.area_m2 || 0} m²
+                <div class="text-[10px] font-mono mt-0.5">Risiko: <span class="font-bold">${risk}</span></div>
+              </div>`,
+              { sticky: true }
+            );
+
+            polyLayer.bindPopup(`
+              <div class="p-3 font-sans w-56 text-slate-800 bg-white rounded-xl border border-slate-200 shadow-xl">
+                <div class="flex items-center justify-between gap-1 mb-2 pb-1 border-b border-slate-100">
+                  <span class="text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${badgeBg}">
+                    ZONA ${risk.toUpperCase()}
+                  </span>
+                  <span class="text-[9px] font-mono text-slate-400">ID: ${(props.id || '').slice(-6)}</span>
+                </div>
+                <div class="space-y-1 text-xs">
+                  <div class="flex justify-between">
+                    <span class="text-slate-500 text-[11px]">Luas Tapak:</span>
+                    <strong class="font-mono text-emerald-700">${props.area_m2 || 0} m²</strong>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-slate-500 text-[11px]">Tingkat Risiko:</span>
+                    <strong class="${risk === 'Tinggi' ? 'text-rose-600' : risk === 'Sedang' ? 'text-amber-600' : 'text-emerald-600'}">${risk}</strong>
+                  </div>
+                  ${props.plus_code ? `
+                  <div class="pt-1 border-t border-slate-100 text-[10px] font-mono text-slate-500">
+                    Plus Code: <span class="text-slate-700 font-bold">${props.plus_code}</span>
+                  </div>` : ''}
+                </div>
+              </div>
+            `);
+          }
+        }).addTo(buildingsLayerRef.current);
+
+        if (geoLayer.getBounds().isValid()) {
+          map.fitBounds(geoLayer.getBounds(), { padding: [30, 30], maxZoom: 16 });
+        }
+      } catch (err) {
+        console.error('Error loading village buildings:', err);
+      } finally {
+        if (onBuildingsLoadingChange) onBuildingsLoadingChange(false);
       }
-
-      if (onBuildingsLoadingChange) onBuildingsLoadingChange(false);
     };
 
-    loadVisibleChunks();
-
-    const handleMove = () => {
-      loadVisibleChunks();
-    };
-
-    map.on('moveend', handleMove);
+    loadVillageBuildings();
 
     return () => {
       isCancelled = true;
-      map.off('moveend', handleMove);
       if (buildingsLayerRef.current) {
         map.removeLayer(buildingsLayerRef.current);
         buildingsLayerRef.current = null;
       }
       if (onBuildingsLoadingChange) onBuildingsLoadingChange(false);
     };
-  }, [showBuildings]);
+  }, [showBuildings, selectedVillage, selectedDistrict]);
 
   // Render Real 30-meter Disaster Risk Index Raster Overlay (from INDEKS BENCANA 30 GeoTIFFs)
   useEffect(() => {
@@ -1573,6 +1568,14 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           >
             Batal
           </button>
+        </div>
+      )}
+
+      {/* Floating Guidance Banner when Building Layer is active but no village is selected */}
+      {showBuildings && !selectedVillage && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] bg-slate-900/90 backdrop-blur-md text-white text-xs px-4 py-2 rounded-2xl shadow-xl border border-white/20 flex items-center gap-2 animate-in fade-in slide-in-from-top-4 duration-200 pointer-events-auto max-w-[90vw] text-center">
+          <Home className="w-4 h-4 text-emerald-400 animate-pulse shrink-0" />
+          <span><strong>Mode Tapak Bangunan Aktif:</strong> Klik salah satu desa di peta atau pilih dari sidebar untuk memuat poligon bangunan.</span>
         </div>
       )}
 

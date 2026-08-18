@@ -920,6 +920,8 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
         {!isMapFullscreen && (
           <LeftSidebar
             selectedDistrict={selectedDistrict}
+            selectedVillage={selectedVillage}
+            onSelectVillage={setSelectedVillage}
             stats={stats}
             selectedHazard={selectedHazard}
             onSelectHazard={handleSelectHazard}

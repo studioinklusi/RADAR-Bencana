@@ -46,6 +46,7 @@ import {
   ArrowRight,
   Home
 } from 'lucide-react';
+import { VILLAGE_BUILDING_STATS } from '../data/villageBuildingStatsData';
 import { HazardType, FacilityCategory, FacilitySubType, RadarInvestInput, RadarInvestResult, ChatMessage, AdminFeature, ZonalStatistics } from '../types';
 import { HAZARD_LAYERS } from '../data/hazardLayers';
 
@@ -87,6 +88,8 @@ interface LeftSidebarProps {
   onTogglePickOnMap?: () => void;
   pickedLocation?: { lat: number; lng: number } | null;
   selectedDistrict?: AdminFeature | null;
+  selectedVillage?: string | null;
+  onSelectVillage?: (village: string | null) => void;
   stats?: ZonalStatistics | null;
   chatMessages?: ChatMessage[];
   inputChatText?: string;
@@ -98,6 +101,8 @@ interface LeftSidebarProps {
 
 export const LeftSidebar: React.FC<LeftSidebarProps> = ({
   selectedDistrict,
+  selectedVillage = null,
+  onSelectVillage,
   stats,
   selectedHazard,
   onSelectHazard,
@@ -144,6 +149,19 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'tema' | 'invest'>('tema');
   const [expandedSection, setExpandedSection] = useState<'wilayah' | 'polaruang' | 'hazard' | 'incidents' | 'facilities' | 'buildings' | null>('hazard');
+
+  // Filter available villages based on selectedDistrict
+  const selectedDistrictClean = selectedDistrict?.properties?.name?.toLowerCase().replace(/^(kecamatan|kabupaten)\s+/i, '') || '';
+  const availableVillages = Object.values(VILLAGE_BUILDING_STATS).filter((v) => {
+    if (!selectedDistrictClean) return true;
+    return v.kecamatan.toLowerCase().includes(selectedDistrictClean) || selectedDistrictClean.includes(v.kecamatan.toLowerCase());
+  }).sort((a, b) => a.desa.localeCompare(b.desa));
+
+  const currentVillageStat = selectedVillage
+    ? Object.values(VILLAGE_BUILDING_STATS).find(
+        (v) => v.desa.toLowerCase() === selectedVillage.toLowerCase().replace(/^(desa|kelurahan)\s+/i, '')
+      )
+    : null;
 
   // Form state for Radar Invest (Default to Banjarnegara Pusat)
   const [investLat, setInvestLat] = useState<number>(-7.3970);
@@ -769,7 +787,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
               )}
             </div>
 
-            {/* Accordion 6: BANGUNAN (465K FOOTPRINTS) */}
+            {/* Accordion 6: BANGUNAN (MODE DESA CEPAT & RINGAN) */}
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
               <button
                 onClick={() => setExpandedSection(expandedSection === 'buildings' ? null : 'buildings')}
@@ -782,9 +800,9 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0">
                   <span className="text-[9px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-1.5 py-0.5 rounded font-bold">
-                    465k Unit
+                    Mode Desa
                   </span>
-                  <span className={`w-2 h-2 rounded-full ${showBuildings ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`}></span>
+                  <span className={`w-2 h-2 rounded-full ${showBuildings && selectedVillage ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`}></span>
                   {expandedSection === 'buildings' ? (
                     <ChevronDown className="w-4 h-4 text-slate-400" />
                   ) : (
@@ -804,7 +822,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                         onChange={onToggleBuildings}
                         className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
                       />
-                      <span>Tampilkan 465k Tapak Bangunan</span>
+                      <span>Tampilkan Poligon Bangunan</span>
                     </span>
                     <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
                       showBuildings 
@@ -815,19 +833,59 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                     </span>
                   </label>
 
-                  <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-[10.5px] text-slate-600 space-y-1.5">
-                    <div className="flex items-center justify-between text-[10px] font-mono font-bold text-slate-700">
-                      <span>Sumber: Google Open Buildings AI</span>
-                      <span className="text-emerald-700">Banjarnegara</span>
+                  {/* Village Selector */}
+                  <div className="space-y-1.5 bg-white p-2.5 rounded-lg border border-slate-200">
+                    <div className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                      <span className="flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Pilih Desa Target:</span>
+                      </span>
+                      {selectedVillage && (
+                        <button
+                          onClick={() => onSelectVillage && onSelectVillage(null)}
+                          className="text-[9px] text-rose-600 hover:underline font-mono cursor-pointer"
+                        >
+                          Hapus Pilihan
+                        </button>
+                      )}
                     </div>
-                    <p className="text-slate-500 text-[10px] leading-snug">
-                      Memuat 465.806 tapak fisik atap bangunan dengan klasifikasi warna risiko bencana (Merah = Tinggi, Kuning = Sedang, Hijau = Rendah).
-                    </p>
+                    <select
+                      value={selectedVillage || ''}
+                      onChange={(e) => {
+                        const val = e.target.value || null;
+                        if (onSelectVillage) onSelectVillage(val);
+                        if (val && !showBuildings && onToggleBuildings) onToggleBuildings();
+                      }}
+                      className="w-full text-xs p-2 rounded-lg bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 font-sans cursor-pointer text-slate-800 font-medium"
+                    >
+                      <option value="">-- Pilih Desa untuk Memuat Bangunan --</option>
+                      {availableVillages.map((v, i) => (
+                        <option key={i} value={v.desa}>
+                          Desa {v.desa} (Kec. {v.kecamatan}) — {v.totalBuildings} Unit
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
-                  <p className="text-[10px] text-slate-500 leading-relaxed border-t border-slate-200 pt-2">
-                    💡 <strong>Tips:</strong> Perbesar peta (zoom in) ke area pemukiman desa/kota untuk melihat detail poligon atap dan tingkat bahaya per bangunan.
-                  </p>
+                  {/* Active Village Info Chip */}
+                  {currentVillageStat ? (
+                    <div className="bg-emerald-50/70 border border-emerald-200 p-2.5 rounded-lg space-y-1 text-xs">
+                      <div className="flex justify-between items-center text-emerald-900 font-bold text-[11px]">
+                        <span>Desa {currentVillageStat.desa}</span>
+                        <span className="font-mono text-emerald-700 bg-white px-1.5 py-0.5 rounded border border-emerald-200 text-[10px]">
+                          {currentVillageStat.totalBuildings.toLocaleString()} Unit
+                        </span>
+                      </div>
+                      <div className="text-[10px] text-emerald-800 font-mono flex justify-between">
+                        <span>Luas Atap: {currentVillageStat.totalAreaM2.toLocaleString()} m²</span>
+                        <span>{currentVillageStat.totalPopulasi} Jiwa</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-[10px] text-slate-500 leading-snug bg-amber-50/70 p-2 rounded border border-amber-200/80">
+                      💡 <strong>Panduan:</strong> Pilih salah satu desa di atas atau klik langsung poligon desa di peta untuk memunculkan atap bangunan wilayah tersebut secara instan.
+                    </p>
+                  )}
                 </div>
               )}
             </div>

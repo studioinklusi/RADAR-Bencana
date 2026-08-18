@@ -1,0 +1,1430 @@
+{
+  "piasa_wetan_susukan": {
+    "desa": "Piasa Wetan",
+    "kecamatan": "Susukan",
+    "fileName": "piasa_wetan_susukan.json",
+    "totalBuildings": 689
+  },
+  "pakikiran_susukan": {
+    "desa": "Pakikiran",
+    "kecamatan": "Susukan",
+    "fileName": "pakikiran_susukan.json",
+    "totalBuildings": 812
+  },
+  "brengkok_susukan": {
+    "desa": "brengkok",
+    "kecamatan": "Susukan",
+    "fileName": "brengkok_susukan.json",
+    "totalBuildings": 118
+  },
+  "penerusan_kulon_susukan": {
+    "desa": "Penerusan Kulon",
+    "kecamatan": "Susukan",
+    "fileName": "penerusan_kulon_susukan.json",
+    "totalBuildings": 818
+  },
+  "penerusan_wetan_susukan": {
+    "desa": "Penerusan wetan",
+    "kecamatan": "Susukan",
+    "fileName": "penerusan_wetan_susukan.json",
+    "totalBuildings": 232
+  },
+  "gumelan_kulon_susukan": {
+    "desa": "Gumelan Kulon",
+    "kecamatan": "Susukan",
+    "fileName": "gumelan_kulon_susukan.json",
+    "totalBuildings": 3292
+  },
+  "gumelan_wetan_susukan": {
+    "desa": "Gumelan Wetan",
+    "kecamatan": "Susukan",
+    "fileName": "gumelan_wetan_susukan.json",
+    "totalBuildings": 2767
+  },
+  "derik_susukan": {
+    "desa": "Derik",
+    "kecamatan": "Susukan",
+    "fileName": "derik_susukan.json",
+    "totalBuildings": 294
+  },
+  "berta_susukan": {
+    "desa": "Berta",
+    "kecamatan": "Susukan",
+    "fileName": "berta_susukan.json",
+    "totalBuildings": 731
+  },
+  "kemrangon_susukan": {
+    "desa": "Kemrangon",
+    "kecamatan": "Susukan",
+    "fileName": "kemrangon_susukan.json",
+    "totalBuildings": 248
+  },
+  "karangsalam_susukan": {
+    "desa": "Karangsalam",
+    "kecamatan": "Susukan",
+    "fileName": "karangsalam_susukan.json",
+    "totalBuildings": 8
+  },
+  "sirkandi_purworejo_klampo": {
+    "desa": "Sirkandi",
+    "kecamatan": "Purworejo Klampo",
+    "fileName": "sirkandi_purworejo_klampo.json",
+    "totalBuildings": 1336
+  },
+  "salamerta_mandiraja": {
+    "desa": "Salamerta",
+    "kecamatan": "Mandiraja",
+    "fileName": "salamerta_mandiraja.json",
+    "totalBuildings": 1549
+  },
+  "glempang_mandiraja": {
+    "desa": "Glempang",
+    "kecamatan": "Mandiraja",
+    "fileName": "glempang_mandiraja.json",
+    "totalBuildings": 802
+  },
+  "kebanaran_mandiraja": {
+    "desa": "Kebanaran",
+    "kecamatan": "Mandiraja",
+    "fileName": "kebanaran_mandiraja.json",
+    "totalBuildings": 4704
+  },
+  "kaliwungu_mandiraja": {
+    "desa": "Kaliwungu",
+    "kecamatan": "Mandiraja",
+    "fileName": "kaliwungu_mandiraja.json",
+    "totalBuildings": 2622
+  },
+  "somawangi_mandiraja": {
+    "desa": "Somawangi",
+    "kecamatan": "Mandiraja",
+    "fileName": "somawangi_mandiraja.json",
+    "totalBuildings": 4733
+  },
+  "jalatunda_mandiraja": {
+    "desa": "Jalatunda",
+    "kecamatan": "Mandiraja",
+    "fileName": "jalatunda_mandiraja.json",
+    "totalBuildings": 3146
+  },
+  "mandiraja_wetan_purwonegoro": {
+    "desa": "Mandiraja Wetan",
+    "kecamatan": "Purwonegoro",
+    "fileName": "mandiraja_wetan_purwonegoro.json",
+    "totalBuildings": 257
+  },
+  "mandiraja_kulon_purwonegoro": {
+    "desa": "Mandiraja Kulon",
+    "kecamatan": "Purwonegoro",
+    "fileName": "mandiraja_kulon_purwonegoro.json",
+    "totalBuildings": 497
+  },
+  "kertayasa_mandiraja": {
+    "desa": "Kertayasa",
+    "kecamatan": "Mandiraja",
+    "fileName": "kertayasa_mandiraja.json",
+    "totalBuildings": 978
+  },
+  "kalitengah_purwonegoro": {
+    "desa": "Kalitengah",
+    "kecamatan": "Purwonegoro",
+    "fileName": "kalitengah_purwonegoro.json",
+    "totalBuildings": 2673
+  },
+  "petir_purwonegoro": {
+    "desa": "Petir",
+    "kecamatan": "Purwonegoro",
+    "fileName": "petir_purwonegoro.json",
+    "totalBuildings": 8057
+  },
+  "kaliajir_purwonegoro": {
+    "desa": "Kaliajir",
+    "kecamatan": "Purwonegoro",
+    "fileName": "kaliajir_purwonegoro.json",
+    "totalBuildings": 1088
+  },
+  "karangannyar_purwonegoro": {
+    "desa": "Karangannyar",
+    "kecamatan": "Purwonegoro",
+    "fileName": "karangannyar_purwonegoro.json",
+    "totalBuildings": 826
+  },
+  "merden_purwonegoro": {
+    "desa": "Merden",
+    "kecamatan": "Purwonegoro",
+    "fileName": "merden_purwonegoro.json",
+    "totalBuildings": 388
+  },
+  "mertasari_wetan_purwonegoro": {
+    "desa": "Mertasari Wetan",
+    "kecamatan": "Purwonegoro",
+    "fileName": "mertasari_wetan_purwonegoro.json",
+    "totalBuildings": 202
+  },
+  "parakan_purwonegoro": {
+    "desa": "Parakan",
+    "kecamatan": "Purwonegoro",
+    "fileName": "parakan_purwonegoro.json",
+    "totalBuildings": 2930
+  },
+  "pucungbedug_purwonegoro": {
+    "desa": "Pucungbedug",
+    "kecamatan": "Purwonegoro",
+    "fileName": "pucungbedug_purwonegoro.json",
+    "totalBuildings": 2902
+  },
+  "gumiwang_purwonegoro": {
+    "desa": "Gumiwang",
+    "kecamatan": "Purwonegoro",
+    "fileName": "gumiwang_purwonegoro.json",
+    "totalBuildings": 527
+  },
+  "kalipelus_rakit": {
+    "desa": "Kalipelus",
+    "kecamatan": "Rakit",
+    "fileName": "kalipelus_rakit.json",
+    "totalBuildings": 3785
+  },
+  "purwonegoro_purwonegoro": {
+    "desa": "Purwonegoro",
+    "kecamatan": "Purwonegoro",
+    "fileName": "purwonegoro_purwonegoro.json",
+    "totalBuildings": 2551
+  },
+  "danaraja_purwonegoro": {
+    "desa": "Danaraja",
+    "kecamatan": "Purwonegoro",
+    "fileName": "danaraja_purwonegoro.json",
+    "totalBuildings": 560
+  },
+  "wanadri_bawang": {
+    "desa": "Wanadri",
+    "kecamatan": "Bawang",
+    "fileName": "wanadri_bawang.json",
+    "totalBuildings": 609
+  },
+  "kebondalem_bawang": {
+    "desa": "Kebondalem",
+    "kecamatan": "Bawang",
+    "fileName": "kebondalem_bawang.json",
+    "totalBuildings": 1121
+  },
+  "duren_bawang": {
+    "desa": "Duren",
+    "kecamatan": "Bawang",
+    "fileName": "duren_bawang.json",
+    "totalBuildings": 1986
+  },
+  "lebakwangi_bawang": {
+    "desa": "Lebakwangi",
+    "kecamatan": "Bawang",
+    "fileName": "lebakwangi_bawang.json",
+    "totalBuildings": 2457
+  },
+  "majalengka_bawang": {
+    "desa": "Majalengka",
+    "kecamatan": "Bawang",
+    "fileName": "majalengka_bawang.json",
+    "totalBuildings": 1352
+  },
+  "wiramastra_bawang": {
+    "desa": "Wiramastra",
+    "kecamatan": "Bawang",
+    "fileName": "wiramastra_bawang.json",
+    "totalBuildings": 1575
+  },
+  "kutayasa_kulon_bawang": {
+    "desa": "Kutayasa Kulon",
+    "kecamatan": "Bawang",
+    "fileName": "kutayasa_kulon_bawang.json",
+    "totalBuildings": 1459
+  },
+  "winong_bawang": {
+    "desa": "Winong",
+    "kecamatan": "Bawang",
+    "fileName": "winong_bawang.json",
+    "totalBuildings": 1073
+  },
+  "depok_bawang": {
+    "desa": "Depok",
+    "kecamatan": "Bawang",
+    "fileName": "depok_bawang.json",
+    "totalBuildings": 5436
+  },
+  "gentasari_bawang": {
+    "desa": "Gentasari",
+    "kecamatan": "Bawang",
+    "fileName": "gentasari_bawang.json",
+    "totalBuildings": 815
+  },
+  "mantrianom_bawang": {
+    "desa": "Mantrianom",
+    "kecamatan": "Bawang",
+    "fileName": "mantrianom_bawang.json",
+    "totalBuildings": 139
+  },
+  "joho_bawang": {
+    "desa": "Joho",
+    "kecamatan": "Bawang",
+    "fileName": "joho_bawang.json",
+    "totalBuildings": 970
+  },
+  "bawang_bawang": {
+    "desa": "Bawang",
+    "kecamatan": "Bawang",
+    "fileName": "bawang_bawang.json",
+    "totalBuildings": 23
+  },
+  "gunungjati_banjarnegara": {
+    "desa": "GunungJati",
+    "kecamatan": "Banjarnegara",
+    "fileName": "gunungjati_banjarnegara.json",
+    "totalBuildings": 1999
+  },
+  "kebutuh_jurang_banjarnegara": {
+    "desa": "Kebutuh Jurang",
+    "kecamatan": "Banjarnegara",
+    "fileName": "kebutuh_jurang_banjarnegara.json",
+    "totalBuildings": 1194
+  },
+  "kebutuh_duwur_banjarnegara": {
+    "desa": "Kebutuh Duwur",
+    "kecamatan": "Banjarnegara",
+    "fileName": "kebutuh_duwur_banjarnegara.json",
+    "totalBuildings": 1934
+  },
+  "pasangkalan_banjarnegara": {
+    "desa": "Pasangkalan",
+    "kecamatan": "Banjarnegara",
+    "fileName": "pasangkalan_banjarnegara.json",
+    "totalBuildings": 1038
+  },
+  "pagedongan_banjarnegara": {
+    "desa": "Pagedongan",
+    "kecamatan": "Banjarnegara",
+    "fileName": "pagedongan_banjarnegara.json",
+    "totalBuildings": 1575
+  },
+  "twelagiri_banjarnegara": {
+    "desa": "Twelagiri",
+    "kecamatan": "Banjarnegara",
+    "fileName": "twelagiri_banjarnegara.json",
+    "totalBuildings": 3149
+  },
+  "argasoka_banjarnegara": {
+    "desa": "Argasoka",
+    "kecamatan": "Banjarnegara",
+    "fileName": "argasoka_banjarnegara.json",
+    "totalBuildings": 757
+  },
+  "ampelsari_banjarnegara": {
+    "desa": "Ampelsari",
+    "kecamatan": "Banjarnegara",
+    "fileName": "ampelsari_banjarnegara.json",
+    "totalBuildings": 1631
+  },
+  "tlagawera_banjarnegara": {
+    "desa": "Tlagawera",
+    "kecamatan": "Banjarnegara",
+    "fileName": "tlagawera_banjarnegara.json",
+    "totalBuildings": 1635
+  },
+  "cendana_banjarnegara": {
+    "desa": "Cendana",
+    "kecamatan": "Banjarnegara",
+    "fileName": "cendana_banjarnegara.json",
+    "totalBuildings": 935
+  },
+  "sukayasa_banjarnegara": {
+    "desa": "Sukayasa",
+    "kecamatan": "Banjarnegara",
+    "fileName": "sukayasa_banjarnegara.json",
+    "totalBuildings": 500
+  },
+  "sukanandi_banjarnegara": {
+    "desa": "Sukanandi",
+    "kecamatan": "Banjarnegara",
+    "fileName": "sukanandi_banjarnegara.json",
+    "totalBuildings": 3581
+  },
+  "parakancanggah_banjarnegara": {
+    "desa": "Parakancanggah",
+    "kecamatan": "Banjarnegara",
+    "fileName": "parakancanggah_banjarnegara.json",
+    "totalBuildings": 34
+  },
+  "semarang_banjarnegara": {
+    "desa": "Semarang",
+    "kecamatan": "Banjarnegara",
+    "fileName": "semarang_banjarnegara.json",
+    "totalBuildings": 148
+  },
+  "karangtengah_banjarnegara": {
+    "desa": "Karangtengah",
+    "kecamatan": "Banjarnegara",
+    "fileName": "karangtengah_banjarnegara.json",
+    "totalBuildings": 12
+  },
+  "wangon_banjarnegara": {
+    "desa": "Wangon",
+    "kecamatan": "Banjarnegara",
+    "fileName": "wangon_banjarnegara.json",
+    "totalBuildings": 2318
+  },
+  "semampir_banjarnegara": {
+    "desa": "Semampir",
+    "kecamatan": "Banjarnegara",
+    "fileName": "semampir_banjarnegara.json",
+    "totalBuildings": 1331
+  },
+  "pringamba_sigaluh": {
+    "desa": "Pringamba",
+    "kecamatan": "Sigaluh",
+    "fileName": "pringamba_sigaluh.json",
+    "totalBuildings": 1109
+  },
+  "sawal_sigaluh": {
+    "desa": "Sawal",
+    "kecamatan": "Sigaluh",
+    "fileName": "sawal_sigaluh.json",
+    "totalBuildings": 1033
+  },
+  "panawaren_sigaluh": {
+    "desa": "Panawaren",
+    "kecamatan": "Sigaluh",
+    "fileName": "panawaren_sigaluh.json",
+    "totalBuildings": 1303
+  },
+  "tunggara_sigaluh": {
+    "desa": "Tunggara",
+    "kecamatan": "Sigaluh",
+    "fileName": "tunggara_sigaluh.json",
+    "totalBuildings": 827
+  },
+  "randengan_sigaluh": {
+    "desa": "Randengan",
+    "kecamatan": "Sigaluh",
+    "fileName": "randengan_sigaluh.json",
+    "totalBuildings": 207
+  },
+  "bojanegara_sigaluh": {
+    "desa": "Bojanegara",
+    "kecamatan": "Sigaluh",
+    "fileName": "bojanegara_sigaluh.json",
+    "totalBuildings": 1300
+  },
+  "bandingan_sigaluh": {
+    "desa": "Bandingan",
+    "kecamatan": "Sigaluh",
+    "fileName": "bandingan_sigaluh.json",
+    "totalBuildings": 981
+  },
+  "prigi_sigaluh": {
+    "desa": "Prigi",
+    "kecamatan": "Sigaluh",
+    "fileName": "prigi_sigaluh.json",
+    "totalBuildings": 1374
+  },
+  "gembongan_sigaluh": {
+    "desa": "Gembongan",
+    "kecamatan": "Sigaluh",
+    "fileName": "gembongan_sigaluh.json",
+    "totalBuildings": 1249
+  },
+  "kemiri_sigaluh": {
+    "desa": "Kemiri",
+    "kecamatan": "Sigaluh",
+    "fileName": "kemiri_sigaluh.json",
+    "totalBuildings": 46
+  },
+  "karangmangu_sigaluh": {
+    "desa": "Karangmangu",
+    "kecamatan": "Sigaluh",
+    "fileName": "karangmangu_sigaluh.json",
+    "totalBuildings": 169
+  },
+  "wanacipta_sigaluh": {
+    "desa": "Wanacipta",
+    "kecamatan": "Sigaluh",
+    "fileName": "wanacipta_sigaluh.json",
+    "totalBuildings": 103
+  },
+  "sigaluh_sigaluh": {
+    "desa": "Sigaluh",
+    "kecamatan": "Sigaluh",
+    "fileName": "sigaluh_sigaluh.json",
+    "totalBuildings": 163
+  },
+  "singometro_madukara": {
+    "desa": "Singometro",
+    "kecamatan": "Madukara",
+    "fileName": "singometro_madukara.json",
+    "totalBuildings": 1270
+  },
+  "kalibenda_madukara": {
+    "desa": "Kalibenda",
+    "kecamatan": "Madukara",
+    "fileName": "kalibenda_madukara.json",
+    "totalBuildings": 764
+  },
+  "kenteng_madukara": {
+    "desa": "Kenteng",
+    "kecamatan": "Madukara",
+    "fileName": "kenteng_madukara.json",
+    "totalBuildings": 184
+  },
+  "bantarwaru_madukara": {
+    "desa": "Bantarwaru",
+    "kecamatan": "Madukara",
+    "fileName": "bantarwaru_madukara.json",
+    "totalBuildings": 1561
+  },
+  "dawuhan_madukara": {
+    "desa": "Dawuhan",
+    "kecamatan": "Madukara",
+    "fileName": "dawuhan_madukara.json",
+    "totalBuildings": 960
+  },
+  "pagelak_madukara": {
+    "desa": "Pagelak",
+    "kecamatan": "Madukara",
+    "fileName": "pagelak_madukara.json",
+    "totalBuildings": 887
+  },
+  "kotayasa_lor_madukara": {
+    "desa": "Kotayasa Lor",
+    "kecamatan": "Madukara",
+    "fileName": "kotayasa_lor_madukara.json",
+    "totalBuildings": 286
+  },
+  "pekauman_madukara": {
+    "desa": "Pekauman",
+    "kecamatan": "Madukara",
+    "fileName": "pekauman_madukara.json",
+    "totalBuildings": 85
+  },
+  "talunamba_madukara": {
+    "desa": "Talunamba",
+    "kecamatan": "Madukara",
+    "fileName": "talunamba_madukara.json",
+    "totalBuildings": 735
+  },
+  "limbangan_madukara": {
+    "desa": "Limbangan",
+    "kecamatan": "Madukara",
+    "fileName": "limbangan_madukara.json",
+    "totalBuildings": 683
+  },
+  "clapar_madukara": {
+    "desa": "Clapar",
+    "kecamatan": "Madukara",
+    "fileName": "clapar_madukara.json",
+    "totalBuildings": 1254
+  },
+  "madukara_madukara": {
+    "desa": "Madukara",
+    "kecamatan": "Madukara",
+    "fileName": "madukara_madukara.json",
+    "totalBuildings": 198
+  },
+  "karangannyar_madukara": {
+    "desa": "Karangannyar",
+    "kecamatan": "Madukara",
+    "fileName": "karangannyar_madukara.json",
+    "totalBuildings": 609
+  },
+  "sered_madukara": {
+    "desa": "Sered",
+    "kecamatan": "Madukara",
+    "fileName": "sered_madukara.json",
+    "totalBuildings": 539
+  },
+  "blitar_madukara": {
+    "desa": "Blitar",
+    "kecamatan": "Madukara",
+    "fileName": "blitar_madukara.json",
+    "totalBuildings": 436
+  },
+  "petambakan_madukara": {
+    "desa": "Petambakan",
+    "kecamatan": "Madukara",
+    "fileName": "petambakan_madukara.json",
+    "totalBuildings": 42
+  },
+  "rakitan_madukara": {
+    "desa": "Rakitan",
+    "kecamatan": "Madukara",
+    "fileName": "rakitan_madukara.json",
+    "totalBuildings": 1087
+  },
+  "kaliurip_madukara": {
+    "desa": "Kaliurip",
+    "kecamatan": "Madukara",
+    "fileName": "kaliurip_madukara.json",
+    "totalBuildings": 1505
+  },
+  "gununggiana_madukara": {
+    "desa": "Gununggiana",
+    "kecamatan": "Madukara",
+    "fileName": "gununggiana_madukara.json",
+    "totalBuildings": 637
+  },
+  "pakelen_madukara": {
+    "desa": "Pakelen",
+    "kecamatan": "Madukara",
+    "fileName": "pakelen_madukara.json",
+    "totalBuildings": 311
+  },
+  "jenggawur_banjarmangu": {
+    "desa": "Jenggawur",
+    "kecamatan": "Banjarmangu",
+    "fileName": "jenggawur_banjarmangu.json",
+    "totalBuildings": 476
+  },
+  "banjarmangu_banjarmangu": {
+    "desa": "Banjarmangu",
+    "kecamatan": "Banjarmangu",
+    "fileName": "banjarmangu_banjarmangu.json",
+    "totalBuildings": 173
+  },
+  "rejasari_banjarmangu": {
+    "desa": "Rejasari",
+    "kecamatan": "Banjarmangu",
+    "fileName": "rejasari_banjarmangu.json",
+    "totalBuildings": 1398
+  },
+  "kasenent_banjarmangu": {
+    "desa": "Kasenent",
+    "kecamatan": "Banjarmangu",
+    "fileName": "kasenent_banjarmangu.json",
+    "totalBuildings": 1346
+  },
+  "gripit_banjarmangu": {
+    "desa": "Gripit",
+    "kecamatan": "Banjarmangu",
+    "fileName": "gripit_banjarmangu.json",
+    "totalBuildings": 108
+  },
+  "sigeblok_banjarmangu": {
+    "desa": "Sigeblok",
+    "kecamatan": "Banjarmangu",
+    "fileName": "sigeblok_banjarmangu.json",
+    "totalBuildings": 4716
+  },
+  "paseh_banjarmangu": {
+    "desa": "Paseh",
+    "kecamatan": "Banjarmangu",
+    "fileName": "paseh_banjarmangu.json",
+    "totalBuildings": 1098
+  },
+  "sipedang_banjarmangu": {
+    "desa": "Sipedang",
+    "kecamatan": "Banjarmangu",
+    "fileName": "sipedang_banjarmangu.json",
+    "totalBuildings": 1318
+  },
+  "pekandangan_banjarmangu": {
+    "desa": "Pekandangan",
+    "kecamatan": "Banjarmangu",
+    "fileName": "pekandangan_banjarmangu.json",
+    "totalBuildings": 51
+  },
+  "kendaga_banjarmangu": {
+    "desa": "Kendaga",
+    "kecamatan": "Banjarmangu",
+    "fileName": "kendaga_banjarmangu.json",
+    "totalBuildings": 1408
+  },
+  "kalilunjar_banjarmangu": {
+    "desa": "Kalilunjar",
+    "kecamatan": "Banjarmangu",
+    "fileName": "kalilunjar_banjarmangu.json",
+    "totalBuildings": 874
+  },
+  "sijeruk_banjarmangu": {
+    "desa": "Sijeruk",
+    "kecamatan": "Banjarmangu",
+    "fileName": "sijeruk_banjarmangu.json",
+    "totalBuildings": 535
+  },
+  "prendengan_banjarmangu": {
+    "desa": "Prendengan",
+    "kecamatan": "Banjarmangu",
+    "fileName": "prendengan_banjarmangu.json",
+    "totalBuildings": 861
+  },
+  "majatengah_banjarmangu": {
+    "desa": "Majatengah",
+    "kecamatan": "Banjarmangu",
+    "fileName": "majatengah_banjarmangu.json",
+    "totalBuildings": 415
+  },
+  "sijenggung_banjarmangu": {
+    "desa": "Sijenggung",
+    "kecamatan": "Banjarmangu",
+    "fileName": "sijenggung_banjarmangu.json",
+    "totalBuildings": 136
+  },
+  "tapen_wanadadi": {
+    "desa": "Tapen",
+    "kecamatan": "Wanadadi",
+    "fileName": "tapen_wanadadi.json",
+    "totalBuildings": 168
+  },
+  "kasilip_wanadadi": {
+    "desa": "Kasilip",
+    "kecamatan": "Wanadadi",
+    "fileName": "kasilip_wanadadi.json",
+    "totalBuildings": 24
+  },
+  "medayu_wanadadi": {
+    "desa": "Medayu",
+    "kecamatan": "Wanadadi",
+    "fileName": "medayu_wanadadi.json",
+    "totalBuildings": 228
+  },
+  "kandangwangi_wanadadi": {
+    "desa": "Kandangwangi",
+    "kecamatan": "Wanadadi",
+    "fileName": "kandangwangi_wanadadi.json",
+    "totalBuildings": 318
+  },
+  "lemahjaya_wanadadi": {
+    "desa": "Lemahjaya",
+    "kecamatan": "Wanadadi",
+    "fileName": "lemahjaya_wanadadi.json",
+    "totalBuildings": 2725
+  },
+  "situwangi_rakit": {
+    "desa": "Situwangi",
+    "kecamatan": "Rakit",
+    "fileName": "situwangi_rakit.json",
+    "totalBuildings": 56
+  },
+  "gelang_rakit": {
+    "desa": "Gelang",
+    "kecamatan": "Rakit",
+    "fileName": "gelang_rakit.json",
+    "totalBuildings": 107
+  },
+  "rakit_rakit": {
+    "desa": "Rakit",
+    "kecamatan": "Rakit",
+    "fileName": "rakit_rakit.json",
+    "totalBuildings": 953
+  },
+  "adipasir_rakit": {
+    "desa": "Adipasir",
+    "kecamatan": "Rakit",
+    "fileName": "adipasir_rakit.json",
+    "totalBuildings": 4001
+  },
+  "kincang_rakit": {
+    "desa": "Kincang",
+    "kecamatan": "Rakit",
+    "fileName": "kincang_rakit.json",
+    "totalBuildings": 1966
+  },
+  "tanjunganom_rakit": {
+    "desa": "Tanjunganom",
+    "kecamatan": "Rakit",
+    "fileName": "tanjunganom_rakit.json",
+    "totalBuildings": 1572
+  },
+  "luwung_rakit": {
+    "desa": "Luwung",
+    "kecamatan": "Rakit",
+    "fileName": "luwung_rakit.json",
+    "totalBuildings": 1096
+  },
+  "lengkong_rakit": {
+    "desa": "Lengkong",
+    "kecamatan": "Rakit",
+    "fileName": "lengkong_rakit.json",
+    "totalBuildings": 3509
+  },
+  "badamita_rakit": {
+    "desa": "Badamita",
+    "kecamatan": "Rakit",
+    "fileName": "badamita_rakit.json",
+    "totalBuildings": 398
+  },
+  "bandingan_rakit": {
+    "desa": "Bandingan",
+    "kecamatan": "Rakit",
+    "fileName": "bandingan_rakit.json",
+    "totalBuildings": 1896
+  },
+  "pingit_rakit": {
+    "desa": "Pingit",
+    "kecamatan": "Rakit",
+    "fileName": "pingit_rakit.json",
+    "totalBuildings": 623
+  },
+  "sambung_rakit": {
+    "desa": "Sambung",
+    "kecamatan": "Rakit",
+    "fileName": "sambung_rakit.json",
+    "totalBuildings": 3097
+  },
+  "tribuana_punggelan": {
+    "desa": "Tribuana",
+    "kecamatan": "Punggelan",
+    "fileName": "tribuana_punggelan.json",
+    "totalBuildings": 1394
+  },
+  "sawangan_punggelan": {
+    "desa": "Sawangan",
+    "kecamatan": "Punggelan",
+    "fileName": "sawangan_punggelan.json",
+    "totalBuildings": 2541
+  },
+  "sidarata_punggelan": {
+    "desa": "Sidarata",
+    "kecamatan": "Punggelan",
+    "fileName": "sidarata_punggelan.json",
+    "totalBuildings": 3215
+  },
+  "badakarya_punggelan": {
+    "desa": "Badakarya",
+    "kecamatan": "Punggelan",
+    "fileName": "badakarya_punggelan.json",
+    "totalBuildings": 3776
+  },
+  "bandolharjo_punggelan": {
+    "desa": "Bandolharjo",
+    "kecamatan": "Punggelan",
+    "fileName": "bandolharjo_punggelan.json",
+    "totalBuildings": 1974
+  },
+  "punggelan_punggelan": {
+    "desa": "Punggelan",
+    "kecamatan": "Punggelan",
+    "fileName": "punggelan_punggelan.json",
+    "totalBuildings": 6948
+  },
+  "karangsari_punggelan": {
+    "desa": "Karangsari",
+    "kecamatan": "Punggelan",
+    "fileName": "karangsari_punggelan.json",
+    "totalBuildings": 1354
+  },
+  "kacepit_punggelan": {
+    "desa": "Kacepit",
+    "kecamatan": "Punggelan",
+    "fileName": "kacepit_punggelan.json",
+    "totalBuildings": 1026
+  },
+  "danakerta_punggelan": {
+    "desa": "Danakerta",
+    "kecamatan": "Punggelan",
+    "fileName": "danakerta_punggelan.json",
+    "totalBuildings": 2642
+  },
+  "klapa_punggelan": {
+    "desa": "Klapa",
+    "kecamatan": "Punggelan",
+    "fileName": "klapa_punggelan.json",
+    "totalBuildings": 930
+  },
+  "jembangan_punggelan": {
+    "desa": "Jembangan",
+    "kecamatan": "Punggelan",
+    "fileName": "jembangan_punggelan.json",
+    "totalBuildings": 1538
+  },
+  "purwasana_punggelan": {
+    "desa": "Purwasana",
+    "kecamatan": "Punggelan",
+    "fileName": "purwasana_punggelan.json",
+    "totalBuildings": 431
+  },
+  "petuguran_punggelan": {
+    "desa": "Petuguran",
+    "kecamatan": "Punggelan",
+    "fileName": "petuguran_punggelan.json",
+    "totalBuildings": 2160
+  },
+  "tanjungtirta_punggelan": {
+    "desa": "Tanjungtirta",
+    "kecamatan": "Punggelan",
+    "fileName": "tanjungtirta_punggelan.json",
+    "totalBuildings": 658
+  },
+  "mlaya_punggelan": {
+    "desa": "Mlaya",
+    "kecamatan": "Punggelan",
+    "fileName": "mlaya_punggelan.json",
+    "totalBuildings": 1323
+  },
+  "tlaga_punggelan": {
+    "desa": "Tlaga",
+    "kecamatan": "Punggelan",
+    "fileName": "tlaga_punggelan.json",
+    "totalBuildings": 558
+  },
+  "slatri_karangkobar": {
+    "desa": "Slatri",
+    "kecamatan": "Karangkobar",
+    "fileName": "slatri_karangkobar.json",
+    "totalBuildings": 1384
+  },
+  "pawedan_karangkobar": {
+    "desa": "Pawedan",
+    "kecamatan": "Karangkobar",
+    "fileName": "pawedan_karangkobar.json",
+    "totalBuildings": 323
+  },
+  "gumelar_karangkobar": {
+    "desa": "Gumelar",
+    "kecamatan": "Karangkobar",
+    "fileName": "gumelar_karangkobar.json",
+    "totalBuildings": 651
+  },
+  "purwadadi_karangkobar": {
+    "desa": "Purwadadi",
+    "kecamatan": "Karangkobar",
+    "fileName": "purwadadi_karangkobar.json",
+    "totalBuildings": 683
+  },
+  "sampang_karangkobar": {
+    "desa": "Sampang",
+    "kecamatan": "Karangkobar",
+    "fileName": "sampang_karangkobar.json",
+    "totalBuildings": 646
+  },
+  "ambal_karangkobar": {
+    "desa": "Ambal",
+    "kecamatan": "Karangkobar",
+    "fileName": "ambal_karangkobar.json",
+    "totalBuildings": 1120
+  },
+  "pagerpelah_karangkobar": {
+    "desa": "Pagerpelah",
+    "kecamatan": "Karangkobar",
+    "fileName": "pagerpelah_karangkobar.json",
+    "totalBuildings": 591
+  },
+  "pasuruhan_karangkobar": {
+    "desa": "Pasuruhan",
+    "kecamatan": "Karangkobar",
+    "fileName": "pasuruhan_karangkobar.json",
+    "totalBuildings": 498
+  },
+  "karanggondang_kalibening": {
+    "desa": "Karanggondang",
+    "kecamatan": "Kalibening",
+    "fileName": "karanggondang_kalibening.json",
+    "totalBuildings": 1318
+  },
+  "jlegong_karangkobar": {
+    "desa": "Jlegong",
+    "kecamatan": "Karangkobar",
+    "fileName": "jlegong_karangkobar.json",
+    "totalBuildings": 26
+  },
+  "binangun_karangkobar": {
+    "desa": "Binangun",
+    "kecamatan": "Karangkobar",
+    "fileName": "binangun_karangkobar.json",
+    "totalBuildings": 1344
+  },
+  "karangkobar_karangkobar": {
+    "desa": "Karangkobar",
+    "kecamatan": "Karangkobar",
+    "fileName": "karangkobar_karangkobar.json",
+    "totalBuildings": 700
+  },
+  "leksana_karangkobar": {
+    "desa": "Leksana",
+    "kecamatan": "Karangkobar",
+    "fileName": "leksana_karangkobar.json",
+    "totalBuildings": 625
+  },
+  "nagasari_pagentan": {
+    "desa": "Nagasari",
+    "kecamatan": "Pagentan",
+    "fileName": "nagasari_pagentan.json",
+    "totalBuildings": 544
+  },
+  "aribaya_pagentan": {
+    "desa": "Aribaya",
+    "kecamatan": "Pagentan",
+    "fileName": "aribaya_pagentan.json",
+    "totalBuildings": 893
+  },
+  "larangan_pagentan": {
+    "desa": "Larangan",
+    "kecamatan": "Pagentan",
+    "fileName": "larangan_pagentan.json",
+    "totalBuildings": 794
+  },
+  "karangnangka_pagentan": {
+    "desa": "Karangnangka",
+    "kecamatan": "Pagentan",
+    "fileName": "karangnangka_pagentan.json",
+    "totalBuildings": 485
+  },
+  "sokaraja_pagentan": {
+    "desa": "Sokaraja",
+    "kecamatan": "Pagentan",
+    "fileName": "sokaraja_pagentan.json",
+    "totalBuildings": 1042
+  },
+  "gumingsir_pagentan": {
+    "desa": "Gumingsir",
+    "kecamatan": "Pagentan",
+    "fileName": "gumingsir_pagentan.json",
+    "totalBuildings": 1213
+  },
+  "kayuares_pagentan": {
+    "desa": "Kayuares",
+    "kecamatan": "Pagentan",
+    "fileName": "kayuares_pagentan.json",
+    "totalBuildings": 466
+  },
+  "metawana_pagentan": {
+    "desa": "Metawana",
+    "kecamatan": "Pagentan",
+    "fileName": "metawana_pagentan.json",
+    "totalBuildings": 818
+  },
+  "kalitlaga_pagentan": {
+    "desa": "Kalitlaga",
+    "kecamatan": "Pagentan",
+    "fileName": "kalitlaga_pagentan.json",
+    "totalBuildings": 745
+  },
+  "plumbungan_pagentan": {
+    "desa": "Plumbungan",
+    "kecamatan": "Pagentan",
+    "fileName": "plumbungan_pagentan.json",
+    "totalBuildings": 1954
+  },
+  "karekan_pejawaran": {
+    "desa": "Karekan",
+    "kecamatan": "Pejawaran",
+    "fileName": "karekan_pejawaran.json",
+    "totalBuildings": 1405
+  },
+  "kasmaran_pagentan": {
+    "desa": "Kasmaran",
+    "kecamatan": "Pagentan",
+    "fileName": "kasmaran_pagentan.json",
+    "totalBuildings": 2046
+  },
+  "pagentan_pagentan": {
+    "desa": "Pagentan",
+    "kecamatan": "Pagentan",
+    "fileName": "pagentan_pagentan.json",
+    "totalBuildings": 822
+  },
+  "babadan_pagentan": {
+    "desa": "Babadan",
+    "kecamatan": "Pagentan",
+    "fileName": "babadan_pagentan.json",
+    "totalBuildings": 3025
+  },
+  "majasari_pagentan": {
+    "desa": "Majasari",
+    "kecamatan": "Pagentan",
+    "fileName": "majasari_pagentan.json",
+    "totalBuildings": 299
+  },
+  "tegaljeruk_pagentan": {
+    "desa": "Tegaljeruk",
+    "kecamatan": "Pagentan",
+    "fileName": "tegaljeruk_pagentan.json",
+    "totalBuildings": 48
+  },
+  "kalilunjar_pejawaran": {
+    "desa": "Kalilunjar",
+    "kecamatan": "Pejawaran",
+    "fileName": "kalilunjar_pejawaran.json",
+    "totalBuildings": 932
+  },
+  "biting_pejawaran": {
+    "desa": "Biting",
+    "kecamatan": "Pejawaran",
+    "fileName": "biting_pejawaran.json",
+    "totalBuildings": 2365
+  },
+  "tlahab_pejawaran": {
+    "desa": "Tlahab",
+    "kecamatan": "Pejawaran",
+    "fileName": "tlahab_pejawaran.json",
+    "totalBuildings": 1400
+  },
+  "darmayasa_pejawaran": {
+    "desa": "Darmayasa",
+    "kecamatan": "Pejawaran",
+    "fileName": "darmayasa_pejawaran.json",
+    "totalBuildings": 1169
+  },
+  "pejawaran_pejawaran": {
+    "desa": "Pejawaran",
+    "kecamatan": "Pejawaran",
+    "fileName": "pejawaran_pejawaran.json",
+    "totalBuildings": 2851
+  },
+  "pengundungan_pejawaran": {
+    "desa": "Pengundungan",
+    "kecamatan": "Pejawaran",
+    "fileName": "pengundungan_pejawaran.json",
+    "totalBuildings": 1133
+  },
+  "beji_batur": {
+    "desa": "Beji",
+    "kecamatan": "Batur",
+    "fileName": "beji_batur.json",
+    "totalBuildings": 2509
+  },
+  "semangkung_batur": {
+    "desa": "Semangkung",
+    "kecamatan": "Batur",
+    "fileName": "semangkung_batur.json",
+    "totalBuildings": 200
+  },
+  "condongcampur_batur": {
+    "desa": "Condongcampur",
+    "kecamatan": "Batur",
+    "fileName": "condongcampur_batur.json",
+    "totalBuildings": 2486
+  },
+  "gembol_batur": {
+    "desa": "Gembol",
+    "kecamatan": "Batur",
+    "fileName": "gembol_batur.json",
+    "totalBuildings": 2902
+  },
+  "sidengok_batur": {
+    "desa": "Sidengok",
+    "kecamatan": "Batur",
+    "fileName": "sidengok_batur.json",
+    "totalBuildings": 1746
+  },
+  "ratamba_pejawaran": {
+    "desa": "Ratamba",
+    "kecamatan": "Pejawaran",
+    "fileName": "ratamba_pejawaran.json",
+    "totalBuildings": 301
+  },
+  "panusupan_pejawaran": {
+    "desa": "Panusupan",
+    "kecamatan": "Pejawaran",
+    "fileName": "panusupan_pejawaran.json",
+    "totalBuildings": 1971
+  },
+  "giritirta_pejawaran": {
+    "desa": "Giritirta",
+    "kecamatan": "Pejawaran",
+    "fileName": "giritirta_pejawaran.json",
+    "totalBuildings": 827
+  },
+  "karangsari_pejawaran": {
+    "desa": "Karangsari",
+    "kecamatan": "Pejawaran",
+    "fileName": "karangsari_pejawaran.json",
+    "totalBuildings": 106
+  },
+  "sarwodadi_pejawaran": {
+    "desa": "Sarwodadi",
+    "kecamatan": "Pejawaran",
+    "fileName": "sarwodadi_pejawaran.json",
+    "totalBuildings": 408
+  },
+  "grogol_pejawaran": {
+    "desa": "Grogol",
+    "kecamatan": "Pejawaran",
+    "fileName": "grogol_pejawaran.json",
+    "totalBuildings": 3701
+  },
+  "batur_batur": {
+    "desa": "Batur",
+    "kecamatan": "Batur",
+    "fileName": "batur_batur.json",
+    "totalBuildings": 4882
+  },
+  "sumberejo_batur": {
+    "desa": "Sumberejo",
+    "kecamatan": "Batur",
+    "fileName": "sumberejo_batur.json",
+    "totalBuildings": 2984
+  },
+  "pasurenan_batur": {
+    "desa": "Pasurenan",
+    "kecamatan": "Batur",
+    "fileName": "pasurenan_batur.json",
+    "totalBuildings": 440
+  },
+  "bakal_batur": {
+    "desa": "Bakal",
+    "kecamatan": "Batur",
+    "fileName": "bakal_batur.json",
+    "totalBuildings": 2278
+  },
+  "dieng_kulon_batur": {
+    "desa": "Dieng Kulon",
+    "kecamatan": "Batur",
+    "fileName": "dieng_kulon_batur.json",
+    "totalBuildings": 2583
+  },
+  "karangtengah_batur": {
+    "desa": "Karangtengah",
+    "kecamatan": "Batur",
+    "fileName": "karangtengah_batur.json",
+    "totalBuildings": 1518
+  },
+  "kepakisan_batur": {
+    "desa": "Kepakisan",
+    "kecamatan": "Batur",
+    "fileName": "kepakisan_batur.json",
+    "totalBuildings": 1352
+  },
+  "pekasiran_batur": {
+    "desa": "Pekasiran",
+    "kecamatan": "Batur",
+    "fileName": "pekasiran_batur.json",
+    "totalBuildings": 214
+  },
+  "suwidak_wanayasa": {
+    "desa": "Suwidak",
+    "kecamatan": "Wanayasa",
+    "fileName": "suwidak_wanayasa.json",
+    "totalBuildings": 762
+  },
+  "karangtengah_wanayasa": {
+    "desa": "Karangtengah",
+    "kecamatan": "Wanayasa",
+    "fileName": "karangtengah_wanayasa.json",
+    "totalBuildings": 322
+  },
+  "bantar_wanayasa": {
+    "desa": "Bantar",
+    "kecamatan": "Wanayasa",
+    "fileName": "bantar_wanayasa.json",
+    "totalBuildings": 674
+  },
+  "pandansari_wanayasa": {
+    "desa": "Pandansari",
+    "kecamatan": "Wanayasa",
+    "fileName": "pandansari_wanayasa.json",
+    "totalBuildings": 1358
+  },
+  "pagergunung_wanayasa": {
+    "desa": "Pagergunung",
+    "kecamatan": "Wanayasa",
+    "fileName": "pagergunung_wanayasa.json",
+    "totalBuildings": 595
+  },
+  "dawuhan_wanayasa": {
+    "desa": "Dawuhan",
+    "kecamatan": "Wanayasa",
+    "fileName": "dawuhan_wanayasa.json",
+    "totalBuildings": 355
+  },
+  "kubang_wanayasa": {
+    "desa": "Kubang",
+    "kecamatan": "Wanayasa",
+    "fileName": "kubang_wanayasa.json",
+    "totalBuildings": 2220
+  },
+  "susukan_wanayasa": {
+    "desa": "Susukan",
+    "kecamatan": "Wanayasa",
+    "fileName": "susukan_wanayasa.json",
+    "totalBuildings": 367
+  },
+  "wanayasa_wanayasa": {
+    "desa": "Wanayasa",
+    "kecamatan": "Wanayasa",
+    "fileName": "wanayasa_wanayasa.json",
+    "totalBuildings": 3045
+  },
+  "pesantren_wanayasa": {
+    "desa": "Pesantren",
+    "kecamatan": "Wanayasa",
+    "fileName": "pesantren_wanayasa.json",
+    "totalBuildings": 1271
+  },
+  "balun_kalibening": {
+    "desa": "Balun",
+    "kecamatan": "Kalibening",
+    "fileName": "balun_kalibening.json",
+    "totalBuildings": 1566
+  },
+  "tempuran_wanayasa": {
+    "desa": "Tempuran",
+    "kecamatan": "Wanayasa",
+    "fileName": "tempuran_wanayasa.json",
+    "totalBuildings": 908
+  },
+  "wanaraja_wanayasa": {
+    "desa": "Wanaraja",
+    "kecamatan": "Wanayasa",
+    "fileName": "wanaraja_wanayasa.json",
+    "totalBuildings": 3257
+  },
+  "jatilawang_wanayasa": {
+    "desa": "Jatilawang",
+    "kecamatan": "Wanayasa",
+    "fileName": "jatilawang_wanayasa.json",
+    "totalBuildings": 1522
+  },
+  "legoksayem_wanayasa": {
+    "desa": "Legoksayem",
+    "kecamatan": "Wanayasa",
+    "fileName": "legoksayem_wanayasa.json",
+    "totalBuildings": 504
+  },
+  "kasimpar_wanayasa": {
+    "desa": "Kasimpar",
+    "kecamatan": "Wanayasa",
+    "fileName": "kasimpar_wanayasa.json",
+    "totalBuildings": 910
+  },
+  "pananggungan_wanayasa": {
+    "desa": "Pananggungan",
+    "kecamatan": "Wanayasa",
+    "fileName": "pananggungan_wanayasa.json",
+    "totalBuildings": 99
+  },
+  "sinduaji_kalibening": {
+    "desa": "Sinduaji",
+    "kecamatan": "Kalibening",
+    "fileName": "sinduaji_kalibening.json",
+    "totalBuildings": 715
+  },
+  "pandanarum_kalibening": {
+    "desa": "Pandanarum",
+    "kecamatan": "Kalibening",
+    "fileName": "pandanarum_kalibening.json",
+    "totalBuildings": 1492
+  },
+  "beji_kalibening": {
+    "desa": "Beji",
+    "kecamatan": "Kalibening",
+    "fileName": "beji_kalibening.json",
+    "totalBuildings": 546
+  },
+  "asinan_kalibening": {
+    "desa": "Asinan",
+    "kecamatan": "Kalibening",
+    "fileName": "asinan_kalibening.json",
+    "totalBuildings": 541
+  },
+  "sembawa_kalibening": {
+    "desa": "Sembawa",
+    "kecamatan": "Kalibening",
+    "fileName": "sembawa_kalibening.json",
+    "totalBuildings": 545
+  },
+  "kalibombong_kalibening": {
+    "desa": "Kalibombong",
+    "kecamatan": "Kalibening",
+    "fileName": "kalibombong_kalibening.json",
+    "totalBuildings": 1868
+  },
+  "kalisat_kidul_kalibening": {
+    "desa": "Kalisat Kidul",
+    "kecamatan": "Kalibening",
+    "fileName": "kalisat_kidul_kalibening.json",
+    "totalBuildings": 1041
+  },
+  "sirukem_kalibening": {
+    "desa": "Sirukem",
+    "kecamatan": "Kalibening",
+    "fileName": "sirukem_kalibening.json",
+    "totalBuildings": 52
+  },
+  "kertasari_kalibening": {
+    "desa": "Kertasari",
+    "kecamatan": "Kalibening",
+    "fileName": "kertasari_kalibening.json",
+    "totalBuildings": 1249
+  },
+  "sidokangen_kalibening": {
+    "desa": "Sidokangen",
+    "kecamatan": "Kalibening",
+    "fileName": "sidokangen_kalibening.json",
+    "totalBuildings": 1418
+  },
+  "majatengah_kalibening": {
+    "desa": "Majatengah",
+    "kecamatan": "Kalibening",
+    "fileName": "majatengah_kalibening.json",
+    "totalBuildings": 1285
+  },
+  "kalibening_kalibening": {
+    "desa": "Kalibening",
+    "kecamatan": "Kalibening",
+    "fileName": "kalibening_kalibening.json",
+    "totalBuildings": 127
+  },
+  "pringamba_kalibening": {
+    "desa": "Pringamba",
+    "kecamatan": "Kalibening",
+    "fileName": "pringamba_kalibening.json",
+    "totalBuildings": 905
+  },
+  "pasegeran_kalibening": {
+    "desa": "Pasegeran",
+    "kecamatan": "Kalibening",
+    "fileName": "pasegeran_kalibening.json",
+    "totalBuildings": 497
+  },
+  "pingit_lor_kalibening": {
+    "desa": "Pingit Lor",
+    "kecamatan": "Kalibening",
+    "fileName": "pingit_lor_kalibening.json",
+    "totalBuildings": 297
+  },
+  "lawen_kalibening": {
+    "desa": "Lawen",
+    "kecamatan": "Kalibening",
+    "fileName": "lawen_kalibening.json",
+    "totalBuildings": 720
+  },
+  "sikumpul_kalibening": {
+    "desa": "Sikumpul",
+    "kecamatan": "Kalibening",
+    "fileName": "sikumpul_kalibening.json",
+    "totalBuildings": 826
+  },
+  "gununglangit_kalibening": {
+    "desa": "Gununglangit",
+    "kecamatan": "Kalibening",
+    "fileName": "gununglangit_kalibening.json",
+    "totalBuildings": 631
+  },
+  "bedana_kalibening": {
+    "desa": "Bedana",
+    "kecamatan": "Kalibening",
+    "fileName": "bedana_kalibening.json",
+    "totalBuildings": 698
+  },
+  "sirukun_kalibening": {
+    "desa": "Sirukun",
+    "kecamatan": "Kalibening",
+    "fileName": "sirukun_kalibening.json",
+    "totalBuildings": 365
+  },
+  "karanganyar_kalibening": {
+    "desa": "Karanganyar",
+    "kecamatan": "Kalibening",
+    "fileName": "karanganyar_kalibening.json",
+    "totalBuildings": 744
+  },
+  "plorengan_kalibening": {
+    "desa": "Plorengan",
+    "kecamatan": "Kalibening",
+    "fileName": "plorengan_kalibening.json",
+    "totalBuildings": 1034
+  },
+  "kasinoman_kalibening": {
+    "desa": "Kasinoman",
+    "kecamatan": "Kalibening",
+    "fileName": "kasinoman_kalibening.json",
+    "totalBuildings": 174
+  }
+}

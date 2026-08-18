@@ -70,6 +70,7 @@ interface MapContainerProps {
   focusedCoords?: [number, number] | null;
   showImpactOverlay?: boolean;
   onToggleImpactOverlay?: () => void;
+  customUploadedLayers?: any[];
   isFullscreen?: boolean;
   onToggleFullscreen?: () => void;
 }
@@ -131,7 +132,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   const [selectedYear, setSelectedYear] = useState<number>(2024);
   const [basemapStyle, setBasemapStyle] = useState<'google_hybrid' | 'google_satellite' | 'osm' | 'positron' | 'esri_satellite'>('positron');
   const [showLegend, setShowLegend] = useState<boolean>(true);
-  const [groupingMode, setGroupingMode] = useState<string>('Kecamatan & Desa');
+  const [groupingMode, setGroupingMode] = useState<string>('Kecamatan');
   const [isPlayingTimelapse, setIsPlayingTimelapse] = useState<boolean>(false);
   const [isTimelineVisible, setIsTimelineVisible] = useState<boolean>(true);
   const [isScaleVisible, setIsScaleVisible] = useState<boolean>(true);
@@ -257,7 +258,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     L.tileLayer(url, { maxZoom, subdomains }).addTo(map);
   }, [basemapStyle]);
 
-  // Render Admin Vector Layer
+  // Render Admin Vector Layer (Kecamatan - 20 Subdistricts)
   useEffect(() => {
     if (!leafletMap.current) return;
     const map = leafletMap.current;
@@ -269,15 +270,20 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
     if (!showAdminBoundaries) return;
 
+    // Show kecamatan layer if groupingMode is 'Kecamatan', 'Kecamatan & Desa', or if a district is selected in 'Desa' mode
+    const shouldRenderKecamatan = groupingMode === 'Kecamatan' || groupingMode === 'Kecamatan & Desa' || (groupingMode === 'Desa' && Boolean(selectedDistrict));
+    if (!shouldRenderKecamatan) return;
+
     const layer = L.geoJSON(adminBoundaries as any, {
       style: (feature) => {
         const isSelected = selectedDistrict && selectedDistrict.id === feature?.id;
+        const isDesaMode = groupingMode === 'Desa';
         return {
-          color: isSelected ? '#059669' : '#64748b',
-          weight: isSelected ? 3 : 1.2,
-          opacity: isSelected ? 1.0 : 0.7,
+          color: isSelected ? '#059669' : isDesaMode ? '#94a3b8' : '#475569',
+          weight: isSelected ? 3 : isDesaMode ? 1 : 1.5,
+          opacity: isSelected ? 1.0 : isDesaMode ? 0.4 : 0.75,
           fillColor: isSelected ? '#10b981' : '#ffffff',
-          fillOpacity: isSelected ? 0.15 : 0.03,
+          fillOpacity: isSelected ? 0.12 : 0.02,
           dashArray: isSelected ? '' : '3, 3',
         };
       },
@@ -375,7 +381,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     }).addTo(map);
 
     geojsonLayerRef.current = layer;
-  }, [adminBoundaries, selectedDistrict, showAdminBoundaries, onSelectDistrict, isPickingOnMap, onMapClickSelect]);
+  }, [adminBoundaries, selectedDistrict, showAdminBoundaries, groupingMode, onSelectDistrict, isPickingOnMap, onMapClickSelect]);
 
   // Render Desa Vector Layer (276 Desa in Banjarnegara)
   useEffect(() => {
@@ -388,6 +394,15 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     }
 
     if (!showAdminBoundaries) return;
+
+    // Check if Desa layer should be rendered
+    const isDesaMode = groupingMode === 'Desa';
+    const isCombinedMode = groupingMode === 'Kecamatan & Desa';
+    const isDrillDownKecamatan = groupingMode === 'Kecamatan' && Boolean(selectedDistrict);
+
+    if (!isDesaMode && !isCombinedMode && !isDrillDownKecamatan) {
+      return;
+    }
 
     // Filter desas by selected district if a district is selected
     const desasToRender = selectedDistrict
@@ -402,11 +417,11 @@ export const MapContainer: React.FC<MapContainerProps> = ({
       style: (feature: any) => {
         const isSelected = selectedVillage && selectedVillage.toLowerCase() === feature?.properties?.name?.toLowerCase();
         return {
-          color: isSelected ? '#059669' : '#334155',
-          weight: isSelected ? 2.5 : 0.8,
-          opacity: isSelected ? 0.95 : 0.45,
-          fillColor: isSelected ? '#10b981' : '#64748b',
-          fillOpacity: isSelected ? 0.25 : 0.04,
+          color: isSelected ? '#059669' : '#475569',
+          weight: isSelected ? 2.5 : 1,
+          opacity: isSelected ? 1.0 : 0.65,
+          fillColor: isSelected ? '#10b981' : '#f8fafc',
+          fillOpacity: isSelected ? 0.25 : 0.05,
           dashArray: '2, 2',
         };
       },
@@ -414,13 +429,41 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         const props = feature.properties;
         polygonLayer.bindTooltip(
           `
-          <div class="p-1 font-sans">
+          <div class="p-1.5 font-sans">
             <div class="font-bold text-slate-800 text-xs">${props.name}</div>
             <div class="text-[10px] text-slate-500 font-mono">${props.subdistrict} • ${props.district}</div>
-            <div class="text-[9px] text-emerald-700 font-mono">Luas: ${props.total_area_ha?.toLocaleString()} Ha</div>
+            <div class="text-[9px] text-emerald-700 font-mono">Luas: ${props.total_area_ha?.toLocaleString()} Ha ${props.population ? `• ${props.population.toLocaleString()} Jiwa` : ''}</div>
           </div>
           `,
           { sticky: true, direction: 'top' }
+        );
+
+        polygonLayer.bindPopup(
+          `
+          <div class="p-2.5 font-sans w-64 max-w-[280px] text-slate-800 bg-white/95 rounded-xl border border-slate-200 shadow-xl backdrop-blur">
+            <div class="flex items-center justify-between gap-1 mb-1.5 pb-1 border-b border-slate-100">
+              <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200">
+                ${props.code || 'Batas Desa'}
+              </span>
+              <span class="text-[9px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">${props.subdistrict}</span>
+            </div>
+            <h4 class="font-bold text-xs text-slate-900 mb-1 leading-snug">${props.name}</h4>
+            <div class="bg-slate-50 p-2 rounded-lg border border-slate-200/80 mb-2 space-y-1 text-[10px]">
+              <div class="flex justify-between border-b border-slate-200 pb-1">
+                <span class="text-slate-500 font-mono">Luas Wilayah:</span>
+                <span class="font-bold text-slate-800 font-mono">${props.total_area_ha?.toLocaleString() || '-'} Ha</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500 font-mono">Populasi Desa:</span>
+                <span class="font-medium text-slate-700 font-mono">${(props.population || 0).toLocaleString()} jiwa</span>
+              </div>
+            </div>
+            <div class="text-[9px] text-emerald-700 font-medium">
+              Batas Administrasi Desa / Kelurahan
+            </div>
+          </div>
+          `,
+          { closeButton: true }
         );
 
         polygonLayer.on('click', (e: any) => {
@@ -440,7 +483,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     }).addTo(map);
 
     desaLayerRef.current = layer;
-  }, [selectedDistrict, selectedVillage, showAdminBoundaries, onSelectVillage, isPickingOnMap, onMapClickSelect]);
+  }, [selectedDistrict, selectedVillage, showAdminBoundaries, groupingMode, onSelectVillage, isPickingOnMap, onMapClickSelect]);
 
   // Smooth Zoom-in effect when selectedVillage changes
   useEffect(() => {
@@ -1322,7 +1365,9 @@ export const MapContainer: React.FC<MapContainerProps> = ({
               className="bg-transparent text-slate-800 text-xs rounded-xl pl-2 pr-6 py-1 focus:outline-none font-bold cursor-pointer appearance-none border-0"
               title="Kelompokkan Batas Wilayah Peta"
             >
-              <option value="Kecamatan & Desa">Zone: Kec &amp; Desa</option>
+              <option value="Kecamatan">Zone: Kecamatan (20 Wilayah)</option>
+              <option value="Desa">Zone: Batas Desa (276 Desa)</option>
+              <option value="Kecamatan & Desa">Zone: Gabungan (Kec &amp; Desa)</option>
               <option value="DAS" disabled className="text-slate-400">Zone: DAS (Sungai) - Segera</option>
               <option value="Kelas Risk" disabled className="text-slate-400">Zone: Kelas Risiko - Segera</option>
             </select>
@@ -1367,23 +1412,33 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           )}
         </div>
 
-        {/* Legenda Hazard Box (Positioned Under Filter Controls) */}
-        <div className="bg-white/95 border border-slate-200/90 rounded-2xl shadow-xl p-3 w-60 backdrop-blur-md pointer-events-auto transition-all">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Legenda Risiko</span>
+        {/* Legenda Hazard Box / Floating Compact Trigger */}
+        {!showLegend ? (
+          <button
+            onClick={() => setShowLegend(true)}
+            className="bg-white/95 hover:bg-emerald-50/90 border border-slate-200/90 hover:border-emerald-300 rounded-2xl shadow-xl px-3 py-1.5 flex items-center gap-2 backdrop-blur-md pointer-events-auto transition-all group cursor-pointer animate-in fade-in duration-150"
+            title="Tampilkan Legenda Risiko Bencana"
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="text-xs font-bold text-slate-700 group-hover:text-emerald-800">Legenda</span>
+            <Eye className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600" />
+          </button>
+        ) : (
+          <div className="bg-white/95 border border-slate-200/90 rounded-2xl shadow-xl p-3 w-60 backdrop-blur-md pointer-events-auto transition-all animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span className="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Legenda Risiko</span>
+              </div>
+              <button
+                onClick={() => setShowLegend(false)}
+                className="text-slate-400 hover:text-slate-700 text-xs p-1 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
+                title="Sembunyikan Legenda"
+              >
+                <EyeOff className="w-3.5 h-3.5" />
+              </button>
             </div>
-            <button
-              onClick={() => setShowLegend(!showLegend)}
-              className="text-slate-400 hover:text-slate-700 text-xs p-1 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
-              title={showLegend ? "Sembunyikan Legenda" : "Tampilkan Legenda"}
-            >
-              {showLegend ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-            </button>
-          </div>
 
-          {showLegend ? (
             <div className="space-y-2.5 pt-2 text-xs">
               <div className="flex items-center justify-between text-[11px] font-bold text-emerald-700 font-mono">
                 <span className="truncate max-w-[150px]">{HAZARD_LAYERS[selectedHazard].name}</span>
@@ -1457,12 +1512,8 @@ export const MapContainer: React.FC<MapContainerProps> = ({
                 </div>
               )}
             </div>
-          ) : (
-            <div className="pt-1 text-[10px] text-slate-500 font-mono italic">
-              Klik ikon mata untuk menampilkan legenda
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Loading Overlay */}

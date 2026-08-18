@@ -39,11 +39,21 @@
   z-index: 10;
 }
 
-/* Smooth Bilinear Interpolation for Hazard Rasters */
-.smooth-raster-overlay {
+/* Smooth Bilinear & Bicubic Interpolation for Hazard Rasters */
+.smooth-raster-overlay,
+.smooth-raster-overlay-index,
+.smooth-raster-overlay-class {
   image-rendering: auto !important;
   image-rendering: smooth !important;
-  image-rendering: -webkit-optimize-contrast !important;
+  -ms-interpolation-mode: bicubic !important;
+}
+
+.smooth-raster-overlay-index {
+  filter: blur(0.4px) contrast(1.08) saturate(1.15) !important;
+}
+
+.smooth-raster-overlay-class {
+  filter: contrast(1.05) saturate(1.1) !important;
 }
 
 .leaflet-control-zoom {

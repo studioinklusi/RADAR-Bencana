@@ -641,17 +641,32 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     ];
 
     const overlayUrl = `/hazard_rasters/${selectedHazard}_${hazardRenderMode}.png`;
+    const overlayClass = hazardRenderMode === 'index' ? 'smooth-raster-overlay-index' : 'smooth-raster-overlay-class';
 
     const overlay = L.imageOverlay(overlayUrl, bounds, {
       opacity: opacity,
       interactive: false,
-      className: 'smooth-raster-overlay',
+      className: overlayClass,
     }).addTo(map);
+
+    const applySmoothing = (el: HTMLElement) => {
+      el.style.imageRendering = 'smooth';
+      (el.style as any).msInterpolationMode = 'bicubic';
+      if (hazardRenderMode === 'index') {
+        el.style.filter = 'blur(0.4px) contrast(1.08) saturate(1.15)';
+      } else {
+        el.style.filter = 'contrast(1.05) saturate(1.1)';
+      }
+    };
+
+    overlay.on('load', () => {
+      const el = overlay.getElement();
+      if (el) applySmoothing(el);
+    });
 
     const imgEl = overlay.getElement();
     if (imgEl) {
-      imgEl.style.imageRendering = 'auto';
-      imgEl.style.filter = 'contrast(1.18) saturate(1.15)';
+      applySmoothing(imgEl);
     }
 
     rasterCanvasOverlayRef.current = overlay;

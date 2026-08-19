@@ -183,4 +183,45 @@ input[type="range"].custom-slider::-moz-range-thumb:active {
   z-index: 25 !important;
 }
 
+@media (max-width: 768px) {
+  .leaflet-bottom.leaflet-right {
+    margin-bottom: 140px !important;
+    margin-right: 12px !important;
+  }
+}
+
+/* Mobile Safe Area & Layout Utilities */
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pl-safe {
+  padding-left: env(safe-area-inset-left, 0px);
+}
+.pr-safe {
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* Hide scrollbar for clean mobile horizontal pill navigation */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Smooth drag and bottom sheet transitions */
+.bottom-sheet-transition {
+  transition: height 0.35s cubic-bezier(0.32, 0.72, 0, 1), transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Optimize touch interactions */
+button, a, input, select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+
 

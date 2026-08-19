@@ -157,7 +157,7 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
   const totalArea = stats ? stats.totalAreaHa.toLocaleString() : '12,980,500';
 
   return (
-    <aside className="w-80 lg:w-96 bg-white/95 backdrop-blur-md border-l border-slate-200 text-slate-800 flex flex-col h-[calc(100vh-3.5rem)] shrink-0 z-20 select-none shadow-sm">
+    <aside className="hidden md:flex md:w-80 lg:w-96 bg-white/95 backdrop-blur-md border-l border-slate-200 text-slate-800 flex-col h-[calc(100vh-3.5rem)] shrink-0 z-20 select-none shadow-sm">
       {/* Top Header Title Panel */}
       <div className="p-4 border-b border-slate-200 bg-slate-50/80">
         <div className="flex items-center justify-between mb-1">

@@ -240,7 +240,17 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
     leafletMap.current = map;
 
+    // ResizeObserver to handle layout transitions (sidebar, bottom sheet, orientation)
+    let resizeObserver: ResizeObserver | null = null;
+    if (mapRef.current && window.ResizeObserver) {
+      resizeObserver = new ResizeObserver(() => {
+        map.invalidateSize();
+      });
+      resizeObserver.observe(mapRef.current);
+    }
+
     return () => {
+      if (resizeObserver) resizeObserver.disconnect();
       map.remove();
       leafletMap.current = null;
     };
@@ -1801,7 +1811,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
       )}
 
       {/* Unified Single Bottom Control Dock Bar */}
-      <div className="absolute bottom-4 left-4 right-4 z-20 flex items-center justify-start pointer-events-none">
+      <div className="absolute bottom-36 md:bottom-4 left-3 md:left-4 right-3 md:right-auto z-20 flex items-center justify-start pointer-events-none">
         {isTimelineVisible ? (
           <div className="bg-white/95 border border-slate-200/90 rounded-2xl p-2 shadow-xl flex flex-wrap items-center gap-2 backdrop-blur-md pointer-events-auto max-w-full">
             {/* Play / Pause Timelapse Button */}

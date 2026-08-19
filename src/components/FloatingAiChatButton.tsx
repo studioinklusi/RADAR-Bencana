@@ -9,7 +9,7 @@ export const FloatingAiChatButton: React.FC<FloatingAiChatButtonProps> = ({
   onOpenChat,
 }) => {
   return (
-    <div className="fixed bottom-5 right-5 sm:right-6 z-30 pointer-events-auto">
+    <div className="hidden md:block fixed bottom-5 right-5 sm:right-6 z-30 pointer-events-auto">
       <button
         onClick={onOpenChat}
         className="group flex items-center gap-2.5 px-4 py-2.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-amber-600 hover:from-emerald-700 hover:via-teal-700 hover:to-amber-700 text-white font-bold text-xs rounded-full shadow-lg shadow-emerald-700/30 hover:shadow-xl hover:shadow-emerald-700/40 hover:scale-105 active:scale-95 transition-all cursor-pointer border border-white/30 backdrop-blur-md"

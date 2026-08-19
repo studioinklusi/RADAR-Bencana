@@ -29,40 +29,33 @@ export const MaximizedChatModal: React.FC<MaximizedChatModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-3 md:p-6 animate-fadeIn select-text">
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-2xl w-full max-w-5xl h-[92vh] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-0 md:p-6 animate-fadeIn select-text">
+      <div className="bg-white border-0 md:border md:border-slate-200 rounded-none md:rounded-2xl shadow-2xl w-full max-w-5xl h-full md:h-[92vh] flex flex-col overflow-hidden">
         {/* Modal Header */}
-        <div className="p-4 md:px-6 bg-gradient-to-r from-emerald-50 via-white to-amber-50 border-b border-slate-200 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-sm">
-              <Bot className="w-6 h-6" />
+        <div className="p-3 md:p-6 pt-safe bg-gradient-to-r from-emerald-50 via-white to-amber-50 border-b border-slate-200 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-sm shrink-0">
+              <Bot className="w-5 h-5 md:w-6 md:h-6" />
             </div>
-            <div>
-              <h3 className="font-bold text-slate-800 text-base flex items-center gap-2">
-                <span>Tanya AI Bencana — Mode Layar Penuh (Fullscreen)</span>
-                <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono font-bold border border-emerald-200">
+            <div className="min-w-0">
+              <h3 className="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5 truncate">
+                <span>Tanya AI Bencana</span>
+                <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono font-bold border border-emerald-200">
                   RADAR AI
                 </span>
               </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Konteks Wilayah Aktif: <strong className="text-emerald-700 font-semibold">{selectedDistrict?.properties?.name || 'Banjarnegara (Keseluruhan)'}</strong> • Ancaman: <strong className="text-amber-700 font-mono uppercase font-bold">{selectedHazard}</strong>
+              <p className="text-[10px] md:text-xs text-slate-500 truncate font-mono mt-0.5">
+                Wilayah: <strong className="text-emerald-700 font-semibold">{selectedDistrict?.properties?.name || 'Banjarnegara'}</strong> • <strong className="text-amber-700 uppercase">{selectedHazard}</strong>
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 shrink-0">
             <button
               type="button"
               onClick={onClose}
-              className="px-3 py-2 bg-white hover:bg-slate-100 text-slate-700 hover:text-slate-900 rounded-xl font-semibold text-xs border border-slate-200 transition-all flex items-center gap-2 shadow-xs cursor-pointer active:scale-95"
-            >
-              <Minimize2 className="w-4 h-4 text-emerald-600" />
-              <span>Kembali (Minimize)</span>
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-2 hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-xl transition-all cursor-pointer"
+              className="p-2 hover:bg-slate-100 text-slate-600 rounded-xl transition-all cursor-pointer"
+              title="Tutup Modal"
             >
               <X className="w-5 h-5" />
             </button>
@@ -119,8 +112,8 @@ export const MaximizedChatModal: React.FC<MaximizedChatModalProps> = ({
         </div>
 
         {/* Quick Chips & Chat Input Form Footer */}
-        <div className="p-4 md:px-6 bg-white border-t border-slate-200 space-y-3 shrink-0">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+        <div className="p-3 md:p-4 md:px-6 bg-white border-t border-slate-200 space-y-2.5 shrink-0 pb-safe">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
             <span className="text-xs text-slate-500 font-semibold shrink-0 flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
               <span>Pertanyaan Cepat:</span>

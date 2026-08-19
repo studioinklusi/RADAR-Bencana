@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modul SCALA 3: Estimasi Cadangan Karbon & Analisis Emisi CO₂ (QGIS)</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- KaTeX CSS & JS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Mermaid.js for Diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <style>
+    :root {
+      --bg-primary: #070d12;
+      --bg-secondary: #0e1720;
+      --bg-card: rgba(16, 26, 36, 0.85);
+      --bg-card-hover: rgba(24, 38, 52, 0.95);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --border-accent: rgba(16, 185, 129, 0.4);
+      
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --accent-emerald: #10b981;
+      --accent-emerald-light: #34d399;
+      --accent-cyan: #06b6d4;
+      --accent-sky: #38bdf8;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-purple: #a855f7;
+      
+      --gradient-brand: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+      --gradient-amber: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+      
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 15px 35px -5px rgba(0, 0, 0, 0.5), 0 0 25px rgba(16, 185, 129, 0.15);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.92);
+      --bg-card-hover: #ffffff;
+      --border-color: rgba(0, 0, 0, 0.1);
+      --border-accent: rgba(16, 185, 129, 0.5);
+      
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 12px 30px rgba(16, 185, 129, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.75;
+      overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Ambient Background Glow */
+    .ambient-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(circle at 10% 15%, rgba(16, 185, 129, 0.1) 0%, transparent 45%),
+                  radial-gradient(circle at 90% 60%, rgba(6, 182, 212, 0.08) 0%, transparent 50%);
+    }
+
+    /* Layout Structure */
+    .app-wrapper {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    /* Fixed & Non-Shrinking Sidebar */
+    .sidebar {
+      width: 290px;
+      min-width: 290px;
+      max-width: 290px;
+      flex-shrink: 0;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 1.75rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      border-radius: 12px;
+      background: var(--gradient-brand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.25rem;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+    }
+
+    .brand-text h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      background: var(--gradient-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-text p {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .nav-list a {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-list a i {
+      width: 18px;
+      min-width: 18px;
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--accent-emerald);
+    }
+
+    .nav-list a:hover, .nav-list a.active {
+      color: #fff;
+      background: rgba(16, 185, 129, 0.15);
+      border-left: 3px solid var(--accent-emerald);
+      transform: translateX(3px);
+    }
+
+    [data-theme="light"] .nav-list a:hover, [data-theme="light"] .nav-list a.active {
+      color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    /* Main Content Container */
+    .main-container {
+      flex: 1;
+      min-width: 0; /* Prevents overflow issues */
+      padding: 2.5rem 3.5rem;
+      max-width: 1300px;
+    }
+
+    /* Top Controls */
+    .top-controls {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 2rem;
+    }
+
+    .btn-toggle {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.55rem 1.1rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .btn-toggle:hover {
+      border-color: var(--accent-emerald);
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.25);
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(6, 182, 212, 0.08) 100%), var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-lg);
+      padding: 2.75rem 3rem;
+      margin-bottom: 3.5rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(12px);
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--accent-emerald-light);
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.35rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.25;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #ffffff 30%, #a7f3d0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    [data-theme="light"] .hero-title {
+      background: linear-gradient(135deg, #0f172a 30%, #059669 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 900px;
+      line-height: 1.7;
+    }
+
+    .author-chip {
+      margin-top: 1.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    .author-chip span i {
+      color: var(--accent-cyan);
+      margin-right: 0.4rem;
+    }
+
+    /* Section Styling */
+    section {
+      margin-bottom: 4rem;
+      scroll-margin-top: 2rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .section-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.12);
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-accent);
+    }
+
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.25rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.6rem;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.25s ease;
+      position: relative;
+      backdrop-filter: blur(10px);
+    }
+
+    .card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-accent);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card-header-flex {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .card-icon {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      border-radius: 10px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+
+    /* Table Styling */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      margin: 1.5rem 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--accent-emerald-light);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      padding: 0.9rem 1.2rem;
+      border-bottom: 1px solid var(--border-color);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+    }
+
+    [data-theme="light"] th {
+      background: rgba(0, 0, 0, 0.03);
+      color: var(--accent-emerald);
+    }
+
+    td {
+      padding: 0.85rem 1.2rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .tag-code {
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 0.2rem 0.5rem;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
+    }
+
+    [data-theme="light"] .tag-code {
+      background: rgba(0, 0, 0, 0.06);
+      color: #0284c7;
+    }
+
+    /* Math Box & Formulas */
+    .math-callout {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(6, 182, 212, 0.05) 100%), var(--bg-card);
+      border-left: 4px solid var(--accent-emerald);
+      border-radius: var(--radius-md);
+      padding: 1.5rem 1.75rem;
+      margin: 1.5rem 0;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .math-callout h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      color: var(--accent-emerald-light);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    [data-theme="light"] .math-callout h4 {
+      color: var(--accent-emerald);
+    }
+
+    .formula-scroll {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      padding: 0.85rem 1.25rem;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      margin: 0.85rem 0;
+      text-align: center;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    [data-theme="light"] .formula-scroll {
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    .formula-scroll::-webkit-scrollbar {
+      height: 5px;
+    }
+    .formula-scroll::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 4px;
+    }
+    .formula-scroll::-webkit-scrollbar-thumb {
+      background: var(--accent-emerald);
+      border-radius: 4px;
+    }
+
+    /* KaTeX Display Fixes */
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0.25rem 0;
+      margin: 0.35rem 0 !important;
+      max-width: 100%;
+    }
+
+    .katex-display::-webkit-scrollbar {
+      height: 4px;
+    }
+    .katex-display::-webkit-scrollbar-thumb {
+      background: var(--accent-emerald);
+      border-radius: 4px;
+    }
+
+    /* Calibration Parameters Grid */
+    .param-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 0.85rem;
+      margin-top: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .param-card {
+      background: rgba(0, 0, 0, 0.22);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      transition: all 0.2s ease;
+    }
+
+    [data-theme="light"] .param-card {
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+    .param-card:hover {
+      border-color: var(--accent-emerald);
+      transform: translateY(-2px);
+    }
+
+    .param-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .param-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--accent-emerald-light);
+    }
+
+    [data-theme="light"] .param-name {
+      color: var(--accent-emerald);
+    }
+
+    .param-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--accent-cyan);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    .param-val {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .param-desc {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    /* Interactive Simulator */
+    .calculator-panel {
+      background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+      border: 2px solid var(--border-accent);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem;
+      margin: 2rem 0;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 2.25rem;
+    }
+
+    .calc-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .calc-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .calc-input, .calc-select {
+      width: 100%;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.65rem 0.9rem;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .calc-input:focus, .calc-select:focus {
+      outline: none;
+      border-color: var(--accent-emerald);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
+    }
+
+    .calc-range {
+      width: 100%;
+      accent-color: var(--accent-emerald);
+      cursor: pointer;
+    }
+
+    .calc-result-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.65rem;
+      border-bottom: 1px dashed var(--border-color);
+    }
+
+    .result-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .result-title {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .result-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent-emerald-light);
+    }
+
+    .result-val.loss {
+      color: var(--accent-rose);
+    }
+
+    .result-val.gain {
+      color: var(--accent-cyan);
+    }
+
+    /* Diagram Container */
+    .diagram-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      margin: 1.5rem 0;
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+      backdrop-filter: blur(10px);
+    }
+
+    /* Step Guide */
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.35rem;
+      transition: all 0.2s;
+    }
+
+    .step-item:hover {
+      border-color: var(--border-accent);
+      transform: translateX(3px);
+    }
+
+    .step-badge {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      border-radius: 50%;
+      background: var(--gradient-brand);
+      color: #fff;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+    }
+
+    .step-content h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .step-content p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 1024px) {
+      .main-container {
+        padding: 2rem 2rem;
+      }
+      .calc-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .app-wrapper {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .main-container {
+        padding: 1.5rem;
+      }
+      .hero-title {
+        font-size: 1.85rem;
+      }
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+  
+  <div class="app-wrapper">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand-box">
+        <div class="brand-icon">
+          <i class="fa-solid fa-tree"></i>
+        </div>
+        <div class="brand-text">
+          <h2>SCALA 3: Carbon</h2>
+          <p>QGIS Processing Module</p>
+        </div>
+      </div>
+
+      <ul class="nav-list" id="sidebarNav">
+        <li><a href="#pendahuluan" class="active"><i class="fa-solid fa-compass"></i> 1. Pendahuluan</a></li>
+        <li><a href="#modul1-estimasi"><i class="fa-solid fa-layer-group"></i> 2. Estimasi Karbon (Raster)</a></li>
+        <li><a href="#modul2-komparasi"><i class="fa-solid fa-scale-balanced"></i> 3. Komparasi & Valuasi CO₂</a></li>
+        <li><a href="#workflow-diagram"><i class="fa-solid fa-diagram-project"></i> 4. Alur Kerja Terpadu</a></li>
+        <li><a href="#simulasi-interaktif"><i class="fa-solid fa-calculator"></i> 5. Simulator Interaktif</a></li>
+        <li><a href="#panduan-qgis"><i class="fa-solid fa-book-open"></i> 6. Panduan di QGIS</a></li>
+        <li><a href="#batasan-model"><i class="fa-solid fa-circle-exclamation"></i> 7. Kesimpulan & Batasan</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Body -->
+    <main class="main-container">
+      <!-- Top Action Bar -->
+      <div class="top-controls">
+        <button class="btn-toggle" id="themeToggleBtn">
+          <i class="fa-solid fa-moon"></i> <span>Ubah Tema</span>
+        </button>
+        <button class="btn-toggle" onclick="window.print()">
+          <i class="fa-solid fa-print"></i> <span>Cetak Modul</span>
+        </button>
+      </div>
+
+      <!-- Hero Header -->
+      <header class="hero-banner">
+        <div class="badge-pill">
+          <i class="fa-solid fa-seedling"></i> Cities Course 2025
+        </div>
+        <h1 class="hero-title">Estimasi Cadangan Karbon & Analisis Emisi CO₂ Berbasis QGIS</h1>
+        <p class="hero-desc">
+          Panduan komprehensif metodologi, formulasi matematis penyesuaian lingkungan, stoikiometri konversi gas rumah kaca, dan analisis spasial valuasi ekonomi berbasis PyQGIS Processing.
+        </p>
+        <div class="author-chip">
+          <span><i class="fa-solid fa-user-pen"></i> Penulis: <strong>Firman Afrianto</strong></span>
+          <span><i class="fa-solid fa-folder-open"></i> Modul: <strong>SCALA 3 (Mastering Carbon Stock)</strong></span>
+          <span><i class="fa-brands fa-python"></i> Framework: <strong>PyQGIS 3.x</strong></span>
+        </div>
+      </header>
+
+      <!-- Section 1: Pendahuluan -->
+      <section id="pendahuluan">
+        <div class="section-header">
+          <div class="section-num">01</div>
+          <h2 class="section-title">Pendahuluan & Konsep Dasar</h2>
+        </div>
+        <p>
+          Akuntansi cadangan karbon <em>(Carbon Stock Accounting)</em> di atas permukaan tanah <em>(Above Ground Carbon)</em> merupakan fondasi penting dalam aksi mitigasi krisis iklim global (REDD+, NDC, dan Net Zero Emission). Pendekatan tradisional seringkali hanya menerapkan nilai konstan <em>(flat rate)</em> untuk setiap kelas tutupan lahan tanpa memperhitungkan heterogenitas kualitas ekosistem.
+        </p>
+        
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-header-flex">
+              <div class="card-icon"><i class="fa-solid fa-satellite-dish"></i></div>
+              <h3 class="card-title">Multi-Sensor Biofisik</h3>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted);">
+              Menggabungkan respon spektral NDVI (klorofil) dan NDMI (kadar air tajuk) untuk mengukur vitalitas vegetasi secara kontinu.
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-header-flex">
+              <div class="card-icon"><i class="fa-solid fa-mountain"></i></div>
+              <h3 class="card-title">Struktur & Topografi</h3>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted);">
+              Mempertimbangkan ketinggian tajuk <em>(Canopy Height)</em> dan elevasi medan (DEM) terhadap volume kayu dan iklim mikro.
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-header-flex">
+              <div class="card-icon"><i class="fa-solid fa-coins"></i></div>
+              <h3 class="card-title">Valuasi Tata Ruang</h3>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted);">
+              Menghitung dampak finansial emisi dan sekuestrasi $\text{CO}_2$ secara granular per zona peruntukan rencana tata ruang (RTRW).
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Modul 1 -->
+      <section id="modul1-estimasi">
+        <div class="section-header">
+          <div class="section-num">02</div>
+          <h2 class="section-title">Modul 1: Estimasi Cadangan Karbon Berbasis Raster</h2>
+        </div>
+        <p>
+          Modul <span class="tag-code">scala_carbon_stock_estimation.py</span> (Kelas <code>CarbonStockEstimationRasters</code>) mengubah raster klasifikasi tutupan lahan (LULC) menjadi layer poligon vektor berbobot karbon dengan koreksi lingkungan.
+        </p>
+
+        <!-- Tabel Base Carbon -->
+        <h3 style="font-family: 'Outfit'; margin-top: 1.75rem; margin-bottom: 0.75rem;">A. Tabel Densitas Dasar Karbon (Base Carbon Density)</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Skema</th>
+                <th>Kode DN</th>
+                <th>Kelas Tutupan Lahan</th>
+                <th>Base Carbon ($\text{ton C/ha}$)</th>
+                <th>Karakteristik Biologis</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="tag-code">Dynamic World</span></td>
+                <td><code>1</code></td>
+                <td><strong>Trees / Hutan</strong></td>
+                <td><strong style="color: var(--accent-emerald-light);">150</strong></td>
+                <td>Tegakan pohon berkayu dengan cadangan biomassa tertinggi.</td>
+              </tr>
+              <tr>
+                <td><span class="tag-code">Dynamic World</span></td>
+                <td><code>3</code></td>
+                <td><strong>Flooded Vegetation</strong></td>
+                <td><strong style="color: var(--accent-emerald-light);">100</strong></td>
+                <td>Mangrove / rawa gambut dengan cadangan karbon tinggi.</td>
+              </tr>
+              <tr>
+                <td><span class="tag-code">Dynamic World</span></td>
+                <td><code>4</code></td>
+                <td><strong>Crops / Pertanian</strong></td>
+                <td><strong>40</strong></td>
+                <td>Tanaman semusim & perkebunan produktif.</td>
+              </tr>
+              <tr>
+                <td><span class="tag-code">Dynamic World</span></td>
+                <td><code>5</code></td>
+                <td><strong>Shrub and Scrub</strong></td>
+                <td><strong>30</strong></td>
+                <td>Semak belukar dan suksesi alami sekunder.</td>
+              </tr>
+              <tr>
+                <td><span class="tag-code">Dynamic World</span></td>
+                <td><code>2</code></td>
+                <td><strong>Grass / Padang Rumput</strong></td>
+                <td><strong>10</strong></td>
+                <td>Tumbuhan herba dan padang rumput alami.</td>
+              </tr>
+              <tr>
+                <td><span class="tag-code">Dynamic World</span></td>
+                <td><code>7</code></td>
+                <td><strong>Bare Ground</strong></td>
+                <td><strong>1</strong></td>
+                <td>Lahan terbuka dengan akumulasi bahan organik minimal.</td>
+              </tr>
+              <tr>
+                <td><span class="tag-code">Dynamic World</span></td>
+                <td><code>0, 6, 8</code></td>
+                <td><strong>Water, Built, Snow/Ice</strong></td>
+                <td><strong>0</strong></td>
+                <td>Badan air, permukiman terbangun, atau salju abadi.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Formula Matematis -->
+        <div class="math-callout">
+          <h4><i class="fa-solid fa-square-root-variable"></i> Formulasi Faktor Penyesuaian Lingkungan (Adjustment Factor)</h4>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.6rem;">Nilai stok karbon setiap poligon dikoreksi terhadap kondisi lokal rata-rata zona:</p>
+          
+          <div class="formula-scroll">
+            $$\text{Adjustment} = 1 + a(\text{NDVI} - \text{NDVI}_{\text{ref}}) + b(\text{Canopy} - \text{Canopy}_{\text{ref}}) + c(\text{DEM} - \text{DEM}_{\text{ref}}) + d(\text{NDMI} - \text{NDMI}_{\text{ref}})$$
+          </div>
+          
+          <div style="margin-top: 1.25rem;">
+            <span style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">
+              <i class="fa-solid fa-sliders" style="color: var(--accent-cyan); margin-right: 0.35rem;"></i> Konstanta & Parameter Kalibrasi Model:
+            </span>
+            <div class="param-grid">
+              <div class="param-card">
+                <div class="param-header">
+                  <span class="param-name">NDVI</span>
+                  <span class="param-badge">Bobot a = 0.20</span>
+                </div>
+                <div class="param-val">$\text{NDVI}_{\text{ref}} = 0.50$</div>
+                <div class="param-desc">Kerapatan klorofil tajuk aktif</div>
+              </div>
+              <div class="param-card">
+                <div class="param-header">
+                  <span class="param-name">Canopy Height</span>
+                  <span class="param-badge">Bobot b = 0.01</span>
+                </div>
+                <div class="param-val">$\text{Canopy}_{\text{ref}} = 10.0\text{ m}$</div>
+                <div class="param-desc">Tinggi tegakan pohon berkayu</div>
+              </div>
+              <div class="param-card">
+                <div class="param-header">
+                  <span class="param-name">Elevasi DEM</span>
+                  <span class="param-badge">Bobot c = 0.0005</span>
+                </div>
+                <div class="param-val">$\text{DEM}_{\text{ref}} = 100.0\text{ m}$</div>
+                <div class="param-desc">Topografi & gradien ketinggian</div>
+              </div>
+              <div class="param-card">
+                <div class="param-header">
+                  <span class="param-name">NDMI</span>
+                  <span class="param-badge">Bobot d = 0.15</span>
+                </div>
+                <div class="param-val">$\text{NDMI}_{\text{ref}} = 0.50$</div>
+                <div class="param-desc">Kadar air / kelembaban kanopi</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.25rem; padding-top: 0.85rem; border-top: 1px dashed var(--border-color);">
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.5rem;">Kalkulasi Total Stok Karbon pada Poligon:</p>
+            <div class="formula-scroll">
+              $$\text{Total Carbon Stock (ton C)} = \text{Base\_C} \times \text{Area (ha)} \times \text{Adjustment}$$
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Modul 2 -->
+      <section id="modul2-komparasi">
+        <div class="section-header">
+          <div class="section-num">03</div>
+          <h2 class="section-title">Modul 2: Komparasi Dinamika Karbon & Valuasi CO₂</h2>
+        </div>
+        <p>
+          Modul <span class="tag-code">scala_carbon_stock_comparison_shp.py</span> (Kelas <code>CarbonStockComparisonShapefiles</code>) melakukan analisis perubahan multitemporal antara Tahun A <em>(baseline)</em> dan Tahun B <em>(monitoring)</em>.
+        </p>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom: 0.75rem;"><i class="fa-solid fa-atom" style="color: var(--accent-cyan);"></i> Stoikiometri Konversi Gas Rumah Kaca</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.85rem;">
+              Setiap atom $\text{C}$ (berat atom 12) yang dilepaskan ke atmosfer berikatan dengan 2 atom oksigen membentuk $\text{CO}_2$ (berat molekul 44):
+            </p>
+            <div class="formula-scroll">
+              $$\text{Faktor Konversi } \text{CO}_2 = \frac{44}{12} \approx 3.6667$$
+            </div>
+            <div class="formula-scroll">
+              $$\Delta \text{CO}_2 (\text{tCO}_2) = \Delta C \times \frac{44}{12}$$
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom: 0.75rem;"><i class="fa-solid fa-money-bill-trend-up" style="color: var(--accent-emerald);"></i> Neraca & Valuasi Ekonomi (IDR)</h3>
+            <div style="font-size: 0.88rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.75rem;">
+              <div>
+                <strong style="color: var(--accent-rose);"><i class="fa-solid fa-arrow-trend-down"></i> Jika $\Delta C < 0$ (Deforestasi / Degradasi):</strong>
+                <div class="formula-scroll">
+                  $$\text{Emisi } \text{CO}_2 = |\Delta \text{CO}_2|, \quad \text{Sekuestrasi} = 0$$
+                </div>
+                <div class="formula-scroll">
+                  $$\text{Economic Loss} = \text{Emisi} \times \text{Carbon Price (IDR)}$$
+                </div>
+              </div>
+              <div style="padding-top: 0.5rem; border-top: 1px dashed var(--border-color);">
+                <strong style="color: var(--accent-cyan);"><i class="fa-solid fa-arrow-trend-up"></i> Jika $\Delta C > 0$ (Reforestasi / Suksesi):</strong>
+                <div class="formula-scroll">
+                  $$\text{Emisi} = 0, \quad \text{Sekuestrasi } \text{CO}_2 = \Delta \text{CO}_2$$
+                </div>
+                <div class="formula-scroll">
+                  $$\text{Economic Gain} = \text{Sekuestrasi} \times \text{Carbon Price (IDR)}$$
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: Workflow Diagram -->
+      <section id="workflow-diagram">
+        <div class="section-header">
+          <div class="section-num">04</div>
+          <h2 class="section-title">Diagram Alur Kerja Terpadu (End-to-End Pipeline)</h2>
+        </div>
+        <p>
+          Visualisasi siklus analisis terintegrasi mulai dari data penginderaan jauh mentah hingga tabel valuasi per zona tata ruang:
+        </p>
+
+        <div class="diagram-box">
+          <div class="mermaid">
+flowchart TD
+    subgraph S1 ["Tahap 1: Estimasi Cadangan Karbon (Script 1)"]
+        R_LULC["Raster Tutupan Lahan (Tahun A & B)"] --> POLY["GDAL Polygonize"]
+        R_BIO["Raster Biofisik (NDVI / NDMI / DEM / Canopy)"] --> ZONAL["QGIS Zonal Statistics"]
+        POLY --> ZONAL
+        ZONAL --> CALC1["Kalkulasi: Base_C x Area x Adjustment"]
+        CALC1 --> VEC_C["Layer Poligon Karbon (Tahun A & B)"]
+    end
+
+    subgraph S2 ["Tahap 2: Komparasi, CO2 & Tata Ruang (Script 2)"]
+        VEC_C --> DIFF["Spatial Join / Diff: Delta_C = B - A"]
+        BOUND["Batas Wilayah Studi"] --> CLIP["Clip Boundary"]
+        DIFF --> CLIP
+        RTRW["Peta Rencana Pola Ruang (RTRW)"] --> JOIN_ZONA["Spatial Join Zona RTRW"]
+        CLIP --> JOIN_ZONA
+        JOIN_ZONA --> CALC2["Konversi CO2: Delta_C x 44/12"]
+        CALC2 --> VAL["Valuasi Ekonomi: IDR/tCO2"]
+        VAL --> OUT_SHP[("Layer Vektor Output (SHP/GPKG)")]
+        VAL --> OUT_CSV[("Tabel Rekap CSV per Zona RTRW")]
+    end
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 5: Simulator Interaktif -->
+      <section id="simulasi-interaktif">
+        <div class="section-header">
+          <div class="section-num">05</div>
+          <h2 class="section-title">Simulator & Kalkulator Karbon Interaktif</h2>
+        </div>
+        <p>
+          Gunakan simulator ini untuk menguji secara langsung dampak perubahan tutupan lahan dan parameter biofisik terhadap emisi $\text{CO}_2$ dan nilai ekonomi finansial:
+        </p>
+
+        <div class="calculator-panel">
+          <div class="calc-grid">
+            <!-- Form Input -->
+            <div>
+              <div class="calc-group">
+                <div class="calc-label"><span>Luas Area (Hektar)</span> <strong id="lblArea">10 ha</strong></div>
+                <input type="number" id="inpArea" class="calc-input" value="10" min="0.1" step="0.5" />
+              </div>
+
+              <div class="calc-group">
+                <div class="calc-label"><span>Tutupan Lahan Tahun A (Awal)</span></div>
+                <select id="selLCA" class="calc-select">
+                  <option value="150" selected>Trees / Hutan (150 tC/ha)</option>
+                  <option value="100">Flooded Vegetation (100 tC/ha)</option>
+                  <option value="40">Crops / Pertanian (40 tC/ha)</option>
+                  <option value="30">Shrub / Semak Belukar (30 tC/ha)</option>
+                  <option value="10">Grass / Rumput (10 tC/ha)</option>
+                  <option value="1">Bare Ground (1 tC/ha)</option>
+                  <option value="0">Built / Terbangun (0 tC/ha)</option>
+                </select>
+              </div>
+
+              <div class="calc-group">
+                <div class="calc-label"><span>Tutupan Lahan Tahun B (Akhir)</span></div>
+                <select id="selLCB" class="calc-select">
+                  <option value="150">Trees / Hutan (150 tC/ha)</option>
+                  <option value="100">Flooded Vegetation (100 tC/ha)</option>
+                  <option value="40">Crops / Pertanian (40 tC/ha)</option>
+                  <option value="30" selected>Shrub / Semak Belukar (30 tC/ha)</option>
+                  <option value="10">Grass / Rumput (10 tC/ha)</option>
+                  <option value="1">Bare Ground (1 tC/ha)</option>
+                  <option value="0">Built / Terbangun (0 tC/ha)</option>
+                </select>
+              </div>
+
+              <div class="calc-group">
+                <div class="calc-label"><span>Rata-rata NDVI</span> <strong id="lblNDVI">0.65</strong></div>
+                <input type="range" id="rngNDVI" class="calc-range" min="0.0" max="1.0" step="0.05" value="0.65" />
+              </div>
+
+              <div class="calc-group">
+                <div class="calc-label"><span>Tinggi Tajuk / Canopy (meter)</span> <strong id="lblCanopy">15 m</strong></div>
+                <input type="range" id="rngCanopy" class="calc-range" min="0" max="40" step="1" value="15" />
+              </div>
+
+              <div class="calc-group">
+                <div class="calc-label"><span>Harga Karbon (IDR / tCO₂)</span></div>
+                <input type="number" id="inpPrice" class="calc-input" value="30000" step="5000" />
+              </div>
+            </div>
+
+            <!-- Result Box -->
+            <div class="calc-result-box">
+              <div class="result-item">
+                <div class="result-title">Faktor Penyesuaian (Adjustment)</div>
+                <div class="result-val" id="resAdj">1.0800</div>
+              </div>
+              <div class="result-item">
+                <div class="result-title">Stok Karbon Tahun A</div>
+                <div class="result-val" id="resCA">1,620.00 ton C</div>
+              </div>
+              <div class="result-item">
+                <div class="result-title">Stok Karbon Tahun B</div>
+                <div class="result-val" id="resCB">324.00 ton C</div>
+              </div>
+              <div class="result-item">
+                <div class="result-title">Perubahan Bersih (ΔC)</div>
+                <div class="result-val" id="resDeltaC">-1,296.00 ton C</div>
+              </div>
+              <div class="result-item">
+                <div class="result-title">Status Neraca CO₂</div>
+                <div class="result-val" id="resCO2">4,752.00 tCO₂ (Emisi)</div>
+              </div>
+              <div class="result-item">
+                <div class="result-title">Valuasi Ekonomi (IDR)</div>
+                <div class="result-val loss" id="resVal">Rp 142.560.000 (Kerugian)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 6: Panduan di QGIS -->
+      <section id="panduan-qgis">
+        <div class="section-header">
+          <div class="section-num">06</div>
+          <h2 class="section-title">Panduan Operasional di QGIS</h2>
+        </div>
+
+        <div class="step-list">
+          <div class="step-item">
+            <div class="step-badge">1</div>
+            <div class="step-content">
+              <h4>Memasang Skrip ke QGIS Processing Toolbox</h4>
+              <p>Buka QGIS &rarr; Panel <strong>Processing Toolbox</strong> (<code>Ctrl+Alt+T</code>) &rarr; Klik ikon <strong>Python</strong> &rarr; Pilih <strong>Add Script to Toolbox...</strong> &rarr; Pilih file skrip Python.</p>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-badge">2</div>
+            <div class="step-content">
+              <h4>Menjalankan Estimasi Karbon Tahap 1</h4>
+              <p>Jalankan <code>2. Carbon Stock Estimation Raster</code>. Masukkan raster LULC, raster biofisik opsional, dan tentukan lokasi penyimpanan file GPKG/SHP dan CSV.</p>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-badge">3</div>
+            <div class="step-content">
+              <h4>Menjalankan Komparasi Multitemporal & Valuasi Tahap 2</h4>
+              <p>Jalankan <code>3. Carbon Stock Comparison & CO₂ Analysis</code>. Masukkan layer Tahun A dan Tahun B, layer batas wilayah <em>(Boundary)</em>, layer Rencana Tata Ruang <em>(Spatial Plan)</em>, serta tentukan harga karbon.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 7: Batasan Model -->
+      <section id="batasan-model">
+        <div class="section-header">
+          <div class="section-num">07</div>
+          <h2 class="section-title">Kesimpulan & Batasan Teknis</h2>
+        </div>
+
+        <div class="grid-2">
+          <div class="card" style="border-left: 4px solid var(--accent-emerald);">
+            <h3 class="card-title" style="color: var(--accent-emerald-light); margin-bottom: 0.5rem;"><i class="fa-solid fa-circle-check"></i> Keunggulan Metodologi</h3>
+            <ul style="font-size: 0.88rem; color: var(--text-muted); padding-left: 1.25rem; line-height: 1.8;">
+              <li>Model dinamis non-linear berbasis biofisik multi-sensor.</li>
+              <li>Integrasi langsung dengan kebijakan tata ruang kota/wilayah (RTRW).</li>
+              <li>Otomasi penuh dalam ekosistem GIS standar terbuka (QGIS/GDAL).</li>
+            </ul>
+          </div>
+
+          <div class="card" style="border-left: 4px solid var(--accent-amber);">
+            <h3 class="card-title" style="color: var(--accent-amber); margin-bottom: 0.5rem;"><i class="fa-solid fa-triangle-exclamation"></i> Catatan & Rekomendasi</h3>
+            <ul style="font-size: 0.88rem; color: var(--text-muted); padding-left: 1.25rem; line-height: 1.8;">
+              <li>Pastikan sistem koordinat proyeksi (CRS) menggunakan satuan meter (UTM).</li>
+              <li>Kalibrasi koefisien empiris ($a, b, c, d$) dengan data lapangan <em>(plot inventarisasi)</em> untuk sertifikasi kredit karbon formal.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer>
+        <p>&copy; 2025 SCALA 3 — Cities Course: <em>Mastering Carbon Stock Accounting</em>.</p>
+        <p style="margin-top: 0.25rem; font-size: 0.78rem;">Dokumen HTML Interaktif disiapkan untuk panduan geospasial profesional.</p>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Interactive JavaScript Logic -->
+  <script>
+    // Initialize KaTeX and Mermaid safely
+    document.addEventListener("DOMContentLoaded", function() {
+      // 1. Render KaTeX while ignoring Mermaid diagrams and scripts
+      if (typeof renderMathInElement === "function") {
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false }
+          ],
+          ignoredClasses: ["mermaid", "calc-result-box", "tag-code"],
+          throwOnError: false
+        });
+      }
+      
+      // 2. Initialize and run Mermaid
+      if (typeof mermaid !== "undefined") {
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: 'dark',
+          themeVariables: {
+            primaryColor: '#10B981',
+            primaryTextColor: '#ffffff',
+            primaryBorderColor: '#059669',
+            lineColor: '#06B6D4',
+            secondaryColor: '#111a22',
+            tertiaryColor: '#0a0f14'
+          }
+        });
+        mermaid.run({
+          querySelector: '.mermaid'
+        });
+      }
+    });
+
+    // Theme Toggle Logic
+    const themeBtn = document.getElementById('themeToggleBtn');
+    let currentTheme = localStorage.getItem('scala_theme') || 'dark';
+    
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      if (theme === 'light') {
+        themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i> <span>Tema Terang</span>';
+      } else {
+        themeBtn.innerHTML = '<i class="fa-solid fa-moon"></i> <span>Tema Gelap</span>';
+      }
+      localStorage.setItem('scala_theme', theme);
+    }
+    applyTheme(currentTheme);
+
+    themeBtn.addEventListener('click', () => {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      applyTheme(currentTheme);
+    });
+
+    // ScrollSpy for Sidebar
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('#sidebarNav a');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 120;
+        if (pageYOffset >= sectionTop) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    // Real-time Carbon Calculator Logic
+    const inpArea = document.getElementById('inpArea');
+    const selLCA = document.getElementById('selLCA');
+    const selLCB = document.getElementById('selLCB');
+    const rngNDVI = document.getElementById('rngNDVI');
+    const rngCanopy = document.getElementById('rngCanopy');
+    const inpPrice = document.getElementById('inpPrice');
+
+    const lblArea = document.getElementById('lblArea');
+    const lblNDVI = document.getElementById('lblNDVI');
+    const lblCanopy = document.getElementById('lblCanopy');
+
+    const resAdj = document.getElementById('resAdj');
+    const resCA = document.getElementById('resCA');
+    const resCB = document.getElementById('resCB');
+    const resDeltaC = document.getElementById('resDeltaC');
+    const resCO2 = document.getElementById('resCO2');
+    const resVal = document.getElementById('resVal');
+
+    function calculate() {
+      const area = parseFloat(inpArea.value) || 0;
+      const baseA = parseFloat(selLCA.value) || 0;
+      const baseB = parseFloat(selLCB.value) || 0;
+      const ndvi = parseFloat(rngNDVI.value) || 0.5;
+      const canopy = parseFloat(rngCanopy.value) || 10;
+      const price = parseFloat(inpPrice.value) || 30000;
+
+      // Update labels
+      lblArea.innerText = area + ' ha';
+      lblNDVI.innerText = ndvi.toFixed(2);
+      lblCanopy.innerText = canopy + ' m';
+
+      // Constants
+      const NDVI_ref = 0.5, a = 0.2;
+      const Canopy_ref = 10.0, b = 0.01;
+      const DEM_ref = 100.0, c = 0.0005, dem = 100.0;
+      const NDMI_ref = 0.5, d = 0.15, ndmi = 0.5;
+
+      const adjustment = 1 + a*(ndvi - NDVI_ref) + b*(canopy - Canopy_ref) + c*(dem - DEM_ref) + d*(ndmi - NDMI_ref);
+      
+      const carbonA = baseA * area * adjustment;
+      const carbonB = baseB * area * adjustment;
+      const deltaC = carbonB - carbonA;
+      
+      const totalCO2 = deltaC * (44.0 / 12.0);
+      const isEmission = deltaC < 0;
+      const co2Val = Math.abs(totalCO2);
+      const moneyVal = co2Val * price;
+
+      // Format Numbers
+      resAdj.innerText = adjustment.toFixed(4);
+      resCA.innerText = carbonA.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ton C';
+      resCB.innerText = carbonB.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ton C';
+      
+      resDeltaC.innerText = (deltaC > 0 ? '+' : '') + deltaC.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ton C';
+      resDeltaC.className = 'result-val ' + (deltaC < 0 ? 'loss' : deltaC > 0 ? 'gain' : '');
+
+      if (deltaC < 0) {
+        resCO2.innerText = co2Val.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' tCO₂ (Emisi)';
+        resCO2.className = 'result-val loss';
+        resVal.innerText = 'Rp ' + moneyVal.toLocaleString('id-ID', { maximumFractionDigits: 0 }) + ' (Kerugian)';
+        resVal.className = 'result-val loss';
+      } else if (deltaC > 0) {
+        resCO2.innerText = co2Val.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' tCO₂ (Sekuestrasi)';
+        resCO2.className = 'result-val gain';
+        resVal.innerText = 'Rp ' + moneyVal.toLocaleString('id-ID', { maximumFractionDigits: 0 }) + ' (Keuntungan)';
+        resVal.className = 'result-val gain';
+      } else {
+        resCO2.innerText = '0.00 tCO₂ (Stabil)';
+        resCO2.className = 'result-val';
+        resVal.innerText = 'Rp 0 (Netral)';
+        resVal.className = 'result-val';
+      }
+    }
+
+    [inpArea, selLCA, selLCB, rngNDVI, rngCanopy, inpPrice].forEach(el => {
+      el.addEventListener('input', calculate);
+    });
+
+    calculate();
+  </script>
+</body>
+</html>

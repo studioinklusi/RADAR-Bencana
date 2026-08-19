@@ -12,6 +12,9 @@ import { LoginPage } from './components/LoginPage';
 import { AdminDashboardPage } from './components/AdminDashboardPage';
 import { PolaRuangAuthModal } from './components/PolaRuangAuthModal';
 import { BuildingLoadingModal } from './components/BuildingLoadingModal';
+import { MobileNavBar, MobileTab } from './components/MobileNavBar';
+import { MobileBottomSheet, BottomSheetSnap } from './components/MobileBottomSheet';
+import { MobileSearchModal } from './components/MobileSearchModal';
 
 import { ADMIN_BOUNDARIES } from './data/mockAdminBoundaries';
 import { DESA_BOUNDARIES } from './data/mockDesaBoundaries';
@@ -109,6 +112,32 @@ export default function App() {
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
+
+  // Mobile Navigation & Responsive Sheet State
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState<boolean>(false);
+  const [mobileActiveTab, setMobileActiveTab] = useState<MobileTab>('map');
+  const [bottomSheetSnap, setBottomSheetSnap] = useState<BottomSheetSnap>('peek');
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState<boolean>(false);
+  const [mobileDrawerInitialTab, setMobileDrawerInitialTab] = useState<'tema' | 'invest'>('tema');
+
+  const handleSelectMobileTab = (tab: MobileTab) => {
+    setMobileActiveTab(tab);
+    if (tab === 'map') {
+      setIsMobileDrawerOpen(false);
+      setBottomSheetSnap('peek');
+    } else if (tab === 'layers') {
+      setMobileDrawerInitialTab('tema');
+      setIsMobileDrawerOpen(true);
+    } else if (tab === 'stats') {
+      setIsMobileDrawerOpen(false);
+      setBottomSheetSnap((prev) => (prev === 'peek' ? 'half' : prev));
+    } else if (tab === 'invest') {
+      setMobileDrawerInitialTab('invest');
+      setIsMobileDrawerOpen(true);
+    } else if (tab === 'chat') {
+      setIsMaximizedChatOpen(true);
+    }
+  };
 
   const handleToggleIncidentHazard = (hazard: HazardType) => {
     setSelectedIncidentHazards((prev) =>
@@ -890,7 +919,7 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
 
   // Route 3: Main GIS Map Page (/)
   return (
-    <div className="flex flex-col h-screen w-screen bg-slate-50 text-slate-800 overflow-hidden font-sans">
+    <div className="flex flex-col h-screen h-[100dvh] w-screen bg-slate-50 text-slate-800 overflow-hidden font-sans">
       {/* Top Header */}
       {!isMapFullscreen && (
         <Header
@@ -911,12 +940,13 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
           lang={lang}
           onToggleLang={() => setLang(lang === 'ID' ? 'EN' : 'ID')}
           groupingMode={groupingMode}
+          onOpenMobileSearch={() => setIsMobileSearchOpen(true)}
         />
       )}
 
       {/* Main Web GIS Three-Pane Layout */}
       <div className="flex flex-1 overflow-hidden relative">
-        {/* Left Sidebar Control Panel */}
+        {/* Left Sidebar Control Panel (Desktop & Mobile Drawer) */}
         {!isMapFullscreen && (
           <LeftSidebar
             selectedDistrict={selectedDistrict}
@@ -965,6 +995,9 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
             onSendChatMessage={handleSendChatMessage}
             isChatSending={isChatSending}
             onOpenMaximizedChat={() => setIsMaximizedChatOpen(true)}
+            isMobileOpen={isMobileDrawerOpen}
+            onCloseMobile={() => setIsMobileDrawerOpen(false)}
+            mobileInitialTab={mobileDrawerInitialTab}
           />
         )}
 
@@ -1015,7 +1048,7 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
           onToggleFullscreen={handleToggleMapFullscreen}
         />
 
-        {/* Right Dashboard Analytics & Sunburst Chart Panel */}
+        {/* Right Dashboard Analytics & Sunburst Chart Panel (Desktop) */}
         {!isMapFullscreen && (
           <RightDashboard
             selectedDistrict={selectedDistrict}
@@ -1030,6 +1063,47 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
           />
         )}
       </div>
+
+      {/* Mobile Interactive Bottom Sheet (Mobile Analytics & Charts) */}
+      {!isMapFullscreen && (
+        <MobileBottomSheet
+          snapState={bottomSheetSnap}
+          onSnapChange={setBottomSheetSnap}
+          selectedDistrict={selectedDistrict}
+          selectedVillage={selectedVillage}
+          selectedHazard={selectedHazard}
+          stats={stats}
+          aiAssessment={aiAssessment}
+          isAiLoading={isAiLoading}
+          onRequestAiAnalysis={handleRequestAiAnalysis}
+          onExportData={handleExportData}
+          radarInvestResult={radarInvestResult}
+          onOpenChatModal={() => setIsMaximizedChatOpen(true)}
+        />
+      )}
+
+      {/* Mobile Bottom Navigation Bar */}
+      {!isMapFullscreen && (
+        <MobileNavBar
+          activeTab={mobileActiveTab}
+          onSelectTab={handleSelectMobileTab}
+        />
+      )}
+
+      {/* Mobile Instant Location Search Modal */}
+      <MobileSearchModal
+        isOpen={isMobileSearchOpen}
+        onClose={() => setIsMobileSearchOpen(false)}
+        districts={ADMIN_BOUNDARIES.features}
+        selectedDistrict={selectedDistrict}
+        selectedVillage={selectedVillage}
+        onSelectDistrict={(d) => {
+          setSelectedDistrict(d);
+          setSelectedVillage(null);
+        }}
+        onSelectVillage={setSelectedVillage}
+        onResetView={handleResetView}
+      />
 
       {/* Custom Geometry Modal */}
       <MyGeometryModal
@@ -1056,7 +1130,7 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
         }}
       />
 
-      {/* Floating AI Chat Assistant Button (Bottom Right) */}
+      {/* Floating AI Chat Assistant Button (Desktop Bottom Right) */}
       <FloatingAiChatButton
         onOpenChat={() => setIsMaximizedChatOpen(true)}
       />

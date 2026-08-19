@@ -97,6 +97,9 @@ interface LeftSidebarProps {
   onSendChatMessage?: (textToSend?: string) => void;
   isChatSending?: boolean;
   onOpenMaximizedChat?: () => void;
+  isMobileOpen?: boolean;
+  onCloseMobile?: () => void;
+  mobileInitialTab?: 'tema' | 'invest';
 }
 
 export const LeftSidebar: React.FC<LeftSidebarProps> = ({
@@ -146,9 +149,18 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
   onSendChatMessage,
   isChatSending = false,
   onOpenMaximizedChat,
+  isMobileOpen = false,
+  onCloseMobile,
+  mobileInitialTab,
 }) => {
-  const [activeTab, setActiveTab] = useState<'tema' | 'invest'>('tema');
+  const [activeTab, setActiveTab] = useState<'tema' | 'invest'>(mobileInitialTab || 'tema');
   const [expandedSection, setExpandedSection] = useState<'wilayah' | 'polaruang' | 'hazard' | 'incidents' | 'facilities' | 'buildings' | null>('hazard');
+
+  useEffect(() => {
+    if (mobileInitialTab) {
+      setActiveTab(mobileInitialTab);
+    }
+  }, [mobileInitialTab]);
 
   // Filter available villages based on selectedDistrict
   const selectedDistrictClean = selectedDistrict?.properties?.name?.toLowerCase().replace(/^(kecamatan|kabupaten)\s+/i, '') || '';
@@ -230,15 +242,32 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
     liquefaction: <Zap className="w-4 h-4 text-rose-600" />,
   };
 
-  return (
-    <aside className="w-72 bg-white/95 backdrop-blur-md border-r border-slate-200 text-slate-800 flex flex-col h-[calc(100vh-3.5rem)] shrink-0 z-20 select-none shadow-sm">
+  const sidebarContent = (
+    <>
+      {/* Mobile Drawer Header with Close Button */}
+      {isMobileOpen && (
+        <div className="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between md:hidden">
+          <div className="flex items-center gap-2">
+            <Layers className="w-4 h-4 text-emerald-600" />
+            <span className="font-bold text-xs text-slate-800">Panel Kontrol &amp; Layer</span>
+          </div>
+          <button
+            type="button"
+            onClick={onCloseMobile}
+            className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Top Tab Switcher */}
-      <div className="flex items-center border-b border-slate-200 p-1.5 bg-slate-50 gap-1">
+      <div className="flex items-center border-b border-slate-200 p-1.5 bg-slate-50 gap-1 shrink-0">
         <button
           onClick={() => setActiveTab('tema')}
-          className={`flex-1 py-1.5 px-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
+          className={`flex-1 py-1.5 px-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
             activeTab === 'tema'
-              ? 'bg-white text-emerald-700 border border-slate-200 shadow-sm'
+              ? 'bg-white text-emerald-700 border border-slate-200 shadow-sm font-bold'
               : 'text-slate-500 hover:text-slate-800'
           }`}
         >
@@ -247,7 +276,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
         </button>
         <button
           onClick={() => setActiveTab('invest')}
-          className={`flex-1 py-1.5 px-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 relative ${
+          className={`flex-1 py-1.5 px-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 relative cursor-pointer ${
             activeTab === 'invest'
               ? 'bg-emerald-50 text-emerald-800 border border-emerald-300 shadow-sm font-bold'
               : 'text-slate-500 hover:text-slate-800'
@@ -1167,6 +1196,31 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
           <span>Download Laporan Data (CSV)</span>
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop Permanent Sidebar */}
+      <aside className="hidden md:flex md:w-72 bg-white/95 backdrop-blur-md border-r border-slate-200 text-slate-800 flex-col h-[calc(100vh-3.5rem)] shrink-0 z-20 select-none shadow-sm">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile Off-Canvas Drawer Slide-over */}
+      {isMobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex">
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity animate-fadeIn"
+            onClick={onCloseMobile}
+          />
+          {/* Slide Drawer */}
+          <aside className="relative w-80 max-w-[85vw] bg-white h-full shadow-2xl flex flex-col z-10 pt-safe pb-safe text-slate-800 select-none animate-fadeIn">
+            {sidebarContent}
+          </aside>
+        </div>
+      )}
+    </>
   );
 };
+

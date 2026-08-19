@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ChatMessageRenderer } from './ChatMessageRenderer';
 import { POLA_RUANG_ZONES } from '../data/mockPolaRuang';
 import { 

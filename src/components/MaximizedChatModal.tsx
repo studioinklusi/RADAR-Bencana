@@ -29,10 +29,10 @@ export const MaximizedChatModal: React.FC<MaximizedChatModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 max-sm:p-0 animate-fadeIn select-text">
-      <div className="bg-white border border-slate-200 max-sm:border-0 rounded-2xl max-sm:rounded-none shadow-2xl w-full max-w-4xl h-[84vh] max-h-[720px] max-sm:h-[100dvh] max-sm:max-h-none flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 max-sm:p-0 animate-fadeIn select-text">
+      <div className="bg-white border border-slate-200 max-sm:border-0 rounded-2xl max-sm:rounded-none shadow-2xl w-full max-w-4xl h-[78vh] max-h-[660px] max-sm:h-[100dvh] max-sm:max-h-none flex flex-col overflow-hidden">
         {/* Modal Header */}
-        <div className="px-4 py-3.5 sm:px-6 sm:py-4 bg-gradient-to-r from-emerald-50 via-white to-amber-50 border-b border-slate-200 flex items-center justify-between shrink-0">
+        <div className="px-5 py-4 sm:px-6 sm:py-4.5 bg-gradient-to-r from-emerald-50 via-white to-amber-50 border-b border-slate-200 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-sm shrink-0">
               <Bot className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -40,7 +40,7 @@ export const MaximizedChatModal: React.FC<MaximizedChatModalProps> = ({
             <div className="min-w-0">
               <h3 className="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2 truncate">
                 <span>Tanya AI Bencana</span>
-                <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-mono font-bold border border-emerald-200">
+                <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono font-bold border border-emerald-200">
                   RADAR AI
                 </span>
               </h3>
@@ -111,8 +111,8 @@ export const MaximizedChatModal: React.FC<MaximizedChatModalProps> = ({
           )}
         </div>
 
-        {/* Quick Chips & Chat Input Form Footer */}
-        <div className="p-3.5 sm:p-4 sm:px-6 bg-white border-t border-slate-200 space-y-2.5 shrink-0 pb-safe">
+        {/* Quick Chips & Chat Input Form Footer with generous bottom padding */}
+        <div className="p-4 sm:px-6 pt-3 sm:pt-4 pb-5 sm:pb-6 bg-white border-t border-slate-200 space-y-3 shrink-0">
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
             <span className="text-xs text-slate-500 font-semibold shrink-0 flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
@@ -146,7 +146,7 @@ export const MaximizedChatModal: React.FC<MaximizedChatModalProps> = ({
               e.preventDefault();
               onSendMessage();
             }}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2.5"
           >
             <input
               type="text"
@@ -154,12 +154,12 @@ export const MaximizedChatModal: React.FC<MaximizedChatModalProps> = ({
               onChange={(e) => onChangeInputChatText(e.target.value)}
               placeholder="Ketik pertanyaan kebencanaan atau analisis spasial di sini..."
               disabled={isChatSending}
-              className="flex-1 px-4 py-2.5 sm:py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:border-emerald-500 focus:bg-white text-slate-800 placeholder:text-slate-400 shadow-inner"
+              className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:border-emerald-500 focus:bg-white text-slate-800 placeholder:text-slate-400 shadow-inner"
             />
             <button
               type="submit"
               disabled={isChatSending || !inputChatText.trim()}
-              className="px-5 sm:px-6 py-2.5 sm:py-3 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white font-bold text-xs sm:text-sm rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-sm shadow-emerald-600/30 shrink-0"
+              className="px-5 sm:px-6 py-3 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white font-bold text-xs sm:text-sm rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-sm shadow-emerald-600/30 shrink-0"
             >
               <span>Kirim</span>
               <Send className="w-4 h-4" />

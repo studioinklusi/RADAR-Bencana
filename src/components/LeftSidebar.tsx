@@ -102,7 +102,7 @@ interface LeftSidebarProps {
   mobileInitialTab?: 'tema' | 'invest';
 }
 
-export const LeftSidebar: React.FC<LeftSidebarProps> = ({
+const LeftSidebarComponent: React.FC<LeftSidebarProps> = ({
   selectedDistrict,
   selectedVillage = null,
   onSelectVillage,
@@ -162,18 +162,25 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
     }
   }, [mobileInitialTab]);
 
-  // Filter available villages based on selectedDistrict
-  const selectedDistrictClean = selectedDistrict?.properties?.name?.toLowerCase().replace(/^(kecamatan|kabupaten)\s+/i, '') || '';
-  const availableVillages = Object.values(VILLAGE_BUILDING_STATS).filter((v) => {
-    if (!selectedDistrictClean) return true;
-    return v.kecamatan.toLowerCase().includes(selectedDistrictClean) || selectedDistrictClean.includes(v.kecamatan.toLowerCase());
-  }).sort((a, b) => a.desa.localeCompare(b.desa));
+  const selectedDistrictClean = useMemo(
+    () => selectedDistrict?.properties?.name?.toLowerCase().replace(/^(kecamatan|kabupaten)\s+/i, '') || '',
+    [selectedDistrict]
+  );
 
-  const currentVillageStat = selectedVillage
-    ? Object.values(VILLAGE_BUILDING_STATS).find(
-        (v) => v.desa.toLowerCase() === selectedVillage.toLowerCase().replace(/^(desa|kelurahan)\s+/i, '')
-      )
-    : null;
+  const availableVillages = useMemo(() => {
+    return Object.values(VILLAGE_BUILDING_STATS)
+      .filter((v) => {
+        if (!selectedDistrictClean) return true;
+        return v.kecamatan.toLowerCase().includes(selectedDistrictClean) || selectedDistrictClean.includes(v.kecamatan.toLowerCase());
+      })
+      .sort((a, b) => a.desa.localeCompare(b.desa));
+  }, [selectedDistrictClean]);
+
+  const currentVillageStat = useMemo(() => {
+    if (!selectedVillage) return null;
+    const cleanVillage = selectedVillage.toLowerCase().replace(/^(desa|kelurahan)\s+/i, '');
+    return Object.values(VILLAGE_BUILDING_STATS).find((v) => v.desa.toLowerCase() === cleanVillage) || null;
+  }, [selectedVillage]);
 
   // Form state for Radar Invest (Default to Banjarnegara Pusat)
   const [investLat, setInvestLat] = useState<number>(-7.3970);
@@ -1223,4 +1230,6 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
     </>
   );
 };
+
+export const LeftSidebar = React.memo(LeftSidebarComponent);
 

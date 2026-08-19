@@ -213,9 +213,10 @@ input[type="range"].custom-slider::-moz-range-thumb:active {
   scrollbar-width: none;
 }
 
-/* Smooth drag and bottom sheet transitions */
+/* Smooth hardware-accelerated bottom sheet transitions */
 .bottom-sheet-transition {
-  transition: height 0.35s cubic-bezier(0.32, 0.72, 0, 1), transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: transform;
 }
 
 /* Optimize touch interactions */

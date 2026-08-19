@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   PieChart as PieIcon, 
   Share2, 
@@ -56,7 +56,7 @@ interface RightDashboardProps {
   radarInvestResult?: RadarInvestResult | null;
 }
 
-export const RightDashboard: React.FC<RightDashboardProps> = ({
+const RightDashboardComponent: React.FC<RightDashboardProps> = ({
   selectedDistrict,
   selectedVillage,
   selectedHazard,
@@ -101,16 +101,18 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
   const currentDistrictName = selectedDistrict?.properties?.name?.replace(/^(kecamatan|desa|kabupaten)\s+/i, '') || '';
   const currentDistrictBuildingStats = buildingSummary?.districtStats?.[currentDistrictName] || null;
 
-  // Filter facilities clipped by selected district
-  const districtFacilities = MOCK_FACILITIES.filter((fac) => {
-    if (!selectedDistrict) return true; // All facilities if no district selected
+  // Filter facilities clipped by selected district with useMemo
+  const districtFacilities = useMemo(() => {
+    if (!selectedDistrict) return MOCK_FACILITIES;
     const selectedName = selectedDistrict.properties.name.toLowerCase().replace(/^(kabupaten|kota)\s+/, '');
-    const facName = fac.districtName.toLowerCase().replace(/^(kabupaten|kota)\s+/, '');
-    return facName.includes(selectedName) || selectedName.includes(facName);
-  });
+    return MOCK_FACILITIES.filter((fac) => {
+      const facName = fac.districtName.toLowerCase().replace(/^(kabupaten|kota)\s+/, '');
+      return facName.includes(selectedName) || selectedName.includes(facName);
+    });
+  }, [selectedDistrict]);
 
-  const kritisFacilities = districtFacilities.filter((f) => f.category === 'kritis');
-  const umumFacilities = districtFacilities.filter((f) => f.category === 'umum');
+  const kritisFacilities = useMemo(() => districtFacilities.filter((f) => f.category === 'kritis'), [districtFacilities]);
+  const umumFacilities = useMemo(() => districtFacilities.filter((f) => f.category === 'umum'), [districtFacilities]);
 
   const countBySubType = (subType: FacilitySubType) => 
     districtFacilities.filter((f) => f.subType === subType).length;
@@ -119,37 +121,39 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
   const isZeroRisk = stats && stats.highRiskHa === 0 && stats.mediumRiskHa === 0 && stats.lowRiskHa === 0;
 
   // Prepare chart data matching MapBiomas Sunburst/Donut style (3 hazard classes)
-  const chartData = stats
-    ? isZeroRisk
-      ? [
-          {
-            name: 'Zona Bebas Bahaya (Aman)',
-            value: stats.totalAreaHa || 100,
-            pct: 100,
-            color: '#10b981',
-          },
-        ]
-      : [
-          {
-            name: 'Risiko Tinggi',
-            value: stats.highRiskHa,
-            pct: stats.highRiskPct,
-            color: hazardConfig.colorPalette.high,
-          },
-          {
-            name: 'Risiko Sedang',
-            value: stats.mediumRiskHa,
-            pct: stats.mediumRiskPct,
-            color: hazardConfig.colorPalette.medium,
-          },
-          {
-            name: 'Risiko Rendah',
-            value: stats.lowRiskHa,
-            pct: stats.lowRiskPct,
-            color: hazardConfig.colorPalette.low,
-          },
-        ]
-    : [];
+  const chartData = useMemo(() => {
+    if (!stats) return [];
+    if (isZeroRisk) {
+      return [
+        {
+          name: 'Zona Bebas Bahaya (Aman)',
+          value: stats.totalAreaHa || 100,
+          pct: 100,
+          color: '#10b981',
+        },
+      ];
+    }
+    return [
+      {
+        name: 'Risiko Tinggi',
+        value: stats.highRiskHa,
+        pct: stats.highRiskPct,
+        color: hazardConfig.colorPalette.high,
+      },
+      {
+        name: 'Risiko Sedang',
+        value: stats.mediumRiskHa,
+        pct: stats.mediumRiskPct,
+        color: hazardConfig.colorPalette.medium,
+      },
+      {
+        name: 'Risiko Rendah',
+        value: stats.lowRiskHa,
+        pct: stats.lowRiskPct,
+        color: hazardConfig.colorPalette.low,
+      },
+    ];
+  }, [stats, isZeroRisk, hazardConfig]);
 
   const districtName = selectedDistrict
     ? selectedDistrict.properties.name
@@ -1069,3 +1073,5 @@ export const RightDashboard: React.FC<RightDashboardProps> = ({
     </aside>
   );
 };
+
+export const RightDashboard = React.memo(RightDashboardComponent);

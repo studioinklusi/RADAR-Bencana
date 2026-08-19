@@ -85,7 +85,7 @@ interface MapContainerProps {
   onToggleFullscreen?: () => void;
 }
 
-export const MapContainer: React.FC<MapContainerProps> = ({
+const MapContainerComponent: React.FC<MapContainerProps> = ({
   adminBoundaries,
   selectedDistrict,
   selectedVillage,
@@ -240,16 +240,21 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
     leafletMap.current = map;
 
-    // ResizeObserver to handle layout transitions (sidebar, bottom sheet, orientation)
+    // Debounced ResizeObserver to prevent thrashing map tiles on frame transitions
     let resizeObserver: ResizeObserver | null = null;
+    let resizeTimer: any = null;
     if (mapRef.current && window.ResizeObserver) {
       resizeObserver = new ResizeObserver(() => {
-        map.invalidateSize();
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          map.invalidateSize();
+        }, 150);
       });
       resizeObserver.observe(mapRef.current);
     }
 
     return () => {
+      if (resizeTimer) clearTimeout(resizeTimer);
       if (resizeObserver) resizeObserver.disconnect();
       map.remove();
       leafletMap.current = null;
@@ -1958,3 +1963,5 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     </div>
   );
 };
+
+export const MapContainer = React.memo(MapContainerComponent);

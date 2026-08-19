@@ -148,7 +148,7 @@ const MapContainerComponent: React.FC<MapContainerProps> = ({
   });
   const [selectedYear, setSelectedYear] = useState<number>(2024);
   const [basemapStyle, setBasemapStyle] = useState<'google_hybrid' | 'google_satellite' | 'osm' | 'positron' | 'esri_satellite'>('positron');
-  const [showLegend, setShowLegend] = useState<boolean>(true);
+  const [showLegend, setShowLegend] = useState<boolean>(typeof window !== 'undefined' ? window.innerWidth > 768 : true);
   const [internalGroupingMode, setInternalGroupingMode] = useState<string>('Kecamatan');
   const groupingMode = controlledGroupingMode || internalGroupingMode;
   const setGroupingMode = (mode: string) => {
@@ -1594,45 +1594,45 @@ const MapContainerComponent: React.FC<MapContainerProps> = ({
         </div>
       )}
 
-      {/* Floating Top Controls & Legend Bar (Top-Right Aligned) */}
-      <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2 pointer-events-none">
-        {/* Single Integrated Top Right Controls Bar */}
-        <div className="bg-white/95 border border-slate-200/90 rounded-2xl p-1.5 shadow-xl flex items-center gap-1.5 backdrop-blur-md pointer-events-auto shrink-0 max-w-full overflow-x-auto scrollbar-none">
+      {/* Floating Top Controls & Legend Bar (Responsive & Safe-Aligned) */}
+      <div className="absolute top-3 right-3 left-3 sm:left-auto sm:right-4 z-20 flex flex-col items-end gap-2 pointer-events-none">
+        {/* Single Integrated Top Controls Bar */}
+        <div className="bg-white/95 border border-slate-200/90 rounded-2xl p-1 sm:p-1.5 shadow-xl flex items-center gap-1 sm:gap-1.5 backdrop-blur-md pointer-events-auto max-w-full overflow-x-auto no-scrollbar">
           {/* Dropdown: Basemap Selection */}
-          <div className="relative flex items-center">
-            <Map className="w-3.5 h-3.5 text-emerald-600 absolute left-2 pointer-events-none" />
+          <div className="relative flex items-center shrink-0">
+            <Map className="w-3.5 h-3.5 text-emerald-600 absolute left-1.5 sm:left-2 pointer-events-none" />
             <select
               value={basemapStyle}
               onChange={(e) => setBasemapStyle(e.target.value as any)}
-              className="bg-transparent text-slate-800 text-xs rounded-xl pl-7 pr-6 py-1 focus:outline-none font-bold cursor-pointer appearance-none border-0"
+              className="bg-transparent text-slate-800 text-[11px] sm:text-xs rounded-xl pl-6 sm:pl-7 pr-5 sm:pr-6 py-0.5 sm:py-1 focus:outline-none font-bold cursor-pointer appearance-none border-0 max-w-[80px] sm:max-w-none truncate"
               title="Pilih Gaya Peta Dasaran (Basemap)"
             >
-              <option value="positron">Positron (Light)</option>
-              <option value="google_hybrid">Satellite (Hybrid)</option>
-              <option value="google_satellite">Satellite (Pure)</option>
-              <option value="osm">OpenStreetMap</option>
-              <option value="esri_satellite">Esri Satellite</option>
+              <option value="positron">Positron</option>
+              <option value="google_hybrid">Satellite</option>
+              <option value="google_satellite">Satellite Pure</option>
+              <option value="osm">OSM</option>
+              <option value="esri_satellite">Esri</option>
             </select>
-            <ChevronDown className="w-3 h-3 text-slate-400 absolute right-1.5 pointer-events-none" />
+            <ChevronDown className="w-3 h-3 text-slate-400 absolute right-1 sm:right-1.5 pointer-events-none" />
           </div>
 
           <div className="h-4 w-px bg-slate-200 shrink-0" />
 
           {/* Dropdown: Kelompokkan berdasar... */}
-          <div className="relative flex items-center">
+          <div className="relative flex items-center shrink-0">
             <select
               value={groupingMode}
               onChange={(e) => setGroupingMode(e.target.value)}
-              className="bg-transparent text-slate-800 text-xs rounded-xl pl-2 pr-6 py-1 focus:outline-none font-bold cursor-pointer appearance-none border-0"
+              className="bg-transparent text-slate-800 text-[11px] sm:text-xs rounded-xl pl-1.5 sm:pl-2 pr-5 sm:pr-6 py-0.5 sm:py-1 focus:outline-none font-bold cursor-pointer appearance-none border-0 max-w-[115px] sm:max-w-none truncate"
               title="Kelompokkan Batas Wilayah Peta"
             >
-              <option value="Kecamatan">Zone: Kecamatan (20 Wilayah)</option>
-              <option value="Desa">Zone: Batas Desa (276 Desa)</option>
-              <option value="Kecamatan & Desa">Zone: Gabungan (Kec &amp; Desa)</option>
-              <option value="DAS" disabled className="text-slate-400">Zone: DAS (Sungai) - Segera</option>
-              <option value="Kelas Risk" disabled className="text-slate-400">Zone: Kelas Risiko - Segera</option>
+              <option value="Kecamatan">Kecamatan (20)</option>
+              <option value="Desa">Batas Desa (276)</option>
+              <option value="Kecamatan & Desa">Gabungan</option>
+              <option value="DAS" disabled className="text-slate-400">DAS (Segera)</option>
+              <option value="Kelas Risk" disabled className="text-slate-400">Risiko (Segera)</option>
             </select>
-            <ChevronDown className="w-3 h-3 text-slate-400 absolute right-1.5 pointer-events-none" />
+            <ChevronDown className="w-3 h-3 text-slate-400 absolute right-1 sm:right-1.5 pointer-events-none" />
           </div>
 
           <div className="h-4 w-px bg-slate-200 shrink-0" />
@@ -1640,7 +1640,7 @@ const MapContainerComponent: React.FC<MapContainerProps> = ({
           {/* Quick Reset View Button */}
           <button
             onClick={onResetView}
-            className="p-1 text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/80 rounded-xl transition-colors flex items-center gap-1 text-xs px-2 font-semibold cursor-pointer shrink-0"
+            className="p-1 text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/80 rounded-xl transition-colors flex items-center gap-1 text-[11px] sm:text-xs px-1.5 sm:px-2 font-semibold cursor-pointer shrink-0"
             title="Reset Peta ke Tampilan Kabupaten Banjarnegara"
           >
             <RotateCcw className="w-3.5 h-3.5 text-amber-600" />
@@ -1652,7 +1652,7 @@ const MapContainerComponent: React.FC<MapContainerProps> = ({
           {/* Lock / Unlock Map Panning Button */}
           <button
             onClick={() => setIsMapLocked(!isMapLocked)}
-            className={`p-1 rounded-xl transition-all flex items-center gap-1.5 text-xs px-2.5 font-semibold cursor-pointer shrink-0 ${
+            className={`p-1 rounded-xl transition-all flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs px-1.5 sm:px-2.5 font-semibold cursor-pointer shrink-0 ${
               isMapLocked
                 ? 'bg-rose-50 border border-rose-300 text-rose-700 hover:bg-rose-100 shadow-xs'
                 : 'bg-emerald-50/50 hover:bg-emerald-100/80 border border-emerald-200/80 text-emerald-800'
@@ -1662,12 +1662,12 @@ const MapContainerComponent: React.FC<MapContainerProps> = ({
             {isMapLocked ? (
               <>
                 <Lock className="w-3.5 h-3.5 text-rose-600 animate-pulse" />
-                <span className="font-mono text-[11px] font-bold text-rose-700">Terkunci</span>
+                <span className="font-mono text-[10px] sm:text-[11px] font-bold text-rose-700">Terkunci</span>
               </>
             ) : (
               <>
                 <Unlock className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="font-mono text-[11px] font-medium text-emerald-800">Bebas</span>
+                <span className="font-mono text-[10px] sm:text-[11px] font-medium text-emerald-800">Bebas</span>
               </>
             )}
           </button>
@@ -1676,7 +1676,7 @@ const MapContainerComponent: React.FC<MapContainerProps> = ({
           {onToggleFullscreen && (
             <button
               onClick={onToggleFullscreen}
-              className={`p-1 rounded-xl transition-all flex items-center gap-1 text-xs px-2 font-semibold cursor-pointer shrink-0 ${
+              className={`p-1 rounded-xl transition-all flex items-center gap-1 text-[11px] sm:text-xs px-1.5 sm:px-2 font-semibold cursor-pointer shrink-0 ${
                 isFullscreen
                   ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-xs'
                   : 'text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/80'

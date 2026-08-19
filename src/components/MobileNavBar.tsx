@@ -4,8 +4,8 @@ import {
   Layers, 
   PieChart, 
   Briefcase, 
-  Bot,
-  Sparkles
+  Bot, 
+  Sparkles 
 } from 'lucide-react';
 
 export type MobileTab = 'map' | 'layers' | 'stats' | 'invest' | 'chat';
@@ -14,26 +14,37 @@ interface MobileNavBarProps {
   activeTab: MobileTab;
   onSelectTab: (tab: MobileTab) => void;
   hasUnreadAiNotice?: boolean;
+  isPending?: boolean;
 }
 
-export const MobileNavBar: React.FC<MobileNavBarProps> = ({
+export const MobileNavBarComponent: React.FC<MobileNavBarProps> = ({
   activeTab,
   onSelectTab,
   hasUnreadAiNotice = false,
+  isPending = false,
 }) => {
+  const handleTabClick = (tab: MobileTab) => {
+    if (typeof window !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate(12);
+      } catch (e) {}
+    }
+    onSelectTab(tab);
+  };
+
   return (
     <nav 
-      className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-lg md:hidden pb-safe select-none"
+      className="fixed bottom-0 inset-x-0 z-40 bg-white/98 border-t border-slate-200 shadow-2xl md:hidden pb-safe select-none"
       aria-label="Mobile Navigation Bar"
     >
       <div className="flex items-center justify-around h-14 px-1">
         {/* Tab 1: Peta (Map Canvas) */}
         <button
           type="button"
-          onClick={() => onSelectTab('map')}
-          className={`flex flex-col items-center justify-center flex-1 h-full py-1 transition-all relative ${
+          onClick={() => handleTabClick('map')}
+          className={`flex flex-col items-center justify-center flex-1 h-full py-1 active:scale-80 active:bg-emerald-50/80 rounded-xl transition-transform duration-100 ease-out relative cursor-pointer ${
             activeTab === 'map'
-              ? 'text-emerald-700 font-bold'
+              ? 'text-emerald-700 font-extrabold'
               : 'text-slate-500 hover:text-slate-800'
           }`}
         >
@@ -42,17 +53,17 @@ export const MobileNavBar: React.FC<MobileNavBarProps> = ({
           </div>
           <span className="text-[10px] tracking-tight mt-0.5">Peta</span>
           {activeTab === 'map' && (
-            <span className="absolute top-1 w-1 h-1 rounded-full bg-emerald-600" />
+            <span className="absolute top-1 w-1.5 h-1.5 rounded-full bg-emerald-600 shadow-xs" />
           )}
         </button>
 
         {/* Tab 2: Layer & Filter */}
         <button
           type="button"
-          onClick={() => onSelectTab('layers')}
-          className={`flex flex-col items-center justify-center flex-1 h-full py-1 transition-all relative ${
+          onClick={() => handleTabClick('layers')}
+          className={`flex flex-col items-center justify-center flex-1 h-full py-1 active:scale-80 active:bg-emerald-50/80 rounded-xl transition-transform duration-100 ease-out relative cursor-pointer ${
             activeTab === 'layers'
-              ? 'text-emerald-700 font-bold'
+              ? 'text-emerald-700 font-extrabold'
               : 'text-slate-500 hover:text-slate-800'
           }`}
         >
@@ -61,17 +72,17 @@ export const MobileNavBar: React.FC<MobileNavBarProps> = ({
           </div>
           <span className="text-[10px] tracking-tight mt-0.5">Layer</span>
           {activeTab === 'layers' && (
-            <span className="absolute top-1 w-1 h-1 rounded-full bg-emerald-600" />
+            <span className="absolute top-1 w-1.5 h-1.5 rounded-full bg-emerald-600 shadow-xs" />
           )}
         </button>
 
         {/* Tab 3: Statistik / Analisis */}
         <button
           type="button"
-          onClick={() => onSelectTab('stats')}
-          className={`flex flex-col items-center justify-center flex-1 h-full py-1 transition-all relative ${
+          onClick={() => handleTabClick('stats')}
+          className={`flex flex-col items-center justify-center flex-1 h-full py-1 active:scale-80 active:bg-emerald-50/80 rounded-xl transition-transform duration-100 ease-out relative cursor-pointer ${
             activeTab === 'stats'
-              ? 'text-emerald-700 font-bold'
+              ? 'text-emerald-700 font-extrabold'
               : 'text-slate-500 hover:text-slate-800'
           }`}
         >
@@ -80,17 +91,17 @@ export const MobileNavBar: React.FC<MobileNavBarProps> = ({
           </div>
           <span className="text-[10px] tracking-tight mt-0.5">Risiko</span>
           {activeTab === 'stats' && (
-            <span className="absolute top-1 w-1 h-1 rounded-full bg-emerald-600" />
+            <span className="absolute top-1 w-1.5 h-1.5 rounded-full bg-emerald-600 shadow-xs" />
           )}
         </button>
 
         {/* Tab 4: Radar Invest */}
         <button
           type="button"
-          onClick={() => onSelectTab('invest')}
-          className={`flex flex-col items-center justify-center flex-1 h-full py-1 transition-all relative ${
+          onClick={() => handleTabClick('invest')}
+          className={`flex flex-col items-center justify-center flex-1 h-full py-1 active:scale-80 active:bg-emerald-50/80 rounded-xl transition-transform duration-100 ease-out relative cursor-pointer ${
             activeTab === 'invest'
-              ? 'text-emerald-700 font-bold'
+              ? 'text-emerald-700 font-extrabold'
               : 'text-slate-500 hover:text-slate-800'
           }`}
         >
@@ -99,17 +110,17 @@ export const MobileNavBar: React.FC<MobileNavBarProps> = ({
           </div>
           <span className="text-[10px] tracking-tight mt-0.5">Invest</span>
           {activeTab === 'invest' && (
-            <span className="absolute top-1 w-1 h-1 rounded-full bg-emerald-600" />
+            <span className="absolute top-1 w-1.5 h-1.5 rounded-full bg-emerald-600 shadow-xs" />
           )}
         </button>
 
         {/* Tab 5: Tanya AI */}
         <button
           type="button"
-          onClick={() => onSelectTab('chat')}
-          className={`flex flex-col items-center justify-center flex-1 h-full py-1 transition-all relative ${
+          onClick={() => handleTabClick('chat')}
+          className={`flex flex-col items-center justify-center flex-1 h-full py-1 active:scale-80 active:bg-emerald-50/80 rounded-xl transition-transform duration-100 ease-out relative cursor-pointer ${
             activeTab === 'chat'
-              ? 'text-emerald-700 font-bold'
+              ? 'text-emerald-700 font-extrabold'
               : 'text-slate-500 hover:text-slate-800'
           }`}
         >
@@ -126,3 +137,5 @@ export const MobileNavBar: React.FC<MobileNavBarProps> = ({
     </nav>
   );
 };
+
+export const MobileNavBar = React.memo(MobileNavBarComponent);

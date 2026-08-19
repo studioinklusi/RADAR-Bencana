@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import { Header } from './components/Header';
 import { LeftSidebar } from './components/LeftSidebar';
 import { MapContainer } from './components/MapContainer';
@@ -15,6 +15,7 @@ import { BuildingLoadingModal } from './components/BuildingLoadingModal';
 import { MobileNavBar, MobileTab } from './components/MobileNavBar';
 import { MobileBottomSheet, BottomSheetSnap } from './components/MobileBottomSheet';
 import { MobileSearchModal } from './components/MobileSearchModal';
+import { TopLoadingBar } from './components/TopLoadingBar';
 
 import { ADMIN_BOUNDARIES } from './data/mockAdminBoundaries';
 import { DESA_BOUNDARIES } from './data/mockDesaBoundaries';
@@ -113,7 +114,8 @@ export default function App() {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  // Mobile Navigation & Responsive Sheet State
+  // Mobile Navigation & Responsive Sheet State with React Transition
+  const [isNavPending, startNavTransition] = useTransition();
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState<boolean>(false);
   const [mobileActiveTab, setMobileActiveTab] = useState<MobileTab>('map');
   const [bottomSheetSnap, setBottomSheetSnap] = useState<BottomSheetSnap>('peek');
@@ -121,22 +123,27 @@ export default function App() {
   const [mobileDrawerInitialTab, setMobileDrawerInitialTab] = useState<'tema' | 'invest'>('tema');
 
   const handleSelectMobileTab = (tab: MobileTab) => {
+    // Instant visual feedback for tab button
     setMobileActiveTab(tab);
-    if (tab === 'map') {
-      setIsMobileDrawerOpen(false);
-      setBottomSheetSnap('peek');
-    } else if (tab === 'layers') {
-      setMobileDrawerInitialTab('tema');
-      setIsMobileDrawerOpen(true);
-    } else if (tab === 'stats') {
-      setIsMobileDrawerOpen(false);
-      setBottomSheetSnap((prev) => (prev === 'peek' ? 'half' : prev));
-    } else if (tab === 'invest') {
-      setMobileDrawerInitialTab('invest');
-      setIsMobileDrawerOpen(true);
-    } else if (tab === 'chat') {
-      setIsMaximizedChatOpen(true);
-    }
+
+    // Defer heavy UI changes through startTransition
+    startNavTransition(() => {
+      if (tab === 'map') {
+        setIsMobileDrawerOpen(false);
+        setBottomSheetSnap('peek');
+      } else if (tab === 'layers') {
+        setMobileDrawerInitialTab('tema');
+        setIsMobileDrawerOpen(true);
+      } else if (tab === 'stats') {
+        setIsMobileDrawerOpen(false);
+        setBottomSheetSnap((prev) => (prev === 'peek' ? 'half' : prev));
+      } else if (tab === 'invest') {
+        setMobileDrawerInitialTab('invest');
+        setIsMobileDrawerOpen(true);
+      } else if (tab === 'chat') {
+        setIsMaximizedChatOpen(true);
+      }
+    });
   };
 
   const handleToggleIncidentHazard = (hazard: HazardType) => {
@@ -920,6 +927,9 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
   // Route 3: Main GIS Map Page (/)
   return (
     <div className="flex flex-col h-screen h-[100dvh] w-screen bg-slate-50 text-slate-800 overflow-hidden font-sans">
+      {/* Top glowing progress loader */}
+      <TopLoadingBar isLoading={isNavPending || isMapLoading || isAiLoading} />
+
       {/* Top Header */}
       {!isMapFullscreen && (
         <Header
@@ -1087,6 +1097,7 @@ Berikut adalah analisis komprehensif tingkat risiko ancaman **${hazardLabel.toUp
         <MobileNavBar
           activeTab={mobileActiveTab}
           onSelectTab={handleSelectMobileTab}
+          isPending={isNavPending}
         />
       )}
 
